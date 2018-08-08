@@ -354,8 +354,22 @@ deferStmt
     ;
 
 //IfStmt = "if" [ SimpleStmt ";" ] Expression Block [ "else" ( IfStmt | Block ) ] .
+
+//old grammar
+//ifStmt
+//    : 'if' (simpleStmt ';')? expression block ( 'else' ( ifStmt | block ) )?
+//    ;
+
+
+//jwx modified grammar
 ifStmt
-    : 'if' (simpleStmt ';')? expression block ( 'else' ( ifStmt | block ) )?
+    : ifStmtIf (ifStmtElse)?
+    ;
+ifStmtIf
+    : 'if' (simpleStmt ';')? expression block
+    ;
+ifStmtElse
+    : 'else' ( ifStmt | block )
     ;
 
 //SwitchStmt = ExprSwitchStmt | TypeSwitchStmt .
