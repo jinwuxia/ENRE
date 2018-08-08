@@ -6,6 +6,9 @@ import java.util.ArrayList;
  * LocalNameEntity is for the name appearing inside a function or method
  * it corresponds to the operandName, identifierList of shortVarDecl and VarDecl in grammar.
  * it maybe a local variable/constant, a file variable/constant, a packagename, a functioname, or system's method/pack,func/key.
+ *
+ * LocalName is valid only inside a function/method.
+ * So, We bind a LocalName list to its functionEntity, please see FunctionEntity class declaration.
  */
 public class LocalName{
     private String name;    //operandName
