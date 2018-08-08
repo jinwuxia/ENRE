@@ -31,8 +31,17 @@ public class ConstantString {
     public static final String OPERAND_NAME_ROLE_LOC_VAR = "LocalVar";
     public static final String OPERAND_NAME_ROLE_UNKNOWN = "Unknown";
 
+    //kinds of local block, which are inside function/method body.
+    public static final String LOCAL_BLOCK_FOR = "ForBlock";
+    public static final String LOCAL_BLOCK_IF = "IfBlock";
+    public static final String LOCAL_BLOCK_ELSE = "ElseBlock";
+    public static final String LOCAL_BLOCK_SWITCH = "SwitchBlock";
+    public static final String LOCAL_BLOCK_SWITCH_CASE_CLAUSE = "SwitchCaseClauseBlock"; //include default
+    public static final String LOCAL_BLOCK_SELECT = "SelectBlock";
+    public static final String LOCAL_BLOCK_SELECT_CASE_CLAUSE = "SelectCaseClauseBlock"; //include default
 
-    public static final String [] BUILTIN_WORDS  = {
+
+    public static final String [] BUILTIN_TYPE = {
             "bool",
             "byte",
             "complex128",
@@ -53,6 +62,32 @@ public class ConstantString {
             "uint64",
             "uint8",
             "uintptr"
+    };
+
+
+    public static final String [] BUILTIN_FUNCTION = {
+            "append",
+            "cap",
+            "close",
+            "complex",
+            "copy",
+            "delete",
+            "imag",
+            "len",
+            "make",
+            "new",
+            "panic",
+            "print",
+            "println",
+            "real",
+            "recover"
+    };
+
+    public static final String[] BUILTIN_CONSTANTS = {
+            "true",
+            "false",
+            "iota",
+            "nil"
     };
 
 
