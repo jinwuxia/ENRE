@@ -263,6 +263,18 @@ public interface GolangVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitIfStmt(GolangParser.IfStmtContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link GolangParser#ifStmtIf}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIfStmtIf(GolangParser.IfStmtIfContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link GolangParser#ifStmtElse}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIfStmtElse(GolangParser.IfStmtElseContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link GolangParser#switchStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
