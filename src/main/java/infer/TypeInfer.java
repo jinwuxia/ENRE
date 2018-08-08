@@ -106,8 +106,8 @@ public class TypeInfer {
      * @return
      */
     private Boolean isBuiltInType(String typeName) {
-        for (int i = 0; i < ConstantString.BUILTIN_WORDS.length; i++) {
-            if (ConstantString.BUILTIN_WORDS[i].equals(typeName)) {
+        for (int i = 0; i < ConstantString.BUILTIN_TYPE.length; i++) {
+            if (ConstantString.BUILTIN_TYPE[i].equals(typeName)) {
                 return true;
             }
         }
