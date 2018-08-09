@@ -127,7 +127,11 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
         }
         //in function scope
         else if(functionIndex != -1) {
-            processTask.processConstInFunction(ctx, type, functionIndex);
+            int localBlockId = functionIndex;
+            if(!blockStackForAFuncMeth.isEmpty()) {
+                localBlockId = blockStackForAFuncMeth.peek();
+            }
+            processTask.processConstInFunction(ctx, type, functionIndex, localBlockId);
         }
         return null;
 
@@ -171,7 +175,7 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
                 // the vars appear in function/method scope
                 else if (functionIndex != -1) {
                     int localBlockId = functionIndex;
-                    if (!blockStackForAFuncMeth.empty()) {
+                    if (!blockStackForAFuncMeth.isEmpty()) {
                         localBlockId = blockStackForAFuncMeth.peek();
                     }
                     processTask.processVarInFunction(node, type, value,  functionIndex, localBlockId);
@@ -1379,7 +1383,7 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
         String rightExps = visitRightShortVarDecl(ctx.rightShortVarDecl());
         if (functionIndex != -1 && leftOperands != null && rightExps != null) {
             int localBlockId = functionIndex;
-            if (!blockStackForAFuncMeth.empty()) {
+            if (!blockStackForAFuncMeth.isEmpty()) {
                 localBlockId = blockStackForAFuncMeth.peek();
             }
             processTask.processShortDeclVarInFunction(leftOperands, rightExps, functionIndex, localBlockId);
@@ -1443,7 +1447,7 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
     public String visitForStmt(GolangParser.ForStmtContext ctx) {
         //new block
         int parentBlockId = -1;
-        if (!blockStackForAFuncMeth.empty()) {
+        if (!blockStackForAFuncMeth.isEmpty()) {
             parentBlockId = blockStackForAFuncMeth.peek();
         }
         int depth = blockStackForAFuncMeth.size();
@@ -1487,7 +1491,7 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
     public String visitIfStmtIf(GolangParser.IfStmtIfContext ctx) {
         //new block
         int parentBlockId = -1;
-        if (!blockStackForAFuncMeth.empty()) {
+        if (!blockStackForAFuncMeth.isEmpty()) {
             parentBlockId = blockStackForAFuncMeth.peek();
         }
         int depth = blockStackForAFuncMeth.size();
@@ -1528,7 +1532,7 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
     public String visitIfStmtElse(GolangParser.IfStmtElseContext ctx) {
         //new block
         int parentBlockId = -1;
-        if (!blockStackForAFuncMeth.empty()) {
+        if (!blockStackForAFuncMeth.isEmpty()) {
             parentBlockId = blockStackForAFuncMeth.peek();
         }
         int depth = blockStackForAFuncMeth.size();
@@ -1564,7 +1568,7 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
     public String visitSwitchStmt(GolangParser.SwitchStmtContext ctx) {
         //new block
         int parentBlockId = -1;
-        if (!blockStackForAFuncMeth.empty()) {
+        if (!blockStackForAFuncMeth.isEmpty()) {
             parentBlockId = blockStackForAFuncMeth.peek();
         }
         int depth = blockStackForAFuncMeth.size();
@@ -1600,7 +1604,7 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
     public String visitExprCaseClause(GolangParser.ExprCaseClauseContext ctx) {
         //new block
         int parentBlockId = -1;
-        if (!blockStackForAFuncMeth.empty()) {
+        if (!blockStackForAFuncMeth.isEmpty()) {
             parentBlockId = blockStackForAFuncMeth.peek();
         }
         int depth = blockStackForAFuncMeth.size();
@@ -1637,7 +1641,7 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
     public String visitTypeCaseClause(GolangParser.TypeCaseClauseContext ctx) {
         //new block
         int parentBlockId = -1;
-        if (!blockStackForAFuncMeth.empty()) {
+        if (!blockStackForAFuncMeth.isEmpty()) {
             parentBlockId = blockStackForAFuncMeth.peek();
         }
         int depth = blockStackForAFuncMeth.size();
@@ -1674,7 +1678,7 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
     public String visitSelectStmt(GolangParser.SelectStmtContext ctx) {
         //new block
         int parentBlockId = -1;
-        if (!blockStackForAFuncMeth.empty()) {
+        if (!blockStackForAFuncMeth.isEmpty()) {
             parentBlockId = blockStackForAFuncMeth.peek();
         }
         int depth = blockStackForAFuncMeth.size();
@@ -1709,7 +1713,7 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
     public String visitCommClause(GolangParser.CommClauseContext ctx) {
         //new block
         int parentBlockId = -1;
-        if (!blockStackForAFuncMeth.empty()) {
+        if (!blockStackForAFuncMeth.isEmpty()) {
             parentBlockId = blockStackForAFuncMeth.peek();
         }
         int depth = blockStackForAFuncMeth.size();
