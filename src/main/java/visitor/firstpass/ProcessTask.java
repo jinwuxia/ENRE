@@ -54,6 +54,7 @@ public class ProcessTask {
             int varEntityIndex = singleCollect.getCurrentIndex();
             varEntity.setId(varEntityIndex);
             varEntity.setParentId(functionIndex);
+            varEntity.setLocalBlockId(functionIndex);
             singleCollect.addEntity(varEntity);
             if (isParaOrRet.equals(ConstantString.SAVE_TYPE_PARAMETER)) {
                 ((FunctionEntity) singleCollect.getEntities().get(functionIndex)).addParameter(varEntityIndex);
@@ -198,6 +199,7 @@ public class ProcessTask {
         for (TerminalNode node : varSpecContext.identifierList().IDENTIFIER()) {
             VarEntity varEntity = new VarEntity(singleCollect.getCurrentIndex(), type, node.getText());
             varEntity.setParentId(fileIndex);
+            varEntity.setLocalBlockId(fileIndex);
             singleCollect.addEntity(varEntity);
             singleCollect.getEntities().get(fileIndex).addChildId(varEntity.getId());
         }
@@ -361,12 +363,13 @@ public class ProcessTask {
 
     /**
      * process var in variableDeclaration the function
+     * var here is surely a new variable, so save to entity
      * @param node
      * @param type
      * @param value
      * @param functionIndex
      */
-    public void processVarInFunction(TerminalNode node, String type, String value, int functionIndex) {
+    public void processVarInFunction(TerminalNode node, String type, String value, int functionIndex, int localBlockId) {
         String name = node.getText();
         if(name.equals(ConstantString.BLANK_IDENTIFIER) || name.equals(ConstantString.NIL)) {
             return;
@@ -379,6 +382,7 @@ public class ProcessTask {
         VarEntity varEntity = new VarEntity(singleCollect.getCurrentIndex(), type, name);
         varEntity.setValue(value);
         varEntity.setParentId(functionIndex);
+        varEntity.setLocalBlockId(localBlockId);
         singleCollect.addEntity(varEntity);
         singleCollect.getEntities().get(functionIndex).addChildId(varEntity.getId());
 
@@ -389,10 +393,11 @@ public class ProcessTask {
      * process name (appear in identifierList of shortDecl)
      *  if inside a function, we need to add this entity.
      *  it must be in function since shortDecl is valid only in function.
+     *  var here is surely a new variable, so save to entity
      * @param leftOperands
      * @param rightExps
      */
-    public void processShortDeclVarInFunction(String leftOperands, String rightExps, int functionIndex) {
+    public void processShortDeclVarInFunction(String leftOperands, String rightExps, int functionIndex, int localBlockId) {
         String[] leftNames = leftOperands.split(ConstantString.COMMA);
         String[] rightValues = rightExps.split(ConstantString.COMMA);
         for (int i = 0; i < leftNames.length; i++) {
@@ -415,6 +420,7 @@ public class ProcessTask {
             VarEntity varEntity = new VarEntity(singleCollect.getCurrentIndex(), type, name);
             varEntity.setValue(value);
             varEntity.setParentId(functionIndex);
+            varEntity.setLocalBlockId(localBlockId);
             singleCollect.addEntity(varEntity);
             singleCollect.getEntities().get(functionIndex).addChildId(varEntity.getId());
         }
@@ -423,6 +429,7 @@ public class ProcessTask {
 
     /**
      * constSpec: identifierList ( type? '=' expressionList )?;
+     * var here is surely a new variable, so save to entity
      * process constVar in function scope
      * @param ctx
      */
@@ -470,15 +477,16 @@ public class ProcessTask {
         FunctionEntity functionEntity = (FunctionEntity) singleCollect.getEntities().get(functionIndex);
         //if 1
         if (helperVisitor.isOperandNameInLeftAssignment(ctx)) {
+            String usage = ConstantString.OPERAND_NAME_USAGE_SET;
             int id = functionEntity.searchLocalName(name, ConstantString.SCOPE_ONE);
             if(id == -1) {
                 LocalName localName = new LocalName(name, ConstantString.SCOPE_ONE, "", "");
-                localName.updateUsage(ConstantString.OPERAND_NAME_USAGE_SET);
+                localName.updateUsage(usage);
                 ((FunctionEntity) singleCollect.getEntities().get(functionIndex)).addLocalName(localName);
             }
             else
             {
-                ((FunctionEntity) singleCollect.getEntities().get(functionIndex)).getLocalNames().get(id).updateUsage(ConstantString.OPERAND_NAME_USAGE_SET);
+                ((FunctionEntity) singleCollect.getEntities().get(functionIndex)).getLocalNames().get(id).updateUsage(usage);
             }
         }
         else if (helperVisitor.isOperandNameInRightAssignment(ctx) ||

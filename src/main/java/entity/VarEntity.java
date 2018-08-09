@@ -3,7 +3,14 @@ package entity;
 public class VarEntity extends Entity {
     protected String type;
     protected String value;
-    protected int typeId = -1; // the id of the type if the type (structType or AliasType) is defined in the source code
+    /**
+     * the id of the type if the type (structType or AliasType) is defined in the source code
+     */
+    protected int typeId = -1;
+    /**
+     * record the local block id. If the var is not in localblock, it's set to be the parentId.
+     */
+    protected int localBlockId;
 
     public VarEntity(int id, String type, String name) {
         this.id = id;
@@ -35,6 +42,14 @@ public class VarEntity extends Entity {
 
     public void setTypeId(int typeId) {
         this.typeId = typeId;
+    }
+
+    public void setLocalBlockId(int localBlockId) {
+        this.localBlockId = localBlockId;
+    }
+
+    public int getLocalBlockId() {
+        return localBlockId;
     }
 
     @Override
