@@ -372,18 +372,17 @@ public class ProcessTask {
             return;
         }
         String scope = ConstantString.SCOPE_ONE;
-        LocalName localNameEntity = new LocalName(name, scope, type, value);
-        localNameEntity.updateUsage(ConstantString.OPERAND_NAME_USAGE_SET);
-        ((FunctionEntity) singleCollect.getEntities().get(functionIndex)).addLocalName(localNameEntity);
+        String usage = ConstantString.OPERAND_NAME_USAGE_SET;
+        //it is not in localName, save
+        saveLocalName(functionIndex, name, scope, type, value, usage);
 
-        VarEntity varEntity = new VarEntity(singleCollect.getCurrentIndex(), type, node.getText());
+        VarEntity varEntity = new VarEntity(singleCollect.getCurrentIndex(), type, name);
         varEntity.setValue(value);
         varEntity.setParentId(functionIndex);
         singleCollect.addEntity(varEntity);
         singleCollect.getEntities().get(functionIndex).addChildId(varEntity.getId());
 
     }
-
 
 
     /**
@@ -393,7 +392,7 @@ public class ProcessTask {
      * @param leftOperands
      * @param rightExps
      */
-    public void processNameInShortDecl(String leftOperands, String rightExps, int functionIndex) {
+    public void processShortDeclVarInFunction(String leftOperands, String rightExps, int functionIndex) {
         String[] leftNames = leftOperands.split(ConstantString.COMMA);
         String[] rightValues = rightExps.split(ConstantString.COMMA);
         for (int i = 0; i < leftNames.length; i++) {
@@ -410,13 +409,8 @@ public class ProcessTask {
             } else {
                 value = rightValues[i];
             }
-            //if it 's not in localName, add this new entity
-            if(-1 == ((FunctionEntity) singleCollect.getEntities().get(functionIndex)).searchLocalName(name, scope)) {
-                LocalName localNameEntity = new LocalName(name, scope, type, value);
-                localNameEntity.updateUsage(usage);
-                //add to function's localNames
-                ((FunctionEntity) singleCollect.getEntities().get(functionIndex)).addLocalName(localNameEntity);
-            }
+            //it 's not in localName, add this new entity
+            saveLocalName(functionIndex, name, scope, type, value, usage);
 
             VarEntity varEntity = new VarEntity(singleCollect.getCurrentIndex(), type, name);
             varEntity.setValue(value);
@@ -427,6 +421,34 @@ public class ProcessTask {
     }
 
 
+    /**
+     * constSpec: identifierList ( type? '=' expressionList )?;
+     * process constVar in function scope
+     * @param ctx
+     */
+    public void processConstInFunction(GolangParser.ConstSpecContext ctx, String type, int functionIndex) {
+        for (TerminalNode terminalNode : ctx.identifierList().IDENTIFIER()) {
+            ConstEntity constEntity = new ConstEntity(singleCollect.getCurrentIndex(), type, terminalNode.getText());
+            constEntity.setParentId(functionIndex);
+            singleCollect.addEntity(constEntity);
+            singleCollect.getEntities().get(functionIndex).addChildId(constEntity.getId());
+
+            //it 's not in localName, add this new entity
+            String name = terminalNode.getText();
+            String scope = ConstantString.SCOPE_ONE;
+            String value = "";
+            String usage = ConstantString.OPERAND_NAME_USAGE_USE;
+            //it 's not in localName, add this new entity
+            saveLocalName(functionIndex, name, scope, type, value, usage);
+        }
+    }
+
+
+    private void saveLocalName(int functionIndex, String name, String scope, String type, String value, String usage) {
+        LocalName localNameEntity = new LocalName(name, scope, type, value);
+        localNameEntity.updateUsage(usage);//add to function's localNames
+        ((FunctionEntity) singleCollect.getEntities().get(functionIndex)).addLocalName(localNameEntity);
+    }
 
     /** we don't know the role of the operand.
      * process the operandName inside a funnction,
@@ -462,39 +484,16 @@ public class ProcessTask {
         else if (helperVisitor.isOperandNameInRightAssignment(ctx) ||
                 !helperVisitor.isOperandNameInAssignment(ctx)) {
             int id = functionEntity.searchLocalName(name, ConstantString.SCOPE_ONE);
+            String usage = ConstantString.OPERAND_NAME_USAGE_USE;
             if(id == -1) {
-                LocalName localName = new LocalName(name, ConstantString.SCOPE_ONE, "", "");
-                localName.updateUsage(ConstantString.OPERAND_NAME_USAGE_USE);
-                ((FunctionEntity) singleCollect.getEntities().get(functionIndex)).addLocalName(localName);
+                String scope = ConstantString.SCOPE_ONE;
+                String type = "";
+                String value = "";
+                saveLocalName(functionIndex, name, scope, type, value, usage);
             }
             else
             {
-                ((FunctionEntity) singleCollect.getEntities().get(functionIndex)).getLocalNames().get(id).updateUsage(ConstantString.OPERAND_NAME_USAGE_USE);
-            }
-        }
-    }
-
-    /**
-     * constSpec: identifierList ( type? '=' expressionList )?;
-     * process constVar in function scope
-     * @param ctx
-     */
-    public void processConstInFunction(GolangParser.ConstSpecContext ctx, String type, int functionIndex) {
-        for (TerminalNode terminalNode : ctx.identifierList().IDENTIFIER()) {
-            ConstEntity constEntity = new ConstEntity(singleCollect.getCurrentIndex(), type, terminalNode.getText());
-            constEntity.setParentId(functionIndex);
-            singleCollect.addEntity(constEntity);
-            singleCollect.getEntities().get(functionIndex).addChildId(constEntity.getId());
-
-            //if it 's not in localName, add this new entity
-            String name = terminalNode.getText();
-            String scope = ConstantString.SCOPE_ONE;
-            String value = "";
-            if(-1 == ((FunctionEntity) singleCollect.getEntities().get(functionIndex)).searchLocalName(name, scope)) {
-                LocalName localNameEntity = new LocalName(name, scope, type, value);
-                localNameEntity.updateUsage(ConstantString.OPERAND_NAME_USAGE_USE);
-                //add to function's localNames
-                ((FunctionEntity) singleCollect.getEntities().get(functionIndex)).addLocalName(localNameEntity);
+                ((FunctionEntity) singleCollect.getEntities().get(functionIndex)).getLocalNames().get(id).updateUsage(usage);
             }
         }
     }
@@ -593,5 +592,63 @@ public class ProcessTask {
                 ((MethodEntity) singleCollect.getEntities().get(functionIndex)).addCalledFunction(str);
             }
         }
+    }
+
+
+    public int processForBlock(int functionIndex, int parentBlockId, int depth) {
+        String blockType = ConstantString.LOCAL_BLOCK_FOR;
+        int blockId = processLocalBlock(functionIndex, parentBlockId, blockType, depth);
+        return blockId;
+    }
+
+    public int processIfBlock(int functionIndex, int parentBlockId, int depth) {
+        String blockType = ConstantString.LOCAL_BLOCK_IF;
+        int blockId = processLocalBlock(functionIndex, parentBlockId, blockType, depth);
+        return blockId;
+    }
+
+    public int processElseBlock(int functionIndex, int parentBlockId, int depth) {
+        String blockType = ConstantString.LOCAL_BLOCK_ELSE;
+        int blockId = processLocalBlock(functionIndex, parentBlockId, blockType, depth);
+        return blockId;
+    }
+
+    public int processSwitchBlock(int functionIndex, int parentBlockId, int depth) {
+        String blockType = ConstantString.LOCAL_BLOCK_SWITCH;
+        int blockId = processLocalBlock(functionIndex, parentBlockId, blockType, depth);
+        return blockId;
+    }
+
+    public int processSwitchCaseBlock(int functionIndex, int parentBlockId, int depth) {
+        String blockType = ConstantString.LOCAL_BLOCK_SWITCH_CASE_CLAUSE;
+        int blockId = processLocalBlock(functionIndex, parentBlockId, blockType, depth);
+        return blockId;
+    }
+
+    public int processSelectBlock(int functionIndex, int parentBlockId, int depth) {
+        String blockType = ConstantString.LOCAL_BLOCK_SELECT;
+        int blockId = processLocalBlock(functionIndex, parentBlockId, blockType, depth);
+        return blockId;
+    }
+
+    public int processSelectCaseBlock(int functionIndex, int parentBlockId, int depth) {
+        String blockType = ConstantString.LOCAL_BLOCK_SELECT_CASE_CLAUSE;
+        int blockId = processLocalBlock(functionIndex, parentBlockId, blockType, depth);
+        return blockId;
+    }
+
+    /**
+     * add localBlock into functionEntity's member, and return blockId
+     * @param functionIndex
+     * @param parentBlockId
+     * @param blockType
+     * @return
+     */
+    private int processLocalBlock(int functionIndex, int parentBlockId, String blockType, int depth) {
+        FunctionEntity functionEntity = (FunctionEntity) singleCollect.getEntities().get(functionIndex);
+        int blockId = functionEntity.getLocalBlocks().size();
+        LocalBlock localBlock = new LocalBlock(blockId, blockType, parentBlockId, depth);
+        ((FunctionEntity) singleCollect.getEntities().get(functionIndex)).addLocalBlock(localBlock);
+        return blockId;
     }
 }

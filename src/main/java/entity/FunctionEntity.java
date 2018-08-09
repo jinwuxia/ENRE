@@ -18,6 +18,12 @@ public class FunctionEntity extends Entity {
     //local name -> usage (set, use)
     protected Map<String, ArrayList<String>> name2Usage = new HashMap<String, ArrayList<String>>();
 
+
+
+    //generate in the first visit. it will be used for localName search.
+    protected ArrayList<LocalBlock> localBlocks = new ArrayList<LocalBlock>();
+
+
     public FunctionEntity() {}
 
     public FunctionEntity(String name) {
@@ -109,6 +115,13 @@ public class FunctionEntity extends Entity {
     }
 
 
+    public ArrayList<LocalBlock> getLocalBlocks() {
+        return localBlocks;
+    }
+
+    public void addLocalBlock(LocalBlock block) {
+        localBlocks.add(block);
+    }
 
     @Override
     public String toString() {

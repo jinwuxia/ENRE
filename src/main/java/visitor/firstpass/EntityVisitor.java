@@ -7,6 +7,7 @@ import util.ConstantString;
 import visitor.SingleCollect;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 /**
  * nodes visitor in the first visit
@@ -21,6 +22,9 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
     private int packageIndex;
     private int fileIndex;
     private int functionIndex = -1;
+
+    //blockstack
+    private Stack<Integer> blockStackForAFuncMeth = new Stack<Integer>();
 
     //// such as structFields, or interface Fields.
     private ArrayList<Integer> tmpEntitiesIds = new ArrayList<Integer>();
@@ -1284,6 +1288,8 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
             }
         }
         functionIndex = processTask.processFunction(functionName, parameters, returns, fileIndex);
+        blockStackForAFuncMeth.clear();
+
         if (ctx.function() != null) {
             visitBlock(ctx.function().block()); //add operandVar into function
         }
@@ -1329,6 +1335,7 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
             }
         }
         functionIndex =  processTask.processMethod(functionName, receiverStr, parameters, returns, fileIndex);
+        blockStackForAFuncMeth.clear();
 
         if (ctx.function() != null) {
             visitBlock(ctx.function().block()); //add operandVar into function
@@ -1367,7 +1374,7 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
         String leftOperands = visitLeftShortVarDecl(ctx.leftShortVarDecl());
         String rightExps = visitRightShortVarDecl(ctx.rightShortVarDecl());
         if (functionIndex != -1 && leftOperands != null && rightExps != null) {
-            processTask.processNameInShortDecl(leftOperands, rightExps, functionIndex);
+            processTask.processShortDeclVarInFunction(leftOperands, rightExps, functionIndex);
         }
         return (leftOperands + ":=" + rightExps);
     }
@@ -1415,6 +1422,312 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
         String right = visitRightAssignment(ctx.rightAssignment());
         return (left + op + right);
     }
+
+
+    /**
+     * forStmt: 'for' ( expression | forClause | rangeClause )? block;
+     * when entering, create a new for block and push blockStack, store this block.
+     * when existing, pop blockStack.
+     * @param ctx
+     * @return
+     */
+    @Override
+    public String visitForStmt(GolangParser.ForStmtContext ctx) {
+        //new block
+        int parentBlockId = -1;
+        if (!blockStackForAFuncMeth.empty()) {
+            parentBlockId = blockStackForAFuncMeth.peek();
+        }
+        int depth = blockStackForAFuncMeth.size();
+        int blockId = processTask.processForBlock(functionIndex, parentBlockId, depth);
+        //push block stack
+        blockStackForAFuncMeth.push(blockId);
+
+        //visit children
+        String str = "for";
+        if (ctx == null) {
+            return str;
+        }
+        str += "(";
+        if(ctx.expression() != null) {
+            str += visitExpression(ctx.expression());
+        }
+        if(ctx.forClause() != null) {
+            str += visitForClause(ctx.forClause());
+        }
+        if(ctx.rangeClause() != null) {
+            str += visitRangeClause(ctx.rangeClause());
+        }
+        str += ")";
+        if(ctx.block() != null) {
+            str += visitBlock(ctx.block());
+        }
+
+        //pop block stack
+        blockStackForAFuncMeth.pop();
+        return str;
+    }
+
+    /**
+     * ifStmtIf: 'if' (simpleStmt ';')? expression block;
+     * when entering, create a new for if and push blockStack, store this block.
+     * when existing, pop blockStack.
+     * @param ctx
+     * @return
+     */
+    @Override
+    public String visitIfStmtIf(GolangParser.IfStmtIfContext ctx) {
+        //new block
+        int parentBlockId = -1;
+        if (!blockStackForAFuncMeth.empty()) {
+            parentBlockId = blockStackForAFuncMeth.peek();
+        }
+        int depth = blockStackForAFuncMeth.size();
+        int blockId = processTask.processIfBlock(functionIndex, parentBlockId, depth);
+        //push block stack
+        blockStackForAFuncMeth.push(blockId);
+
+        //visit children
+        String str = "if";
+        if (ctx == null) {
+            return str;
+        }
+        str += "if";
+        if (ctx.simpleStmt() != null) {
+            str += visitSimpleStmt(ctx.simpleStmt());
+        }
+        if(ctx.expression() != null) {
+            str += visitExpression(ctx.expression());
+        }
+        if(ctx.block() != null) {
+            str += visitBlock(ctx.block());
+        }
+
+        //pop block stack
+        blockStackForAFuncMeth.pop();
+
+        return str;
+    }
+
+    /**
+     * fStmtElse: 'else' ( ifStmt | block );
+     * when entering, create a new for else and push blockStack, store this block.
+     * when existing, pop blockStack.
+     * @param ctx
+     * @return
+     */
+    @Override
+    public String visitIfStmtElse(GolangParser.IfStmtElseContext ctx) {
+        //new block
+        int parentBlockId = -1;
+        if (!blockStackForAFuncMeth.empty()) {
+            parentBlockId = blockStackForAFuncMeth.peek();
+        }
+        int depth = blockStackForAFuncMeth.size();
+        int blockId = processTask.processElseBlock(functionIndex, parentBlockId, depth);
+        //push block stack
+        blockStackForAFuncMeth.push(blockId);
+
+        //visit children
+        String str = "else";
+        if (ctx == null) {
+            return str;
+        }
+        if(ctx.ifStmt() != null) {
+            str += visitIfStmt(ctx.ifStmt());
+        }
+        if(ctx.block() != null) {
+            str += visitBlock(ctx.block());
+        }
+
+        //pop block stack
+        blockStackForAFuncMeth.pop();
+        return str;
+    }
+
+    /**
+     * switchStmt: exprSwitchStmt | typeSwitchStmt;
+     * when entering, create a new for switch and push blockStack, store this block.
+     * when existing, pop blockStack.
+     * @param ctx
+     * @return
+     */
+    @Override
+    public String visitSwitchStmt(GolangParser.SwitchStmtContext ctx) {
+        //new block
+        int parentBlockId = -1;
+        if (!blockStackForAFuncMeth.empty()) {
+            parentBlockId = blockStackForAFuncMeth.peek();
+        }
+        int depth = blockStackForAFuncMeth.size();
+        int blockId = processTask.processSwitchBlock(functionIndex, parentBlockId, depth);
+        //push block stack
+        blockStackForAFuncMeth.push(blockId);
+
+        //visit children
+        String str = "switch";
+        if (ctx == null) {
+            return str;
+        }
+        if(ctx.exprSwitchStmt() != null) {
+            str += visitExprSwitchStmt(ctx.exprSwitchStmt());
+        }
+        if(ctx.typeSwitchStmt() != null) {
+            str += visitTypeSwitchStmt(ctx.typeSwitchStmt());
+        }
+
+        //pop block stack
+        blockStackForAFuncMeth.pop();
+        return str;
+    }
+
+    /**
+     * exprCaseClause: exprSwitchCase ':' statementList;
+     * when entering, create a new swithc-case-clause block and push blockStack, store this block.
+     * when existing, pop blockStack.
+     * @param ctx
+     * @return
+     */
+    @Override
+    public String visitExprCaseClause(GolangParser.ExprCaseClauseContext ctx) {
+        //new block
+        int parentBlockId = -1;
+        if (!blockStackForAFuncMeth.empty()) {
+            parentBlockId = blockStackForAFuncMeth.peek();
+        }
+        int depth = blockStackForAFuncMeth.size();
+        int blockId = processTask.processSwitchCaseBlock(functionIndex, parentBlockId, depth);
+        //push block stack
+        blockStackForAFuncMeth.push(blockId);
+
+        //visit children
+        String str = "";
+        if (ctx == null) {
+            return str;
+        }
+        if(ctx.exprSwitchCase() != null) {
+            str += visitExprSwitchCase(ctx.exprSwitchCase());
+        }
+        str+= ":";
+        if(ctx.statementList() != null) {
+            str += visitStatementList(ctx.statementList());
+        }
+
+        //pop block stack
+        blockStackForAFuncMeth.pop();
+        return str;
+    }
+
+    /**
+     * typeCaseClause: typeSwitchCase ':' statementList;
+     * when entering, create a new swithc-case-clause block and push blockStack, store this block.
+     * when existing, pop blockStack.
+     * @param ctx
+     * @return
+     */
+    @Override
+    public String visitTypeCaseClause(GolangParser.TypeCaseClauseContext ctx) {
+        //new block
+        int parentBlockId = -1;
+        if (!blockStackForAFuncMeth.empty()) {
+            parentBlockId = blockStackForAFuncMeth.peek();
+        }
+        int depth = blockStackForAFuncMeth.size();
+        int blockId = processTask.processSwitchCaseBlock(functionIndex, parentBlockId, depth);
+        //push block stack
+        blockStackForAFuncMeth.push(blockId);
+
+        //visit children
+        String str = "";
+        if (ctx == null) {
+            return str;
+        }
+        if(ctx.typeSwitchCase() != null) {
+            str += visitTypeSwitchCase(ctx.typeSwitchCase());
+        }
+        str += ":";
+        if(ctx.statementList() != null) {
+            str += visitStatementList(ctx.statementList());
+        }
+
+        //pop block stack
+        blockStackForAFuncMeth.pop();
+        return str;
+    }
+
+    /**
+     * selectStmt: 'select' '{' commClause* '}';
+     * when entering, create a new select block and push blockStack, store this block.
+     * when existing, pop blockStack.
+     * @param ctx
+     * @return
+     */
+    @Override
+    public String visitSelectStmt(GolangParser.SelectStmtContext ctx) {
+        //new block
+        int parentBlockId = -1;
+        if (!blockStackForAFuncMeth.empty()) {
+            parentBlockId = blockStackForAFuncMeth.peek();
+        }
+        int depth = blockStackForAFuncMeth.size();
+        int blockId = processTask.processSelectBlock(functionIndex, parentBlockId, depth);
+        //push block stack
+        blockStackForAFuncMeth.push(blockId);
+
+        //visit children
+        String str = "select";
+        if (ctx == null) {
+            return str;
+        }
+        if (ctx.commClause() != null && !ctx.commClause().isEmpty()) {
+            for (GolangParser.CommClauseContext commClauseContext : ctx.commClause()) {
+                str += visitCommClause(commClauseContext);
+            }
+        }
+
+        //pop block stack
+        blockStackForAFuncMeth.pop();
+        return str;
+    }
+
+    /**
+     * commClause: commCase ':' statementList;
+     * when entering, create a new select-clause block and push blockStack, store this block.
+     * when existing, pop blockStack.
+     * @param ctx
+     * @return
+     */
+    @Override
+    public String visitCommClause(GolangParser.CommClauseContext ctx) {
+        //new block
+        int parentBlockId = -1;
+        if (!blockStackForAFuncMeth.empty()) {
+            parentBlockId = blockStackForAFuncMeth.peek();
+        }
+        int depth = blockStackForAFuncMeth.size();
+        int blockId = processTask.processSelectCaseBlock(functionIndex, parentBlockId, depth);
+        //push block stack
+        blockStackForAFuncMeth.push(blockId);
+
+        //visit children
+        String str = "";
+        if (ctx == null) {
+            return str;
+        }
+
+        if(ctx.commCase() != null) {
+            str += visitCommCase(ctx.commCase());
+        }
+        str += ":";
+        if(ctx.statementList() != null) {
+            str += visitStatementList(ctx.statementList());
+        }
+        //pop block stack
+        blockStackForAFuncMeth.pop();
+        return str;
+    }
+
+
 }//end class
 
 
