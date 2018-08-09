@@ -211,10 +211,11 @@ public class ProcessTask {
      * process constVar in file scope
      * @param ctx
      */
-    public void processConstInFile(GolangParser.ConstSpecContext ctx, String type, int fileIndex ) {
+    public void processConstInFile(GolangParser.ConstSpecContext ctx, String type, int fileIndex) {
         for (TerminalNode terminalNode : ctx.identifierList().IDENTIFIER()) {
             ConstEntity constEntity = new ConstEntity(singleCollect.getCurrentIndex(), type, terminalNode.getText());
             constEntity.setParentId(fileIndex);
+            constEntity.setLocalBlockId(fileIndex);
             singleCollect.addEntity(constEntity);
             singleCollect.getEntities().get(fileIndex).addChildId(constEntity.getId());
         }
@@ -433,10 +434,11 @@ public class ProcessTask {
      * process constVar in function scope
      * @param ctx
      */
-    public void processConstInFunction(GolangParser.ConstSpecContext ctx, String type, int functionIndex) {
+    public void processConstInFunction(GolangParser.ConstSpecContext ctx, String type, int functionIndex, int localBlockId) {
         for (TerminalNode terminalNode : ctx.identifierList().IDENTIFIER()) {
             ConstEntity constEntity = new ConstEntity(singleCollect.getCurrentIndex(), type, terminalNode.getText());
             constEntity.setParentId(functionIndex);
+            constEntity.setLocalBlockId(localBlockId);
             singleCollect.addEntity(constEntity);
             singleCollect.getEntities().get(functionIndex).addChildId(constEntity.getId());
 
