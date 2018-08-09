@@ -170,7 +170,11 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
                 }
                 // the vars appear in function/method scope
                 else if (functionIndex != -1) {
-                    processTask.processVarInFunction(node, type, value,  functionIndex);
+                    int localBlockId = functionIndex;
+                    if (!blockStackForAFuncMeth.empty()) {
+                        localBlockId = blockStackForAFuncMeth.peek();
+                    }
+                    processTask.processVarInFunction(node, type, value,  functionIndex, localBlockId);
                 } else {
                     //unknown
                 }
@@ -1374,7 +1378,11 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
         String leftOperands = visitLeftShortVarDecl(ctx.leftShortVarDecl());
         String rightExps = visitRightShortVarDecl(ctx.rightShortVarDecl());
         if (functionIndex != -1 && leftOperands != null && rightExps != null) {
-            processTask.processShortDeclVarInFunction(leftOperands, rightExps, functionIndex);
+            int localBlockId = functionIndex;
+            if (!blockStackForAFuncMeth.empty()) {
+                localBlockId = blockStackForAFuncMeth.peek();
+            }
+            processTask.processShortDeclVarInFunction(leftOperands, rightExps, functionIndex, localBlockId);
         }
         return (leftOperands + ":=" + rightExps);
     }
