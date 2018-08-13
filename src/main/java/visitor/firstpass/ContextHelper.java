@@ -301,6 +301,12 @@ public class ContextHelper {
         return false;
     }
 
+    public boolean isBlockInStatement(GolangParser.BlockContext ctx) {
+        if(ctx.parent != null && ctx.parent instanceof GolangParser.StatementContext) {
+            return true;
+        }
+        return false;
+    }
 
 
 }

@@ -1,5 +1,7 @@
 package entity;
 
+import visitor.SingleCollect;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -63,15 +65,52 @@ public class FunctionEntity extends Entity {
         return calledFunctions;
     }
 
-    public int searchLocalName(String name, String scope) {
-        for (int i = 0; i <localNames.size(); i++) {
-            LocalName localName = localNames.get(i);
-            if(localName.getName().equals(name) && localName.getScope().equals(scope)) {
+    /**
+     * search the localName under same localBlock or parentBlock,
+     * @param name
+     * @param localBlockId : the blockId of the searched name.
+     * @return
+     */
+    public int searchLocalName(String name, int localBlockId) {
+        if(localBlockId == -1) {
+            return -1;
+        }
+        /**
+         * look at the nearest one, close-rule.
+         * It's not usable in static language,
+         * but it is important in dynamic typing language.
+         */
+        for (int i = localNames.size() - 1; i >= 0; i--) {
+            LocalName candidateLocalName = localNames.get(i);
+            int candidateLocalBlockId = candidateLocalName.getLocalBlockId();
+            if(candidateLocalName.getName().equals(name)
+                    && isCandidateBlockCoverThisBlock(candidateLocalBlockId, localBlockId)) {
                 return i;
             }
         }
         return -1;
     }
+
+    /**
+     * when blockID is same, or currentBlockDepth > candidiateBlockDepth
+     * @param candidateBlockId
+     * @param currentBlockId
+     * @return
+     */
+    private boolean isCandidateBlockCoverThisBlock(int candidateBlockId, int currentBlockId) {
+        if(candidateBlockId == -1 ||candidateBlockId == -1) {
+            return false;
+        }
+        if (candidateBlockId == currentBlockId) {
+            return true;
+        }
+
+        if(localBlocks.get(currentBlockId).getDepth() > localBlocks.get(candidateBlockId).getDepth()) {
+            return true;
+        }
+        return false;
+    }
+
 
     public void addLocalName(LocalName oneLocalName) {
         localNames.add(oneLocalName);

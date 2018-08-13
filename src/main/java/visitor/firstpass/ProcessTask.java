@@ -375,10 +375,9 @@ public class ProcessTask {
         if(name.equals(ConstantString.BLANK_IDENTIFIER) || name.equals(ConstantString.NIL)) {
             return;
         }
-        String scope = ConstantString.SCOPE_ONE;
         String usage = ConstantString.OPERAND_NAME_USAGE_SET;
         //it is not in localName, save
-        saveLocalName(functionIndex, name, scope, type, value, usage);
+        saveLocalName(functionIndex, name, localBlockId, type, value, usage);
 
         VarEntity varEntity = new VarEntity(singleCollect.getCurrentIndex(), type, name);
         varEntity.setValue(value);
@@ -408,7 +407,6 @@ public class ProcessTask {
             }
             String value = "";
             String usage = ConstantString.OPERAND_NAME_USAGE_SET;
-            String scope = ConstantString.SCOPE_ONE;
             String type = "";
             if (rightValues.length <= i) {
                 value = rightValues[0];
@@ -416,7 +414,7 @@ public class ProcessTask {
                 value = rightValues[i];
             }
             //it 's not in localName, add this new entity
-            saveLocalName(functionIndex, name, scope, type, value, usage);
+            saveLocalName(functionIndex, name, localBlockId, type, value, usage);
 
             VarEntity varEntity = new VarEntity(singleCollect.getCurrentIndex(), type, name);
             varEntity.setValue(value);
@@ -444,17 +442,16 @@ public class ProcessTask {
 
             //it 's not in localName, add this new entity
             String name = terminalNode.getText();
-            String scope = ConstantString.SCOPE_ONE;
             String value = "";
             String usage = ConstantString.OPERAND_NAME_USAGE_USE;
             //it 's not in localName, add this new entity
-            saveLocalName(functionIndex, name, scope, type, value, usage);
+            saveLocalName(functionIndex, name, localBlockId, type, value, usage);
         }
     }
 
 
-    private void saveLocalName(int functionIndex, String name, String scope, String type, String value, String usage) {
-        LocalName localNameEntity = new LocalName(name, scope, type, value);
+    private void saveLocalName(int functionIndex, String name, int localBlockId, String type, String value, String usage) {
+        LocalName localNameEntity = new LocalName(name, localBlockId, type, value);
         localNameEntity.updateUsage(usage);//add to function's localNames
         ((FunctionEntity) singleCollect.getEntities().get(functionIndex)).addLocalName(localNameEntity);
     }
@@ -471,7 +468,8 @@ public class ProcessTask {
      *    if not in assignment, and a name not appear in LocalNameList, add and update "USE"
      *           others: a parameter, a return, a package, or  function
      */
-    public void processOperandNameInFunction(String str, GolangParser.OperandNameContext ctx, int functionIndex) {
+    public void processOperandNameInFunction(String str, GolangParser.OperandNameContext ctx,
+                                             int functionIndex, int localBlockId) {
         String name = str.split("\\.")[0];
         if(name.equals(ConstantString.BLANK_IDENTIFIER) || name.equals(ConstantString.NIL) ) {
             return;
@@ -480,9 +478,9 @@ public class ProcessTask {
         //if 1
         if (helperVisitor.isOperandNameInLeftAssignment(ctx)) {
             String usage = ConstantString.OPERAND_NAME_USAGE_SET;
-            int id = functionEntity.searchLocalName(name, ConstantString.SCOPE_ONE);
+            int id = functionEntity.searchLocalName(name, localBlockId);
             if(id == -1) {
-                LocalName localName = new LocalName(name, ConstantString.SCOPE_ONE, "", "");
+                LocalName localName = new LocalName(name, localBlockId, "", "");
                 localName.updateUsage(usage);
                 ((FunctionEntity) singleCollect.getEntities().get(functionIndex)).addLocalName(localName);
             }
@@ -493,13 +491,13 @@ public class ProcessTask {
         }
         else if (helperVisitor.isOperandNameInRightAssignment(ctx) ||
                 !helperVisitor.isOperandNameInAssignment(ctx)) {
-            int id = functionEntity.searchLocalName(name, ConstantString.SCOPE_ONE);
+            int id = functionEntity.searchLocalName(name, localBlockId);
             String usage = ConstantString.OPERAND_NAME_USAGE_USE;
             if(id == -1) {
                 String scope = ConstantString.SCOPE_ONE;
                 String type = "";
                 String value = "";
-                saveLocalName(functionIndex, name, scope, type, value, usage);
+                saveLocalName(functionIndex, name, localBlockId, type, value, usage);
             }
             else
             {
@@ -605,60 +603,23 @@ public class ProcessTask {
     }
 
 
-    public int processForBlock(int functionIndex, int parentBlockId, int depth) {
-        String blockType = ConstantString.LOCAL_BLOCK_FOR;
-        int blockId = processLocalBlock(functionIndex, parentBlockId, blockType, depth);
-        return blockId;
-    }
-
-    public int processIfBlock(int functionIndex, int parentBlockId, int depth) {
-        String blockType = ConstantString.LOCAL_BLOCK_IF;
-        int blockId = processLocalBlock(functionIndex, parentBlockId, blockType, depth);
-        return blockId;
-    }
-
-    public int processElseBlock(int functionIndex, int parentBlockId, int depth) {
-        String blockType = ConstantString.LOCAL_BLOCK_ELSE;
-        int blockId = processLocalBlock(functionIndex, parentBlockId, blockType, depth);
-        return blockId;
-    }
-
-    public int processSwitchBlock(int functionIndex, int parentBlockId, int depth) {
-        String blockType = ConstantString.LOCAL_BLOCK_SWITCH;
-        int blockId = processLocalBlock(functionIndex, parentBlockId, blockType, depth);
-        return blockId;
-    }
-
-    public int processSwitchCaseBlock(int functionIndex, int parentBlockId, int depth) {
-        String blockType = ConstantString.LOCAL_BLOCK_SWITCH_CASE_CLAUSE;
-        int blockId = processLocalBlock(functionIndex, parentBlockId, blockType, depth);
-        return blockId;
-    }
-
-    public int processSelectBlock(int functionIndex, int parentBlockId, int depth) {
-        String blockType = ConstantString.LOCAL_BLOCK_SELECT;
-        int blockId = processLocalBlock(functionIndex, parentBlockId, blockType, depth);
-        return blockId;
-    }
-
-    public int processSelectCaseBlock(int functionIndex, int parentBlockId, int depth) {
-        String blockType = ConstantString.LOCAL_BLOCK_SELECT_CASE_CLAUSE;
-        int blockId = processLocalBlock(functionIndex, parentBlockId, blockType, depth);
-        return blockId;
-    }
-
     /**
-     * add localBlock into functionEntity's member, and return blockId
+     * genearate and add localBlock into functionEntity's member, and return blockId
      * @param functionIndex
      * @param parentBlockId
-     * @param blockType
+     * @param depth
+     * @param blockName
      * @return
      */
-    private int processLocalBlock(int functionIndex, int parentBlockId, String blockType, int depth) {
+    public int processLocalBlock(int functionIndex, int parentBlockId, int depth, String blockName)
+    {
         FunctionEntity functionEntity = (FunctionEntity) singleCollect.getEntities().get(functionIndex);
         int blockId = functionEntity.getLocalBlocks().size();
-        LocalBlock localBlock = new LocalBlock(blockId, blockType, parentBlockId, depth);
+        LocalBlock localBlock = new LocalBlock(blockId, blockName, parentBlockId, depth);
         ((FunctionEntity) singleCollect.getEntities().get(functionIndex)).addLocalBlock(localBlock);
         return blockId;
     }
+
+
 }
+
