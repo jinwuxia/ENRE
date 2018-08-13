@@ -14,11 +14,11 @@ package entity;
  */
 public class LocalBlock {
     private int id;
-    //depth is not necessary, it 's the size of current block stack.
-    //because we have record the parentblock, so along the parent, we can infer the depth.
+    //depth is necessary, it 's the size of current block stack.
+    //it is for searching var .
     private int depth;
     private String name;
-    private int parentBlockId;
+    private int parentBlockId; // not necessary. when current stack size = 0 (functionbody), its parentBlockID = -1
 
     public LocalBlock() {
 

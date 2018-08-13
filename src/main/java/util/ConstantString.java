@@ -32,6 +32,8 @@ public class ConstantString {
     public static final String OPERAND_NAME_ROLE_UNKNOWN = "Unknown";
 
     //kinds of local block, which are inside function/method body.
+    public static final String LOCAL_BLOCK_FUNCTION = "FunctionBlock";
+    public static final String LOCAL_BLOCK_UNNAMED_BLOCK = "UnknownBlock";
     public static final String LOCAL_BLOCK_FOR = "ForBlock";
     public static final String LOCAL_BLOCK_IF = "IfBlock";
     public static final String LOCAL_BLOCK_ELSE = "ElseBlock";

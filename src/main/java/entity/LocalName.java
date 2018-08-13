@@ -14,13 +14,13 @@ public class LocalName{
     private String name;    //operandName
     private String type;
     private String value;
-    private String scope;
+    private int localBlockId;
     private ArrayList<String> usages = new ArrayList<String>(); //{"use", "set"} or {package}
 
 
-    public LocalName(String name, String scope, String type, String value) {
+    public LocalName(String name, int localBlockId, String type, String value) {
         this.name = name;
-        this.scope = scope;
+        this.localBlockId = localBlockId;
         this.type = type;
         this.value = value;
     }
@@ -33,8 +33,8 @@ public class LocalName{
         return type;
     }
 
-    public String getScope() {
-        return scope;
+    public int getLocalBlockId() {
+        return localBlockId;
     }
 
     public String getValue() {
@@ -54,8 +54,8 @@ public class LocalName{
         this.name = name;
     }
 
-    public void setScope(String scope) {
-        this.scope = scope;
+    public void setLocalBlockId(int localBlockId) {
+        this.localBlockId = localBlockId;
     }
 
     public void setValue(String value) {
@@ -76,7 +76,7 @@ public class LocalName{
         String str = "";
         str += "\nLocalName(";
         str += ("name:" + name + ',');
-        str += ("scope:" + scope + ",");
+        str += ("localBlockId:" + localBlockId + ",");
         str += ("type:" + type + ",");
         str += ("value:" + value);
         str += ")\n";
