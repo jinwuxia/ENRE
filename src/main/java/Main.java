@@ -127,8 +127,8 @@ public class Main {
         //relationOutput.outputAllEntities();
 
         //test blocks
-        relationOutput.outputFunctions();
-        relationOutput.outputMethods();
+        //relationOutput.outputFunctions();
+        //relationOutput.outputMethods();
 
         /*//test imports
         System.out.println("\nimports:");

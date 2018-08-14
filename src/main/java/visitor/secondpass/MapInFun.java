@@ -30,6 +30,8 @@ public class MapInFun {
                         continue;
                     }
 
+                    //int receiverId = getIdIfReceiver()
+
                     int packageId = getIdIfPackage(localName.getName(), functionId);
                     if(packageId != -1) { //modify role, add  2 maps without usage
                         processAsPkg(localName, packageId, functionId);
@@ -43,14 +45,16 @@ public class MapInFun {
 
                     }
 
-                    int localVarId = getIdIfLocalVar(localName.getName(), functionId);
+                    int localVarId = getIdIfLocalVar(localName, functionId);
                     if(localVarId != -1) {//modify role, add 3 map without usages
                         processAsLocalVar(localName, localVarId, functionId);
+                        continue;
                     }
 
                     int globalVarId = getIdIfGlobalVar(localName.getName(), functionId);
                     if(globalVarId != -1) {//modify role, add 3 map without usages
                         processAsGlobalVar(localName, globalVarId, functionId);
+                        continue;
                     }
                 }
             }
@@ -303,25 +307,50 @@ public class MapInFun {
 
 
     /**
-     * get id if it is a global var(var, constant) in the package for functionId
-     * @param name
-     * @param functionId
+     * get id if it is a local var(var, constant) in the package for functionId
+     * @param localName  localName
+     * @param functionId the functionId that contains localName
      * @return
      */
-    private int getIdIfLocalVar(String name, int functionId) {
-        if(functionId == -1
-                || !(singleCollect.getEntities().get(functionId) instanceof FunctionEntity)) {
+    private int getIdIfLocalVar(LocalName localName, int functionId) {
+        if(functionId == -1 || !(singleCollect.getEntities().get(functionId) instanceof FunctionEntity)) {
             return -1;
         }
+
+        System.out.println("function:" + singleCollect.getEntities().get(functionId).getName());
+        System.out.println("find: " + localName);
+
+        String currentName = localName.getName();
+        int currentBlockId = localName.getLocalBlockId();
+        int currentBlockDepth = ((FunctionEntity) singleCollect.getEntities().get(functionId)).getLocalBlocks().get(currentBlockId).getDepth();
+
+        int resVarId = -1;
+        int resBlockId = -1;
         for (int varId : singleCollect.getEntities().get(functionId).getChildrenIds()) {
             if (singleCollect.getEntities().get(varId) instanceof VarEntity) {
-                if(singleCollect.getEntities().get(varId).getName().equals(name)) {
+                String candidateName = singleCollect.getEntities().get(varId).getName();
+                int candidateBlockId = ((VarEntity) singleCollect.getEntities().get(varId)).getLocalBlockId();
+                int candidateBlockDepth =  ((FunctionEntity) singleCollect.getEntities().get(functionId)).getLocalBlocks().get(candidateBlockId).getDepth();
+                // case 1
+                if(currentName.equals(candidateName) && currentBlockId == candidateBlockId) {
+                    System.out.println("found: " + singleCollect.getEntities().get(varId));
                     return varId;
+                }
+                //case 2
+                if(currentName.equals(candidateName) && candidateBlockId < currentBlockId && candidateBlockDepth < currentBlockDepth) {
+                    if(resBlockId == -1 || resBlockId < candidateBlockId) {
+                        resBlockId = candidateBlockId;
+                        resVarId = varId;
+                    }
                 }
             }
         }
-        return -1;
+        if (resVarId != -1) {
+            System.out.println("found: " + singleCollect.getEntities().get(resVarId));
+        }
+        return resVarId;
     }
+
 
 
 }
