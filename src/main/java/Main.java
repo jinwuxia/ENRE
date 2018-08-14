@@ -124,9 +124,13 @@ public class Main {
 
     public static  void testRun() {
         FinalRelation relationOutput = new FinalRelation();
-        relationOutput.outputAllEntities();
+        //relationOutput.outputAllEntities();
 
-        //test imports
+        //test blocks
+        relationOutput.outputFunctions();
+        relationOutput.outputMethods();
+
+        /*//test imports
         System.out.println("\nimports:");
         for (Tuple<String, String> dep: relationOutput.getImportDep("other")) {
             System.out.println(dep);
@@ -235,7 +239,8 @@ public class Main {
         System.out.println("\nfunction returns: file level");
         for (Tuple<String, String> dep: relationOutput.getFunctionRets(ConstantString.RELATION_LEVEL_FILE)) {
             System.out.println(dep);
-        }
+        }*/
+
     }
     public static void main(String[] args) throws Exception{
         long startTime = System.currentTimeMillis();
