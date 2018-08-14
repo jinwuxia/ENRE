@@ -20,9 +20,6 @@ public class LocalBlock {
     private String name;
     private int parentBlockId; // not necessary. when current stack size = 0 (functionbody), its parentBlockID = -1
 
-    public LocalBlock() {
-
-    }
 
     public LocalBlock(int id, String name, int parentBlockId, int depth) {
         this.id = id;
