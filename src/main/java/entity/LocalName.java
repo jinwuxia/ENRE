@@ -74,12 +74,13 @@ public class LocalName{
     @Override
     public String toString() {
         String str = "";
-        str += "\nLocalName(";
+        str += "LocalName(";
         str += ("name:" + name + ',');
         str += ("localBlockId:" + localBlockId + ",");
         str += ("type:" + type + ",");
         str += ("value:" + value);
-        str += ")\n";
+        str += ("usages:" + usages + ",");
+        str += ")";
         return str;
     }
 }

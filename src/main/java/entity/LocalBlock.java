@@ -59,4 +59,16 @@ public class LocalBlock {
     public void setParentBlockId(int parentBlockId) {
         this.parentBlockId = parentBlockId;
     }
+
+    @Override
+    public String toString() {
+        String str = "";
+        str += "LocalBlock(";
+        str += ("id:" + id + ",");
+        str += ("name:" + name + ",");
+        str += ("depth:" + depth + ",");
+        str += ("parentBlock:" + parentBlockId);
+        str += ")";
+        return str;
+    }
 }
