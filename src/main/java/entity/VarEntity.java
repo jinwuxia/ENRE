@@ -8,7 +8,7 @@ public class VarEntity extends Entity {
      */
     protected int typeId = -1;
     /**
-     * record the local block id. If the var is not in localblock, it's set to be the parentId.
+     * record the local block id. If the var is not in localblock, it's set to be the -1.
      */
     protected int localBlockId;
 
