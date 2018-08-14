@@ -71,6 +71,7 @@ public class FinalRelation {
         }
     }
 
+
     public void outputFunctions() {
         for (Entity functionEntity : singleCollect.getEntities()) {
             if (functionEntity instanceof FunctionEntity
@@ -90,7 +91,10 @@ public class FinalRelation {
                     System.out.println("---localVar: " + varEntity.getType() + ":" + varEntity.getName());
                 }
                 for(LocalName localName: ((FunctionEntity) functionEntity).getLocalNames()) {
-                    System.out.println("---Name: " + localName.getType() + ":" + localName.getName() + "; " +  localName.getUsages().toString());
+                    System.out.println("---" + localName);
+                }
+                for(LocalBlock localBlock: ((FunctionEntity) functionEntity).getLocalBlocks()) {
+                    System.out.println("---" + localBlock);
                 }
 
                 System.out.println("---name2IDmap:" + ((FunctionEntity) functionEntity).getName2IdMap());
@@ -121,7 +125,10 @@ public class FinalRelation {
                     System.out.println("---localVar: " + varEntity.getType() + ":" + varEntity.getName());
                 }
                 for(LocalName localName: ((MethodEntity) methodEntity).getLocalNames()) {
-                    System.out.println("---Name: " + localName.getType() + ":" + localName.getName() + "; " +  localName.getUsages().toString());
+                    System.out.println("---" + localName);
+                }
+                for(LocalBlock localBlock: ((MethodEntity) methodEntity).getLocalBlocks()) {
+                    System.out.println("---" + localBlock);
                 }
                 System.out.println("---name2IDmap:" + ((FunctionEntity) methodEntity).getName2IdMap());
                 System.out.println("---name2Rolemap:" + ((FunctionEntity) methodEntity).getName2RoleMap());
