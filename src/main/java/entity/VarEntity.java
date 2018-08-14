@@ -59,6 +59,7 @@ public class VarEntity extends Entity {
         str += ("id:" + id + ",");
         str += ("type:" + type + ",");
         str += ("name:" + name + ",");
+        str += ("localBlockId:" + localBlockId + ",");
         str += ("parentId:" + parentId);
         str += ")";
         return str;
