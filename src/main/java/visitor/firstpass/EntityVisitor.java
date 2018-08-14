@@ -1123,23 +1123,28 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
 
     /**
      * function: signature block;
-     *
+     * only when function is a top-level declaration, we label the block
+     * else case: var = func() {}. we ignore this case.
      * @param ctx
      * @return
      */
     @Override
     public String visitFunction(GolangParser.FunctionContext ctx) {
-        String localBlockName = ConstantString.LOCAL_BLOCK_FUNCTION;
-        int localBlockId = newABlock(localBlockName);
-        //push block stack
-        blockStackForAFuncMeth.push(localBlockId);
+        if(functionIndex != -1) {
+            String localBlockName = ConstantString.LOCAL_BLOCK_FUNCTION;
+            int localBlockId = newABlock(localBlockName);
+            //push block stack
+            blockStackForAFuncMeth.push(localBlockId);
+        }
 
         String str = "";
         str += visitSignature(ctx.signature());
         str += visitBlock(ctx.block());
 
         //pop block stack
-        blockStackForAFuncMeth.pop();
+        if(functionIndex != -1) {
+            blockStackForAFuncMeth.pop();
+        }
 
         return str;
     }
@@ -1154,17 +1159,21 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
     public String visitBlock(GolangParser.BlockContext ctx) {
         //only the block is unnamed, nested, then new a block.
         if(helperVisitor.isBlockInStatement(ctx)) {
-            String localBlockName = ConstantString.LOCAL_BLOCK_UNNAMED_BLOCK;
-            int localBlockId = newABlock(localBlockName);
-            //push block stack
-            blockStackForAFuncMeth.push(localBlockId);
+            if(functionIndex != -1) {
+                String localBlockName = ConstantString.LOCAL_BLOCK_UNNAMED_BLOCK;
+                int localBlockId = newABlock(localBlockName);
+                //push block stack
+                blockStackForAFuncMeth.push(localBlockId);
+            }
         }
 
         visitChildren(ctx);
 
-        //pop block stack
-        if(helperVisitor.isBlockInStatement(ctx)) {
-            blockStackForAFuncMeth.pop();
+        if(functionIndex != -1) {
+            //pop block stack
+            if (helperVisitor.isBlockInStatement(ctx)) {
+                blockStackForAFuncMeth.pop();
+            }
         }
         return "{}";
     }
@@ -1476,10 +1485,12 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitForStmt(GolangParser.ForStmtContext ctx) {
-        String localBlockName = ConstantString.LOCAL_BLOCK_FOR;
-        int localBlockId = newABlock(localBlockName);
-        //push block stack
-        blockStackForAFuncMeth.push(localBlockId);
+        if(functionIndex != -1) {
+            String localBlockName = ConstantString.LOCAL_BLOCK_FOR;
+            int localBlockId = newABlock(localBlockName);
+            //push block stack
+            blockStackForAFuncMeth.push(localBlockId);
+        }
 
         //visit children
         String str = "for";
@@ -1501,8 +1512,10 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
             str += visitBlock(ctx.block());
         }
 
-        //pop block stack
-        blockStackForAFuncMeth.pop();
+        if(functionIndex != -1) {
+            //pop block stack
+            blockStackForAFuncMeth.pop();
+        }
         return str;
     }
 
@@ -1515,11 +1528,13 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitIfStmtIf(GolangParser.IfStmtIfContext ctx) {
-        //new block
-        String localBlockName = ConstantString.LOCAL_BLOCK_IF;
-        int localBlockId = newABlock(localBlockName);
-        //push block stack
-        blockStackForAFuncMeth.push(localBlockId);
+        if(functionIndex != -1) {
+            //new block
+            String localBlockName = ConstantString.LOCAL_BLOCK_IF;
+            int localBlockId = newABlock(localBlockName);
+            //push block stack
+            blockStackForAFuncMeth.push(localBlockId);
+        }
 
         //visit children
         String str = "if";
@@ -1537,8 +1552,10 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
             str += visitBlock(ctx.block());
         }
 
-        //pop block stack
-        blockStackForAFuncMeth.pop();
+        if(functionIndex != -1) {
+            //pop block stack
+            blockStackForAFuncMeth.pop();
+        }
 
         return str;
     }
@@ -1552,10 +1569,12 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitIfStmtElse(GolangParser.IfStmtElseContext ctx) {
-        String localBlockName = ConstantString.LOCAL_BLOCK_ELSE;
-        int localBlockId = newABlock(localBlockName);
-        //push block stack
-        blockStackForAFuncMeth.push(localBlockId);
+        if(functionIndex != -1) {
+            String localBlockName = ConstantString.LOCAL_BLOCK_ELSE;
+            int localBlockId = newABlock(localBlockName);
+            //push block stack
+            blockStackForAFuncMeth.push(localBlockId);
+        }
 
         //visit children
         String str = "else";
@@ -1569,8 +1588,10 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
             str += visitBlock(ctx.block());
         }
 
-        //pop block stack
-        blockStackForAFuncMeth.pop();
+        if(functionIndex != -1) {
+            //pop block stack
+            blockStackForAFuncMeth.pop();
+        }
         return str;
     }
 
@@ -1583,10 +1604,12 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitSwitchStmt(GolangParser.SwitchStmtContext ctx) {
-        String localBlockName = ConstantString.LOCAL_BLOCK_SWITCH;
-        int localBlockId = newABlock(localBlockName);
-        //push block stack
-        blockStackForAFuncMeth.push(localBlockId);
+        if(functionIndex != -1) {
+            String localBlockName = ConstantString.LOCAL_BLOCK_SWITCH;
+            int localBlockId = newABlock(localBlockName);
+            //push block stack
+            blockStackForAFuncMeth.push(localBlockId);
+        }
 
         //visit children
         String str = "switch";
@@ -1600,8 +1623,10 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
             str += visitTypeSwitchStmt(ctx.typeSwitchStmt());
         }
 
-        //pop block stack
-        blockStackForAFuncMeth.pop();
+        if(functionIndex != -1) {
+            //pop block stack
+            blockStackForAFuncMeth.pop();
+        }
         return str;
     }
 
@@ -1614,10 +1639,12 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitExprCaseClause(GolangParser.ExprCaseClauseContext ctx) {
-        String localBlockName = ConstantString.LOCAL_BLOCK_SWITCH_CASE_CLAUSE;
-        int localBlockId = newABlock(localBlockName);
-        //push block stack
-        blockStackForAFuncMeth.push(localBlockId);
+        if(functionIndex != -1) {
+            String localBlockName = ConstantString.LOCAL_BLOCK_SWITCH_CASE_CLAUSE;
+            int localBlockId = newABlock(localBlockName);
+            //push block stack
+            blockStackForAFuncMeth.push(localBlockId);
+        }
 
         //visit children
         String str = "";
@@ -1632,8 +1659,10 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
             str += visitStatementList(ctx.statementList());
         }
 
-        //pop block stack
-        blockStackForAFuncMeth.pop();
+        if(functionIndex != -1) {
+            //pop block stack
+            blockStackForAFuncMeth.pop();
+        }
         return str;
     }
 
@@ -1646,10 +1675,12 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitTypeCaseClause(GolangParser.TypeCaseClauseContext ctx) {
-        String localBlockName = ConstantString.LOCAL_BLOCK_SWITCH_CASE_CLAUSE;
-        int localBlockId = newABlock(localBlockName);
-        //push block stack
-        blockStackForAFuncMeth.push(localBlockId);
+        if(functionIndex != -1) {
+            String localBlockName = ConstantString.LOCAL_BLOCK_SWITCH_CASE_CLAUSE;
+            int localBlockId = newABlock(localBlockName);
+            //push block stack
+            blockStackForAFuncMeth.push(localBlockId);
+        }
 
         //visit children
         String str = "";
@@ -1664,8 +1695,10 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
             str += visitStatementList(ctx.statementList());
         }
 
-        //pop block stack
-        blockStackForAFuncMeth.pop();
+        if(functionIndex != -1) {
+            //pop block stack
+            blockStackForAFuncMeth.pop();
+        }
         return str;
     }
 
@@ -1678,10 +1711,12 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitSelectStmt(GolangParser.SelectStmtContext ctx) {
-        String localBlockName = ConstantString.LOCAL_BLOCK_SELECT;
-        int localBlockId = newABlock(localBlockName);
-        //push block stack
-        blockStackForAFuncMeth.push(localBlockId);
+        if(functionIndex != -1) {
+            String localBlockName = ConstantString.LOCAL_BLOCK_SELECT;
+            int localBlockId = newABlock(localBlockName);
+            //push block stack
+            blockStackForAFuncMeth.push(localBlockId);
+        }
 
         //visit children
         String str = "select";
@@ -1694,8 +1729,10 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
             }
         }
 
-        //pop block stack
-        blockStackForAFuncMeth.pop();
+        if(functionIndex != -1) {
+            //pop block stack
+            blockStackForAFuncMeth.pop();
+        }
         return str;
     }
 
@@ -1708,10 +1745,12 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitCommClause(GolangParser.CommClauseContext ctx) {
-        String localBlockName = ConstantString.LOCAL_BLOCK_SELECT_CASE_CLAUSE;
-        int localBlockId = newABlock(localBlockName);
-        //push block stack
-        blockStackForAFuncMeth.push(localBlockId);
+        if(functionIndex != -1) {
+            String localBlockName = ConstantString.LOCAL_BLOCK_SELECT_CASE_CLAUSE;
+            int localBlockId = newABlock(localBlockName);
+            //push block stack
+            blockStackForAFuncMeth.push(localBlockId);
+        }
 
         //visit children
         String str = "";
@@ -1726,8 +1765,11 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
         if(ctx.statementList() != null) {
             str += visitStatementList(ctx.statementList());
         }
-        //pop block stack
-        blockStackForAFuncMeth.pop();
+
+        if(functionIndex != -1) {
+            //pop block stack
+            blockStackForAFuncMeth.pop();
+        }
         return str;
     }
 
