@@ -78,8 +78,8 @@ public class LocalName{
         str += ("name:" + name + ',');
         str += ("localBlockId:" + localBlockId + ",");
         str += ("type:" + type + ",");
-        str += ("value:" + value);
-        str += ("usages:" + usages + ",");
+        str += ("value:" + value + ",");
+        str += ("usages:" + usages);
         str += ")";
         return str;
     }
