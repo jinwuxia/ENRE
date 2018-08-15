@@ -18,6 +18,9 @@ public class TypeInfer {
     public void inferTypeForVarEntity() {
         for (Entity entity : singleCollect.getEntities()) {
             if(entity instanceof VarEntity) {
+                if(((VarEntity) entity).getTypeId() != -1) {
+                    continue;
+                }
                 String type = ((VarEntity) entity).getType();
                 String keyType = getKeyType(type);
                 int typeId = -1;
