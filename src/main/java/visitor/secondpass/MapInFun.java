@@ -30,7 +30,10 @@ public class MapInFun {
                         continue;
                     }
 
-                    //int receiverId = getIdIfReceiver()
+                    int receiverVarId = getIdIfReceiver(localName.getName(), functionId);
+                    if(receiverVarId != -1) {
+                        processAsReceiver(localName, receiverVarId, functionId);
+                    }
 
                     int packageId = getIdIfPackage(localName.getName(), functionId);
                     if(packageId != -1) { //modify role, add  2 maps without usage
@@ -92,6 +95,20 @@ public class MapInFun {
         ((FunctionEntity) singleCollect.getEntities().get(functionId)).addName2Role(name, role);
         for(String usage : localName.getUsages()) {
             ((FunctionEntity) singleCollect.getEntities().get(functionId)).addName2Usage(name, usage);
+        }
+    }
+
+    /**
+     * if receiver, added three maps
+     */
+    private void  processAsReceiver(LocalName localName, int receiverVarId, int functionId) {
+        String name = localName.getName();
+        String role = ConstantString.OPERAND_NAME_ROLE_REC;
+
+        ((MethodEntity) singleCollect.getEntities().get(functionId)).addName2Id(name, receiverVarId);
+        ((MethodEntity) singleCollect.getEntities().get(functionId)).addName2Role(name, role);
+        for(String usage : localName.getUsages()) {
+            ((MethodEntity) singleCollect.getEntities().get(functionId)).addName2Usage(name, usage);
         }
     }
 
@@ -199,6 +216,25 @@ public class MapInFun {
         return -1;
     }
 
+    /**
+     * get id if it is a receiver of methodId
+     * @param name
+     * @param functionId
+     * @return
+     */
+    private int getIdIfReceiver(String name, int functionId) {
+        if(functionId == -1
+                || !(singleCollect.getEntities().get(functionId) instanceof MethodEntity)) {
+            return -1;
+        }
+        MethodEntity methodEntity = (MethodEntity) singleCollect.getEntities().get(functionId);
+        int receiverVarId = methodEntity.getReceiverVarId();
+        VarEntity varEntity = (VarEntity) singleCollect.getEntities().get(receiverVarId);
+        if(varEntity.getName().equals(name)) {
+            return receiverVarId;
+        }
+        return -1;
+    }
 
     /**
      * get id if it is a used packageName of functionId
