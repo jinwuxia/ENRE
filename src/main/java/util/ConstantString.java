@@ -27,6 +27,7 @@ public class ConstantString {
     public static final String OPERAND_NAME_ROLE_FUN = "Function";
     public static final String OPERAND_NAME_ROLE_PAR = "Parameter";
     public static final String OPERAND_NAME_ROLE_RET = "Return";
+    public static final String OPERAND_NAME_ROLE_REC = "Receiver";
     public static final String OPERAND_NAME_ROLE_GLO_VAR = "GlobalVar";
     public static final String OPERAND_NAME_ROLE_LOC_VAR = "LocalVar";
     public static final String OPERAND_NAME_ROLE_UNKNOWN = "Unknown";

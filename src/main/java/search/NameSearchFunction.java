@@ -1,6 +1,7 @@
 package search;
 
 import entity.FunctionEntity;
+import entity.MethodEntity;
 import entity.VarEntity;
 import util.ConstantString;
 import visitor.SingleCollect;
@@ -53,6 +54,25 @@ public class NameSearchFunction {
         return false;
     }
 
+    /**
+     * judge a name inside a function is a receiver or not.
+     * @param name
+     * @param functionId
+     * @return
+     */
+    public boolean isReceiverName(String name, int functionId) {
+        if(functionId == -1
+                || !(singleCollect.getEntities().get(functionId) instanceof MethodEntity)) {
+            return false;
+        }
+        Map<String, String> name2RoleMap = ((MethodEntity) singleCollect.getEntities().get(functionId)).getName2RoleMap();
+        if(name2RoleMap.containsKey(name)){
+            if (name2RoleMap.get(name).equals(ConstantString.OPERAND_NAME_ROLE_REC)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * judge a name inside a function is a return or not.
@@ -137,7 +157,7 @@ public class NameSearchFunction {
 
 
     /**
-     * judge a name is a local/global/parameter/return or not
+     * judge a name is a local/global/parameter/return/receiver or not
      * @param name
      * @param functionId
      * @return
@@ -147,6 +167,7 @@ public class NameSearchFunction {
                 || isGlobalName(name, functionId)
                 || isParameterName(name, functionId)
                 || isReturnName(name, functionId)
+                || isReceiverName(name, functionId)
                 ) {
             return true;
         }
