@@ -110,7 +110,7 @@ public class FinalRelation {
         for (Entity methodEntity : singleCollect.getEntities()) {
             if(methodEntity instanceof MethodEntity) {
                 System.out.println("Method: " + methodEntity.getName());
-                System.out.println("receiver:" + ((MethodEntity) methodEntity).getReceiver().getType());
+                System.out.println("receiver:" + singleCollect.getEntities().get(((MethodEntity) methodEntity).getReceiverVarId()));
                 System.out.println("in file: " + singleCollect.getEntities().get(methodEntity.getParentId()).getName());
                 for(int id : ((FunctionEntity) methodEntity).getParameters()) {
                     VarEntity varEntity = (VarEntity) singleCollect.getEntities().get(id);

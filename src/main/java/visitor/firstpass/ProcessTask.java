@@ -34,7 +34,25 @@ public class ProcessTask {
         } else {
             type = tmp[0];
         }
-        return new VarEntity(-1, type, name);
+        VarEntity varEntity = new VarEntity(-1, type, name);
+        return varEntity;
+    }
+
+    /**
+     *
+     * @param methodIndex
+     * @param receiverVar
+     * @return
+     */
+    public void saveReceiver(int methodIndex, VarEntity receiverVar) {
+        int id = singleCollect.getCurrentIndex();
+        receiverVar.setId(id);
+        receiverVar.setParentId(methodIndex);
+        receiverVar.setLocalBlockId(methodIndex);
+        singleCollect.addEntity(receiverVar);
+
+        ((MethodEntity) singleCollect.getEntities().get(methodIndex)).setReceiverVarId(id);
+
     }
 
 
@@ -569,19 +587,21 @@ public class ProcessTask {
      * @return
      */
     public int processMethod(String functionName, String receiverStr, String parameters, String returns, int fileIndex) {
+        VarEntity receiverVar = getReceiver(receiverStr);
         ArrayList<VarEntity> parameterVars = getVarFromParameters(parameters);
         ArrayList<VarEntity> returnVars = getVarFromParameters(returns);
-        VarEntity receiver = getReceiver(receiverStr);
 
         int functionIndex = singleCollect.getCurrentIndex();
-        MethodEntity functionEntity = new MethodEntity(functionName, receiver);
+        MethodEntity functionEntity = new MethodEntity(functionName);
         functionEntity.setId(functionIndex);
         functionEntity.setParentId(fileIndex); //MethodDecl only appear in the topLevel
         singleCollect.addEntity(functionEntity);
 
-        //set id, parentId and save into entity, add into function's parameter
+        //set id, parentId, blockId, and save into entity, add into function's receiver
+        saveReceiver(functionIndex, receiverVar);
+        //set id, parentId, blockId, and save into entity, add into function's parameter
         saveParameters(functionIndex, parameterVars, ConstantString.SAVE_TYPE_PARAMETER);
-        //set id, parentId and save into entity, add into function's return
+        //set id, parentId, blockId, and save into entity, add into function's return
         saveParameters(functionIndex, returnVars, ConstantString.SAVE_TYPE_RETURN);
         return functionIndex;
     }

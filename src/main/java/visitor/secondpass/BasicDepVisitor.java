@@ -138,15 +138,17 @@ public class BasicDepVisitor {
                 String methodEntityName = methodEntity.getName();
                 String fileName1 = singleCollect.getEntities().get(singleCollect.getEntities().get(methodEntityId).getParentId()).getName();
                 //System.out.println("method_receive_relation: methodName:" + methodEntityName + ", file: " + fileName1);
-                String receiverType = ((MethodEntity) methodEntity).getReceiver().getType();
+                int receiverVarId =((MethodEntity) methodEntity).getReceiverVarId();
+                String receiverType = ((VarEntity) singleCollect.getEntities().get(receiverVarId)).getType();
                 //System.out.print("receiver pre: " + receiverType);
                 if (receiverType.startsWith(ConstantString.POINTER)) {
                     receiverType = receiverType.substring(1, receiverType.length());
                 }
                 //System.out.print(";  post: " + receiverType);
-                int receiverId = searchReceiver(methodEntityId, receiverType);
-                if (receiverId != -1) {
-                    saveRelation(methodEntityId, receiverId, ConstantString.RELATION_RECEIVE, ConstantString.RELATION_RECEIVED_BY);
+                int receiverTypeId = searchReceiverType(methodEntityId, receiverType);
+                if (receiverTypeId != -1) {
+                    ((VarEntity) singleCollect.getEntities().get(receiverVarId)).setTypeId(receiverTypeId);
+                    saveRelation(methodEntityId, receiverTypeId, ConstantString.RELATION_RECEIVE, ConstantString.RELATION_RECEIVED_BY);
                     //System.out.println("method_receive_relation: receiver:" + receiverType + ", file: " + singleCollect.getEntities().get(singleCollect.getEntities().get(receiverId).getParentId()).getName());
                 }
                 else {
@@ -271,12 +273,12 @@ public class BasicDepVisitor {
 
 
     /**
-     * search the entity id of receiver for methodEntityId
+     * search the entity (struct type or alias type) id of receiver type for methodEntityId
      * @param methodEntityId
      * @param receiverType
      * @return
      */
-    private int searchReceiver(int methodEntityId, String receiverType) {
+    private int searchReceiverType(int methodEntityId, String receiverType) {
         int receiverId = -1;
         int fileId = singleCollect.getEntities().get(methodEntityId).getParentId();
         if (fileId != -1) {
