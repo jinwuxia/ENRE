@@ -1,4 +1,4 @@
-package goextractor.util;
+package multiparser.util;
 
 public class Tuple<X, Y>
 {
