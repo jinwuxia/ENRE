@@ -1,5 +1,7 @@
-package multiparser.extractor;
+package multiparser;
 
+import multiparser.extractor.PythonWork;
+import multiparser.extractor.TemplateWork;
 import multiparser.goextractor.GolangWork;
 import multiparser.util.Configure;
 
