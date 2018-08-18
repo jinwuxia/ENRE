@@ -1,5 +1,6 @@
 package multiparser.extractor;
 
+import multiparser.goextractor.visitor.firstpass.FileParser;
 import multiparser.util.Configure;
 import multiparser.format.MapObject;
 import multiparser.format.json.JBuildObject;
@@ -9,7 +10,6 @@ import multiparser.format.xml.XBuildObject;
 import multiparser.format.xml.XDepObject;
 import multiparser.format.xml.XmlFormat;
 import multiparser.goextractor.ConstantString;
-
 
 import java.util.ArrayList;
 

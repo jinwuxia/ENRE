@@ -12,7 +12,7 @@ import java.util.Stack;
 /**
  * nodes multiparser.goextractor.visitor in the first visit
  */
-public class EntityVisitor extends GolangBaseVisitor<String> {
+public class GoEntityVisitor extends GolangBaseVisitor<String> {
 
     private ContextHelper helperVisitor = new ContextHelper();
     private ProcessTask processTask = new ProcessTask();
@@ -29,7 +29,7 @@ public class EntityVisitor extends GolangBaseVisitor<String> {
     //// such as structFields, or interface Fields.
     private ArrayList<Integer> tmpEntitiesIds = new ArrayList<Integer>();
 
-    public EntityVisitor(String fileFullPath) {
+    public GoEntityVisitor(String fileFullPath) {
         this.fileFullPath = fileFullPath;
     }
 

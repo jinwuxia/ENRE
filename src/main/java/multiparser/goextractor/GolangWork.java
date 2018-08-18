@@ -1,7 +1,9 @@
 package multiparser.goextractor;
 
+import multiparser.goextractor.visitor.firstpass.FileParser;
 import multiparser.extractor.TemplateWork;
 import multiparser.goextractor.infer.TypeInfer;
+import multiparser.util.Configure;
 import multiparser.util.FileUtil;
 import multiparser.goextractor.visitor.secondpass.BasicDepVisitor;
 import multiparser.goextractor.visitor.secondpass.FuncDepVisitor;
@@ -14,7 +16,7 @@ public class GolangWork extends TemplateWork {
     @Override
     protected void identifyEntities() {
         FileUtil fileUtil = new FileUtil(configure.getInputSrcPath());
-        for (String fileFullPath : fileUtil.getGoFileNameList()) {
+        for (String fileFullPath : fileUtil.getFileNameList(Configure.GO_PRO_SUFFIX)) {
             System.out.println(fileFullPath);
             FileParser fileParser = new FileParser(fileFullPath);
             try {
