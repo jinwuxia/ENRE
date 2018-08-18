@@ -32,12 +32,12 @@ public class FileUtil {
     }
 
 
-    public ArrayList<String> getGoFileNameList()
+    public ArrayList<String> getFileNameList(String suffix)
     {
         ArrayList<String> goFileNameList = new ArrayList<String>();
         for(String fileName : this.fileNameList)
         {
-            if(fileName.endsWith(".go"))
+            if(fileName.endsWith(suffix))
             {
                 goFileNameList.add(fileName);
             }

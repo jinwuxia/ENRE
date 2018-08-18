@@ -1,17 +1,16 @@
-package multiparser.goextractor;
+package multiparser.py3extractor;
 
-import multiparser.goextractor.antlr4.GolangLexer;
-import multiparser.goextractor.antlr4.GolangParser;
+
+import multiparser.py3extractor.antlr4.Python3Lexer;
+import multiparser.py3extractor.antlr4.Python3Parser;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import multiparser.goextractor.visitor.firstpass.EntityVisitor;
 
 import java.io.IOException;
 
 public class FileParser {
-
     private String fileFullPath;
     public FileParser(String str) {
         this.fileFullPath = str;
@@ -19,14 +18,12 @@ public class FileParser {
 
     public void parserOneFile() throws IOException {
         CharStream input = CharStreams.fromFileName(fileFullPath);
-        GolangLexer lexer = new GolangLexer(input);
+        Python3Lexer lexer = new Python3Lexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-        GolangParser parser = new GolangParser(tokens);
-        ParseTree tree = parser.sourceFile(); // root rule: sourceFile
+        Python3Parser parser = new Python3Parser(tokens);
+        ParseTree tree = parser.file_input(); // root rule: file_input
 
-        EntityVisitor entityVisitor = new EntityVisitor(fileFullPath);
+        PyEntityVisitor entityVisitor = new PyEntityVisitor(fileFullPath);
         entityVisitor.visit(tree);
     }
-
-
 }
