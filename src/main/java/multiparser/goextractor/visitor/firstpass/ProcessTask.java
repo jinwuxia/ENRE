@@ -2,6 +2,7 @@ package multiparser.goextractor.visitor.firstpass;
 
 import multiparser.goextractor.antlr4.GolangParser;
 import multiparser.entity.*;
+import multiparser.goextractor.goentity.*;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import multiparser.util.Configure;
 import multiparser.goextractor.ConstantString;

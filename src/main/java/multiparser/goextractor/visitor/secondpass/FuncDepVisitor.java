@@ -1,6 +1,10 @@
 package multiparser.goextractor.visitor.secondpass;
 
 import multiparser.entity.*;
+import multiparser.goextractor.goentity.AliasTypeEntity;
+import multiparser.goextractor.goentity.InterfaceEntity;
+import multiparser.goextractor.goentity.StructEntity;
+import multiparser.goextractor.goentity.StructFieldEntity;
 import multiparser.goextractor.search.*;
 import multiparser.goextractor.ConstantString;
 import multiparser.util.Tuple;
