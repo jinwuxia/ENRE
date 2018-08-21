@@ -1,6 +1,10 @@
 package multiparser.extractor;
 
 import multiparser.entity.*;
+import multiparser.goextractor.goentity.AliasTypeEntity;
+import multiparser.goextractor.goentity.InterfaceEntity;
+import multiparser.goextractor.goentity.MethodEntity;
+import multiparser.goextractor.goentity.StructEntity;
 import multiparser.util.Tuple;
 import multiparser.goextractor.ConstantString;
 
