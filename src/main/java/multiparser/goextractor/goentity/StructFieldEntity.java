@@ -1,4 +1,6 @@
-package multiparser.entity;
+package multiparser.goextractor.goentity;
+
+import multiparser.entity.VarEntity;
 
 public class StructFieldEntity extends VarEntity {
     public StructFieldEntity(int id, String type, String name) {

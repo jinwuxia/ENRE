@@ -1,8 +1,8 @@
 package multiparser.goextractor.search;
 
 
-import multiparser.entity.InterfaceEntity;
-import multiparser.entity.InterfaceFieldEntity;
+import multiparser.goextractor.goentity.InterfaceEntity;
+import multiparser.goextractor.goentity.InterfaceFieldEntity;
 import multiparser.goextractor.ConstantString;
 import multiparser.util.Tuple;
 import multiparser.extractor.SingleCollect;

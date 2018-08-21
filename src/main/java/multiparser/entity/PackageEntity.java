@@ -1,7 +1,7 @@
 package multiparser.entity;
 
 public class PackageEntity extends Entity {
-    private String fullPath;  //key
+    protected String fullPath;  //key
 
     public PackageEntity(int id, String fullPath, String name) {
         this.id = id;

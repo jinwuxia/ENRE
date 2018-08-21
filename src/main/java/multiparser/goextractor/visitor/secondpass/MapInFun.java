@@ -2,6 +2,7 @@ package multiparser.goextractor.visitor.secondpass;
 
 import multiparser.entity.*;
 import multiparser.goextractor.ConstantString;
+import multiparser.goextractor.goentity.MethodEntity;
 import multiparser.util.Tuple;
 import multiparser.extractor.SingleCollect;
 

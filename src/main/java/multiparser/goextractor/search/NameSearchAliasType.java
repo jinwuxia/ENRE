@@ -1,6 +1,6 @@
 package multiparser.goextractor.search;
 
-import multiparser.entity.AliasTypeEntity;
+import multiparser.goextractor.goentity.AliasTypeEntity;
 import multiparser.goextractor.ConstantString;
 import multiparser.util.Tuple;
 import multiparser.extractor.SingleCollect;

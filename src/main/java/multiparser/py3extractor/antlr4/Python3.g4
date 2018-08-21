@@ -141,18 +141,24 @@ async_funcdef: ASYNC funcdef;
 funcdef: 'def' NAME parameters ('->' test)? ':' suite;
 
 parameters: '(' (typedargslist)? ')';
+
+//jwx:typedargslist is the argument list of a function
 typedargslist: (tfpdef ('=' test)? (',' tfpdef ('=' test)?)* (',' (
         '*' (tfpdef)? (',' tfpdef ('=' test)?)* (',' ('**' tfpdef (',')?)?)?
-      | '**' tfpdef (',')?)?)?
-  | '*' (tfpdef)? (',' tfpdef ('=' test)?)* (',' ('**' tfpdef (',')?)?)?
-  | '**' tfpdef (',')?);
+        | '**' tfpdef (',')?)?)?
+        | '*' (tfpdef)? (',' tfpdef ('=' test)?)* (',' ('**' tfpdef (',')?)?)?
+        | '**' tfpdef (',')?);
 tfpdef: NAME (':' test)?;
+
+//jwx:varaargslist is the argument list of a lambda (annoymous function)
+// so it is almost in same form with typedagrslist
 varargslist: (vfpdef ('=' test)? (',' vfpdef ('=' test)?)* (',' (
         '*' (vfpdef)? (',' vfpdef ('=' test)?)* (',' ('**' vfpdef (',')?)?)?
-      | '**' vfpdef (',')?)?)?
-  | '*' (vfpdef)? (',' vfpdef ('=' test)?)* (',' ('**' vfpdef (',')?)?)?
-  | '**' vfpdef (',')?
-);
+        | '**' vfpdef (',')?)?)?
+        | '*' (vfpdef)? (',' vfpdef ('=' test)?)* (',' ('**' vfpdef (',')?)?)?
+        | '**' vfpdef (',')?
+        )
+        ;
 vfpdef: NAME;
 
 stmt: simple_stmt | compound_stmt;
@@ -230,7 +236,14 @@ atom: ('(' (yield_expr|testlist_comp)? ')' |
        '{' (dictorsetmaker)? '}' |
        NAME | NUMBER | STRING+ | '...' | 'None' | 'True' | 'False');
 testlist_comp: (test|star_expr) ( comp_for | (',' (test|star_expr))* (',')? );
-trailer: '(' (arglist)? ')' | '[' subscriptlist ']' | '.' NAME;
+
+//jwx modification
+trailer:
+    '(' (arglist)? ')'         #arglisttrailer
+    | '[' subscriptlist ']'    #subscriptlisttrailer
+    | '.' NAME                 #attributetrailer
+    ;
+
 subscriptlist: subscript (',' subscript)* (',')?;
 subscript: test | (test)? ':' (test)? (sliceop)?;
 sliceop: ':' (test)?;

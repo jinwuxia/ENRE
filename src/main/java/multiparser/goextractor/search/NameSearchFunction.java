@@ -1,7 +1,7 @@
 package multiparser.goextractor.search;
 
 import multiparser.entity.FunctionEntity;
-import multiparser.entity.MethodEntity;
+import multiparser.goextractor.goentity.MethodEntity;
 import multiparser.goextractor.ConstantString;
 import multiparser.extractor.SingleCollect;
 

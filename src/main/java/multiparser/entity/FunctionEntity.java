@@ -29,6 +29,10 @@ public class FunctionEntity extends Entity {
     public FunctionEntity(String name) {
         this.name = name;
     }
+    public FunctionEntity(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
 
     public ArrayList<Integer> getParameters() {

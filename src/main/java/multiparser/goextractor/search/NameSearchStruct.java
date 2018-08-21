@@ -1,7 +1,7 @@
 package multiparser.goextractor.search;
 
-import multiparser.entity.StructEntity;
-import multiparser.entity.StructFieldEntity;
+import multiparser.goextractor.goentity.StructEntity;
+import multiparser.goextractor.goentity.StructFieldEntity;
 import multiparser.goextractor.ConstantString;
 import multiparser.util.Tuple;
 import multiparser.extractor.SingleCollect;

@@ -1,4 +1,6 @@
-package multiparser.entity;
+package multiparser.goextractor.goentity;
+
+import multiparser.entity.VarEntity;
 
 public class ConstEntity extends VarEntity {
     public ConstEntity(int i, String type, String name) {
