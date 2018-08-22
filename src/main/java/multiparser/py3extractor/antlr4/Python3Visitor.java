@@ -3,7 +3,6 @@ package multiparser.py3extractor.antlr4;
 
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
-
 /**
  * This interface defines a complete generic visitor for a parse tree produced
  * by {@link Python3Parser}.
@@ -433,11 +432,26 @@ public interface Python3Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTestlist_comp(Python3Parser.Testlist_compContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Python3Parser#trailer}.
+	 * Visit a parse tree produced by the {@code arglisttrailer}
+	 * labeled alternative in {@link Python3Parser#trailer}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTrailer(Python3Parser.TrailerContext ctx);
+	T visitArglisttrailer(Python3Parser.ArglisttrailerContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code subscriptlisttrailer}
+	 * labeled alternative in {@link Python3Parser#trailer}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSubscriptlisttrailer(Python3Parser.SubscriptlisttrailerContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code attributetrailer}
+	 * labeled alternative in {@link Python3Parser#trailer}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAttributetrailer(Python3Parser.AttributetrailerContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Python3Parser#subscriptlist}.
 	 * @param ctx the parse tree
