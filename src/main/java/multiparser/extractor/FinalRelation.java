@@ -1,10 +1,12 @@
 package multiparser.extractor;
 
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import multiparser.entity.*;
 import multiparser.goextractor.goentity.AliasTypeEntity;
 import multiparser.goextractor.goentity.InterfaceEntity;
 import multiparser.goextractor.goentity.MethodEntity;
 import multiparser.goextractor.goentity.StructEntity;
+import multiparser.py3extractor.pyentity.*;
 import multiparser.util.Tuple;
 import multiparser.goextractor.ConstantString;
 
@@ -22,6 +24,11 @@ public class FinalRelation {
         int methodCount = 0;
         int interfaceCount = 0;
         int structCount = 0;
+        int classCount = 0;
+        int classmethodCount = 0;
+        int staticmethodCount = 0;
+        int instmethodCount = 0;
+
 
         for(Entity entity : singleCollect.getEntities()) {
             if(entity instanceof PackageEntity) {
@@ -31,8 +38,20 @@ public class FinalRelation {
                 fileCount ++;
             }
             else if(entity instanceof FunctionEntity
-                    && !(entity instanceof MethodEntity) ) {
+                    && !(entity instanceof MethodEntity)
+                    && !(entity instanceof ClassMethodEntity)
+                    && !(entity instanceof ClassStaticMethodEntity)
+                    && !(entity instanceof InstMethodEntity)) {
                 functionCount ++;
+            }
+            else if(entity instanceof ClassMethodEntity) {
+                classmethodCount ++;
+            }
+            else if(entity instanceof ClassStaticMethodEntity) {
+                staticmethodCount ++;
+            }
+            else if(entity instanceof InstMethodEntity) {
+                instmethodCount ++;
             }
             else if (entity instanceof MethodEntity) {
                 methodCount ++;
@@ -40,17 +59,45 @@ public class FinalRelation {
             else if(entity instanceof StructEntity) {
                 structCount ++;
             }
+            else if(entity instanceof ClassEntity) {
+                classCount ++;
+            }
             else if(entity instanceof InterfaceEntity) {
                 interfaceCount ++;
             }
         }
         String str = "";
-        str += ("Package:   " + Integer.toString(packageCount) + "\n");
-        str += ("File:      " + Integer.toString(fileCount) + "\n");
-        str += ("Function:  " + Integer.toString(functionCount) + "\n");
-        str += ("Method:    " + Integer.toString(methodCount) + "\n");
-        str += ("Struct:    " + Integer.toString(structCount) + "\n");
-        str += ("Interface: " + Integer.toString(interfaceCount) + "\n");
+        if(packageCount != 0) {
+            str += ("Package:     " + Integer.toString(packageCount) + "\n");
+        }
+        if(fileCount != 0) {
+            str += ("File/module: " + Integer.toString(fileCount) + "\n");
+        }
+        if(classCount != 0) {
+            str += ("Class:       " + Integer.toString(classCount) + "\n");
+        }
+        if(functionCount != 0) {
+            str += ("Function:    " + Integer.toString(functionCount) + "\n");
+        }
+        if(methodCount != 0) {
+            str += ("Method:      " + Integer.toString(methodCount) + "\n");
+        }
+        if(instmethodCount != 0) {
+            str += ("InstMethod:  " + Integer.toString(instmethodCount) + "\n");
+        }
+        if(classmethodCount != 0) {
+            str += ("classMethod:  " + Integer.toString(classmethodCount) + "\n");
+        }
+        if(staticmethodCount != 0) {
+            str += ("staticMethod:  " + Integer.toString(staticmethodCount) + "\n");
+        }
+        if(structCount != 0) {
+            str += ("Struct:      " + Integer.toString(structCount) + "\n");
+        }
+        if(interfaceCount != 0) {
+            str += ("Interface:   " + Integer.toString(interfaceCount) + "\n");
+        }
+
         return str;
     }
 
@@ -68,18 +115,114 @@ public class FinalRelation {
 
     public void outputAllEntities() {
         //the following is the test.
-        System.out.println("\nAll entities:");
+        System.out.println("\nall entities:");
         SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
         for(Entity entity : singleCollect.getEntities()) {
             System.out.println(entity);
         }
     }
 
+    public void outputAllpackages() {
+        System.out.println("\npackages:");
+        SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
+        for(Entity entity : singleCollect.getEntities()) {
+            if(entity instanceof PackageEntity) {
+                System.out.println(entity);
+            }
+        }
+    }
 
-    public void outputFunctions() {
+    public void outputAllClasses() {
+        System.out.println("\nclasses:");
+        SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
+        for(Entity entity : singleCollect.getEntities()) {
+            if(entity instanceof ClassEntity) {
+                System.out.println(entity);
+            }
+        }
+    }
+
+    public void outputAllModules() {
+        System.out.println("\nmodules:");
+        SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
+        for(Entity entity : singleCollect.getEntities()) {
+            if(entity instanceof ModuleEntity) {
+                System.out.println(entity);
+            }
+        }
+    }
+
+    public void outputAllInstMethods() {
+        System.out.println("\ninstance methods:");
+        SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
+        for(Entity entity : singleCollect.getEntities()) {
+            if(entity instanceof InstMethodEntity) {
+                System.out.println(entity);
+            }
+        }
+    }
+
+    public void outputAllClassMethods() {
+        System.out.println("\nclass methods:");
+        SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
+        for(Entity entity : singleCollect.getEntities()) {
+            if(entity instanceof ClassMethodEntity) {
+                System.out.println(entity);
+            }
+        }
+    }
+
+    public void outputAllClassStaticMethods() {
+        System.out.println("\nclass static methods:");
+        SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
+        for(Entity entity : singleCollect.getEntities()) {
+            if(entity instanceof ClassStaticMethodEntity) {
+                System.out.println(entity);
+            }
+        }
+    }
+
+    public void outputAllClassVars() {
+        System.out.println("\nClass vars:");
+        SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
+        for(Entity entity : singleCollect.getEntities()) {
+            if(entity instanceof ClassVarEntity) {
+                System.out.println(entity);
+            }
+        }
+    }
+
+    public void outputAllInstVars() {
+        System.out.println("\nInst vars:");
+        SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
+        for(Entity entity : singleCollect.getEntities()) {
+            if(entity instanceof InstVarEntity) {
+                System.out.println(entity);
+            }
+        }
+    }
+
+    public void outputAllLocOrGloVars() {
+        System.out.println("\nLocal or Global vars:");
+        SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
+        for(Entity entity : singleCollect.getEntities()) {
+            if( entity instanceof VarEntity
+                && !(entity instanceof InstVarEntity)
+                && !(entity instanceof ClassVarEntity)) {
+                System.out.println(entity);
+            }
+        }
+    }
+
+
+
+    public void outputAllFunctions() {
         for (Entity functionEntity : singleCollect.getEntities()) {
             if (functionEntity instanceof FunctionEntity
-                    && !(functionEntity instanceof MethodEntity)) {
+                    && !(functionEntity instanceof MethodEntity)
+                    && !(functionEntity instanceof ClassStaticMethodEntity)
+                    && !(functionEntity instanceof ClassMethodEntity)
+                    && !(functionEntity instanceof InstMethodEntity)) {
                 System.out.println("Function: " + functionEntity.getName());
                 System.out.println("in file: " + singleCollect.getEntities().get(functionEntity.getParentId()).getName());
                 for(int id : ((FunctionEntity) functionEntity).getParameters()) {
