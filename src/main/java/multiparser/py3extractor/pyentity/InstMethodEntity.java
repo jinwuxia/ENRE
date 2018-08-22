@@ -9,4 +9,18 @@ public class InstMethodEntity extends FunctionEntity{
         this.name = name;
     }
 
+    @Override
+    public String toString() {
+        String str = "";
+        str += "\n(InstMethod:";
+        str += ("id:" + Integer.toString(id) + ",");
+        str += ("name:" + name + ",");
+        str += ("parentId:" + parentId + ",");
+        str += ("childrenIds:" + childrenIds + ",");
+        str += ("relations:" + relations);
+        str += ")\n";
+        return str;
+
+    }
+
 }
