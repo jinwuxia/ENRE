@@ -113,11 +113,31 @@ abstract public class TemplateWork {
 
     public final void testRun() {
         FinalRelation relationOutput = new FinalRelation();
-        //relationOutput.outputAllEntities();
+
+        relationOutput.outputAllpackages();
+
+        relationOutput.outputAllModules();
+
+        relationOutput.outputAllClasses();
+
+        relationOutput.outputAllClassStaticMethods();
+
+        relationOutput.outputAllClassMethods();
+
+        relationOutput.outputAllInstMethods();
+
+        relationOutput.outputAllFunctions();
+
+        relationOutput.outputAllClassVars();
+
+        relationOutput.outputAllInstVars();
+
+        relationOutput.outputAllLocOrGloVars();
+
 
         //test blocks
         //relationOutput.outputFunctions();
-        relationOutput.outputMethods();
+        //relationOutput.outputMethods();
 
         /*//test imports
         System.out.println("\nimports:");
