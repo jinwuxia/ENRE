@@ -169,12 +169,6 @@ small_stmt: (expr_stmt | del_stmt | pass_stmt | flow_stmt |
 //origin
 //expr_stmt: testlist_star_expr (   annassign     | augassign (yield_expr|testlist)     |    ('=' (yield_expr|testlist_star_expr) )*     );
 
-//jwx modification
-expr_stmt: testlist_star_expr annassign
-         | testlist_star_expr augassign (yield_expr|testlist)
-         | testlist_star_expr ('=' (yield_expr|testlist_star_expr))*
-         ;
-
 annassign: ':' test ('=' test)?;
 testlist_star_expr: (test|star_expr) (',' (test|star_expr))* (',')?;
 augassign: ('+=' | '-=' | '*=' | '@=' | '/=' | '%=' | '&=' | '|=' | '^=' |
@@ -245,11 +239,10 @@ atom: ('(' (yield_expr|testlist_comp)? ')' |
        NAME | NUMBER | STRING+ | '...' | 'None' | 'True' | 'False');
 testlist_comp: (test|star_expr) ( comp_for | (',' (test|star_expr))* (',')? );
 
-//jwx modification
 trailer:
-    '(' (arglist)? ')'         #arglisttrailer
-    | '[' subscriptlist ']'    #subscriptlisttrailer
-    | '.' NAME                 #attributetrailer
+    '(' (arglist)? ')'
+    | '[' subscriptlist ']'
+    | '.' NAME
     ;
 
 subscriptlist: subscript (',' subscript)* (',')?;
