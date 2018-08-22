@@ -21,4 +21,20 @@ public class ClassEntity extends Entity{
     public void addBaseClassId(int baseId) {
         baseClassIdList.add(baseId);
     }
+
+
+    @Override
+    public String toString() {
+        String str = "";
+        str += "\n(Class:";
+        str += ("id:" + Integer.toString(id) + ",");
+        str += ("name:" + name + ",");
+        str += ("parentId:" + parentId + ",");
+        str += ("childrenIds:" + childrenIds + ",");
+        str += ("baseclasses:" + baseClassNameList + ",");
+        str += ("relations:" + relations);
+        str += ")\n";
+        return str;
+
+    }
 }
