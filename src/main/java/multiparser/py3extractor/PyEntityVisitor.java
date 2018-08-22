@@ -8,9 +8,12 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
     private PyProcessTask processTask = new PyProcessTask();
     private PyContextHelper contextHelper = new PyContextHelper();
 
-    int moduleId = -1;
-    int classId = -1;
-    int functionId = -1;
+    private int moduleId = -1;
+    private int classId = -1;
+    private int functionId = -1;
+
+    private String classDecoration = ""; // once the classentity forms, clear it
+    private String methodDecoration = ""; //once the methodentity forms, clear it
 
     public PyEntityVisitor(String fileFullPath) {
         this.fileFullPath = fileFullPath;
@@ -49,9 +52,11 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
 
         if(contextHelper.isOneComStmAtTopLevel(ctx) && moduleId != -1) {
             classId = processTask.processClass(moduleId, className, baseStrs);
+            classDecoration = "";
         }
         else {
             //classId = processTask.processClass(blockId, className, baseStrs);
+            //classDecoration = "";
         }
         //visit class body
         if(ctx.suite() != null) {
@@ -82,14 +87,9 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
         }
         // a class method, class static method, or instance method
         else if(classId != -1) {
-            if(contextHelper.isInDecorator(ctx)) { // classMethod, classStaticMethod
-                String decorations = visitDecorated((Python3Parser.DecoratedContext) ctx.parent);
-                functionId = processTask.processClassMethod(decorations, classId, functionName, paraStrs);
-            }
-            else{ //instanceMethod
-                functionId = processTask.processInstMethod(classId, functionName, paraStrs);
-            }
+            functionId = processTask.processMethod(methodDecoration, classId, functionName, paraStrs);
         }
+        methodDecoration = "";
 
         if(ctx.suite() != null) {
             visitSuite(ctx.suite());
@@ -110,9 +110,24 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
     @Override
     public String visitDecorated(Python3Parser.DecoratedContext ctx) {
         String str = "";
-        if(ctx != null && ctx.decorators() != null) {
+        if(ctx == null) {
+            return str;
+        }
+        if(ctx.decorators() != null) {
             str =  visitDecorators(ctx.decorators());
         }
+        if(ctx.classdef() != null) {
+            classDecoration = str;
+            visitClassdef(ctx.classdef());
+        }
+        if(ctx.funcdef() != null) {
+            methodDecoration = str;
+            visitFuncdef(ctx.funcdef());
+        }
+        if(ctx.async_funcdef() != null) {
+            visitAsync_funcdef(ctx.async_funcdef());
+        }
+
         return str;
     }
 
@@ -124,7 +139,7 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
     @Override
     public String visitDecorators(Python3Parser.DecoratorsContext ctx) {
         String str = "";
-        if(ctx != null) {
+        if(ctx == null) {
             return str;
         }
         if(ctx.decorator() != null && !ctx.decorator().isEmpty()) {
@@ -134,6 +149,7 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
                 str += visitDecorator(ctx.decorator(i));
             }
         }
+        //System.out.println("visitDecorators: " + str);
         return str;
     }
 
@@ -225,24 +241,56 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
 
     /**
      * grammar: atom_expr: (AWAIT)? atom trailer*;
+     * trailer:
+     '(' (arglist)? ')'         #arglisttrailer
+     | '[' subscriptlist ']'    #subscriptlisttrailer
+     | '.' NAME                 #attributetrailer
      * @param ctx
      * @return
      */
     @Override
     public String visitAtom_expr(Python3Parser.Atom_exprContext ctx) {
         String str = "";
+        if(ctx == null) {
+            return str;
+        }
+        if(ctx.AWAIT() != null) {
+            str += ctx.AWAIT().getText();
+            str += " ";
+        }
+        //only get name, not includes literal tring, number, [...], (...), none, true, false,..
         if(ctx.atom() != null) {
             str += visitAtom(ctx.atom());
         }
         if(ctx.trailer() != null && !ctx.trailer().isEmpty()) {
             for (Python3Parser.TrailerContext trailerContext : ctx.trailer()) {
-                str += visitTrailer(trailerContext);
+
+                if(trailerContext instanceof Python3Parser.AttributetrailerContext) {
+                    str += visitAttributetrailer((Python3Parser.AttributetrailerContext) trailerContext);
+                }
+                else if (trailerContext instanceof Python3Parser.ArglisttrailerContext){
+                    str += visitArglisttrailer((Python3Parser.ArglisttrailerContext) trailerContext);
+                }
+                else if (trailerContext instanceof  Python3Parser.SubscriptlisttrailerContext) {
+                    str += visitSubscriptlisttrailer((Python3Parser.SubscriptlisttrailerContext) trailerContext);
+                }
             }
+        }
+
+        String usage = ConstantString.NAME_USAGE_USE; //default usage
+        if(contextHelper.isAtomExprInLeft(ctx)) {
+            usage = ConstantString.NAME_USAGE_SET;
+        }
+        //if it is "", it must bse literal tring, number, [...], (...), none, true, false,..
+        if(!str.equals(ConstantString.NULL_STRING)) {
+            processTask.processAtomExpr(moduleId, classId, functionId, str, usage);
         }
         return str;
     }
 
-    /**
+    /** only returns the name,
+     * if a number, string, none, true, false, it will not return
+     *
      * atom: ('(' (yield_expr|testlist_comp)? ')'
      * |'[' (testlist_comp)? ']'
      * | '{' (dictorsetmaker)? '}'
@@ -269,12 +317,31 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
      * @return
      */
     @Override
-    public String visitTrailer(Python3Parser.TrailerContext ctx) {
+    public String visitAttributetrailer(Python3Parser.AttributetrailerContext ctx) {
         String str = "";
         if(ctx.NAME() != null) {
             str += ".";
             str += ctx.NAME().getText();
         }
+        return str;
+    }
+
+    /**
+     * trailer:
+     '(' (arglist)? ')'         #arglisttrailer
+     | '[' subscriptlist ']'    #subscriptlisttrailer
+     | '.' NAME                 #attributetrailer
+     * @param ctx
+     * @return
+     */
+    @Override
+    public String visitArglisttrailer(Python3Parser.ArglisttrailerContext ctx) {
+        String str = "";
+        str += ConstantString.LEFT_PARENTHESES;
+        if(ctx != null && ctx.arglist() != null) {
+            str += visitArglist(ctx.arglist());
+        }
+        str += ConstantString.RIGHT_PARENTHESES;
         return str;
     }
 
