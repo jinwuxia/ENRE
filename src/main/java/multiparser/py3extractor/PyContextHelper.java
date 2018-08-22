@@ -1,7 +1,6 @@
 package multiparser.py3extractor;
 
-import multiparser.goextractor.antlr4.GolangParser;
-import multiparser.py3extractor.antlr4.Python3BaseVisitor;
+import com.oracle.tools.packager.JreUtils;
 import multiparser.py3extractor.antlr4.Python3Parser;
 import org.antlr.v4.runtime.RuleContext;
 
@@ -28,7 +27,7 @@ public class PyContextHelper {
                 && ctx.parent != null
                 && ctx.parent.parent != null
                 && ctx.parent.parent.parent != null
-                && ctx.parent instanceof Python3Parser.File_inputContext) {
+                && ctx.parent.parent.parent instanceof Python3Parser.File_inputContext) {
             return true;
         }
         return false;
@@ -44,7 +43,7 @@ public class PyContextHelper {
      * @param ctx
      * @return
      */
-    public boolean isInDecorator(Python3Parser.FuncdefContext ctx) {
+    public boolean isInDecorated(Python3Parser.FuncdefContext ctx) {
         if(ctx != null && ctx.parent != null && ctx.parent instanceof Python3Parser.DecoratedContext) {
             return true;
         }
@@ -52,5 +51,224 @@ public class PyContextHelper {
     }
 
 
+    /**
+     * judge the atom_expr is in left "="assignment or in left augassignment.
+     *
+     * expr_stmt: testlist_star_expr_annaassign=testlist_star_expr annassign
+     | testlist_star_expr_augaassign=testlist_star_expr augassign (yield_expr|testlist)
+     | testlist_star_expr_leftassign=testlist_star_expr ('=' (yield_expr|testlist_star_expr_rightassign=testlist_star_expr))*
+     ;
+     * @param ctx
+     * @return
+     */
+    public boolean isAtomExprInLeft(Python3Parser.Atom_exprContext ctx) {
+        if (isAtomExprInLeftAssignment(ctx)) {
+            return true;
+        }
+        if(isAtomExprInLeftAugassignment(ctx)) {
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     expr_stmt: testlist_star_expr_leftassign=testlist_star_expr ('=' (yield_expr|testlist_star_expr_rightassign=testlist_star_expr))*;
+
+     * @param ctx
+     * @return
+     */
+    private boolean isAtomExprInLeftAssignment(Python3Parser.Atom_exprContext ctx) {
+        RuleContext leftAssign = getTestliststarExprForAtomExpr(ctx);
+        if(leftAssign == null) {
+            return false;
+        }
+
+        RuleContext exprStmtCtx = getExprStmtCtxForTestliststarexpr(leftAssign);
+        if(exprStmtCtx == null) {
+            return false;
+        }
+
+        if( ((Python3Parser.Expr_stmtContext) exprStmtCtx).testlist_star_expr_leftassign.equals(leftAssign)) {
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     *
+     * expr_stmt: testlist_star_expr_augaassign=testlist_star_expr augassign (yield_expr|testlist);
+     * @param ctx
+     * @return
+     */
+    private boolean isAtomExprInLeftAugassignment(Python3Parser.Atom_exprContext ctx) {
+        RuleContext leftAugAssign = getTestliststarExprForAtomExpr(ctx);
+        if(leftAugAssign == null) {
+            return false;
+        }
+
+        RuleContext exprStmtCtx = getExprStmtCtxForTestliststarexpr(leftAugAssign);
+        if(exprStmtCtx == null) {
+            return false;
+        }
+
+        if( ((Python3Parser.Expr_stmtContext) exprStmtCtx).testlist_star_expr_augaassign.equals(leftAugAssign)) {
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * for atom_expr, get its testlist_star_expr
+     *
+     * @param ctx
+     * @return
+     */
+    private RuleContext getTestliststarExprForAtomExpr(RuleContext ctx) {
+        RuleContext newCtx = getTermCtxForAtomExpr(ctx);
+        newCtx = getExprCtxForTerm(newCtx);
+        newCtx = getCompCtxForExpr(newCtx);
+        newCtx = getOrtestCtxForComp(newCtx);
+        newCtx = getTestCtxForOrtest(newCtx);
+        newCtx = getTestListStarExprCtxForTest(newCtx);
+        return newCtx;
+    }
+
+
+
+    private RuleContext getExprStmtCtxForTestliststarexpr(RuleContext ctx) {
+        if(ctx != null && ctx.parent != null && ctx.parent instanceof Python3Parser.Expr_stmtContext) {
+            return ctx.parent;
+        }
+        return null;
+    }
+    /**
+     * get testlist_star_expr for test
+     *
+     * testlist_star_expr: (test|star_expr) (',' (test|star_expr))* (',')?;
+     * otherrules: test.....
+     * @param ctx
+     * @return
+     */
+    private RuleContext getTestListStarExprCtxForTest(RuleContext ctx) {
+        if(ctx != null
+                && ctx.parent != null
+                && ctx.parent instanceof Python3Parser.Testlist_star_exprContext) {
+            return ctx.parent;
+        }
+        return null;
+    }
+
+    /**
+     * get TermContext of AtomExpr.
+     * term: factor (('*'|'@'|'/'|'%'|'//') factor)*;
+     factor: ('+'|'-'|'~') factor | power;
+     power: atom_expr ('**' factor)?;
+     * @return
+     */
+    private RuleContext getTermCtxForAtomExpr(RuleContext ctx) {
+        while(ctx != null && !(ctx instanceof Python3Parser.TermContext)) {
+            ctx = ctx.parent;
+        }
+        if(ctx != null) {
+            return ctx;
+        }
+        return null;
+    }
+
+
+    /**
+     * get ExprContext for Term
+     *
+     * expr: xor_expr ('|' xor_expr)*;
+     xor_expr: and_expr ('^' and_expr)*;
+     and_expr: shift_expr ('&' shift_expr)*;
+     shift_expr: arith_expr (('<<'|'>>') arith_expr)*;
+     arith_expr: term (('+'|'-') term)*;
+     * @param ctx
+     * @return
+     */
+    private RuleContext getExprCtxForTerm(RuleContext ctx)
+    {
+        while(ctx != null && !(ctx instanceof Python3Parser.ExprContext)) {
+            ctx = ctx.parent;
+        }
+        if(ctx != null) {
+            return ctx;
+        }
+        return null;
+    }
+
+    /**
+     * getComparisonContext for expr.
+     *
+     * comparison: expr (comp_op expr)*;
+     * otherRules: expr ....
+     * @param ctx
+     * @return
+     */
+    private RuleContext getCompCtxForExpr(RuleContext ctx) {
+        if(ctx != null && ctx.parent != null) {
+            ctx = ctx.parent;
+        }
+        if(ctx.parent != null && ctx.parent instanceof Python3Parser.ComparisonContext) {
+            return ctx.parent;
+        }
+        return null;
+    }
+
+    /**
+     * get or_test context for comparison.
+     * Each rule is in unique usage.
+     *
+     or_test: and_test ('or' and_test)*;
+     and_test: not_test ('and' not_test)*;
+     not_test: 'not' not_test | comparison;
+      * @param ctx
+     * @return
+     */
+    private RuleContext getOrtestCtxForComp(RuleContext ctx) {
+        while(ctx != null && !(ctx instanceof Python3Parser.Or_testContext)) {
+            ctx = ctx.parent;
+        }
+        if(ctx != null) {
+            return ctx;
+        }
+        return null;
+    }
+
+    /**
+     *
+     * test: or_test ('if' or_test 'else' test)? | lambdef;  //test->test
+     comp_for: or_test.....
+     other rules: or_test
+     * @return
+     */
+    private RuleContext getTestCtxForOrtest (RuleContext ctx) {
+        if(ctx == null) {
+            return null;
+        }
+        if(ctx.parent != null && !(ctx.parent instanceof Python3Parser.TestContext)) {
+            return null;
+        }
+
+        //find the first testContext
+        if(ctx.parent!= null) {
+            ctx = ctx.parent;
+        }
+
+        //find the outest testContext
+        while(ctx.parent != null && ctx.parent instanceof Python3Parser.TestContext) {
+            ctx = ctx.parent;
+        }
+        //ctx.parent not instance of TestContest
+        if(ctx.parent != null) {
+            //ctx is outest TestContext
+            return ctx;
+        }
+        return null;
+    }
 
 }
