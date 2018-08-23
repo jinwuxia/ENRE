@@ -276,6 +276,74 @@ public class PyProcessTask {
         }
     }
 
+    /**
+     * judge the str (x) is already a global var or not?
+     * @param str
+     * @param moduleId
+     * @return
+     */
+    private boolean IsRepeatedGlobalVar(String str, int moduleId) {
+        if(moduleId == -1) {
+            return false;
+        }
+        if(!(singleCollect.getEntities().get(moduleId) instanceof ModuleEntity)) {
+            return false;
+        }
+        for (int childId : singleCollect.getEntities().get(moduleId).getChildrenIds()) {
+            if(singleCollect.getEntities().get(childId) instanceof VarEntity) {
+                if(singleCollect.getEntities().get(childId).getName().equals(str)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * judge the str (x) is already a local var in function/method or not?
+     * @param str
+     * @param functionId
+     * @return
+     */
+    private boolean IsRepeatedLocalVar(String str, int functionId) {
+        if(functionId == -1) {
+            return false;
+        }
+        if(!(singleCollect.getEntities().get(functionId) instanceof FunctionEntity)) {
+            return false;
+        }
+        for (int childId : singleCollect.getEntities().get(functionId).getChildrenIds()) {
+            if(singleCollect.getEntities().get(childId) instanceof VarEntity) {
+                if(singleCollect.getEntities().get(childId).getName().equals(str)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * judge the str (x) is already a parameter var in function/method or not?
+     * @param str
+     * @param functionId
+     * @return
+     */
+    private boolean IsParameterVar(String str, int functionId) {
+        if(functionId == -1) {
+            return false;
+        }
+        if(!(singleCollect.getEntities().get(functionId) instanceof FunctionEntity)) {
+            return false;
+        }
+        for (int parameterId : ((FunctionEntity) singleCollect.getEntities().get(functionId)).getParameters()) {
+            if(singleCollect.getEntities().get(parameterId).getName().equals(str)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** process global var inside a module, or local var inside a function.
      * class var and instVar has been processed in single way, see processClassVar() and processInstVar()
      * new varEntity, and save
@@ -283,6 +351,12 @@ public class PyProcessTask {
      * @param str
      */
     private void processLocOrGloVar(int moduleOrFunctionId, String str) {
+        if(IsRepeatedGlobalVar(str, moduleOrFunctionId)
+                || IsRepeatedLocalVar(str, moduleOrFunctionId)
+                || IsParameterVar(str, moduleOrFunctionId)) {
+            return;
+        }
+
         int varId = singleCollect.getCurrentIndex();
         VarEntity varEntity = new VarEntity(varId, "", str);
         varEntity.setParentId(moduleOrFunctionId);
