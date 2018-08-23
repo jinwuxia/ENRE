@@ -420,4 +420,68 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
     }
 
 
+    /**
+     * grammar:
+     * if_stmt: 'if' test ':' suite ('elif' test ':' suite)* ('else' ':' suite)?;
+     * @param ctx
+     * @return
+     */
+    @Override
+    public String visitIf_stmt(Python3Parser.If_stmtContext ctx) {
+        String str = "";
+        if(ctx == null) {
+            return str;
+        }
+        if(ctx.test() != null) {
+            str = visitTest(ctx.test(0)); //if test
+        }
+        if(contextHelper.isOneComStmAtTopLevel(ctx)
+                && str.equals(ConstantString.IF_NAME)) {
+            functionId = processTask.processFunction(moduleId, ConstantString.MAIN_NAME, "");
+        }
+
+        if(ctx.test() != null) {
+            for (int i = 1; i < ctx.test().size(); i++) {
+                visitTest(ctx.test(i));
+            }
+        }
+        if(ctx.suite() != null) {
+            for (Python3Parser.SuiteContext suiteContext : ctx.suite()) {
+                visitSuite(suiteContext);
+            }
+        }
+        functionId = -1;
+        return str;
+    }
+
+    /**
+     * return firstExpr value
+     * comparison: expr (comp_op expr)*;
+     * @param ctx
+     * @return
+     */
+    @Override
+    public String visitComparison(Python3Parser.ComparisonContext ctx) {
+        String firstExprStr = "";
+        if(ctx == null) {
+            return firstExprStr;
+        }
+        if(ctx.expr() != null) {
+            if(!ctx.expr().isEmpty()) {
+                firstExprStr = visitExpr(ctx.expr(0));
+            }
+        }
+        if(ctx.expr() != null) {
+            for (int i = 1; i < ctx.expr().size(); i++) {
+                visitExpr(ctx.expr(i));
+            }
+        }
+        if(ctx.comp_op() != null) {
+            for (int i = 0; i < ctx.comp_op().size(); i++) {
+                visitComp_op(ctx.comp_op(i));
+            }
+        }
+        return firstExprStr;
+    }
+
 }

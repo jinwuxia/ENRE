@@ -14,6 +14,8 @@ public class ConstantString {
     public static final String CLASS_METHOD = "classmethod";
     public static final String INIT_METHOD_NAME = "__init__";
     public static final String SELF_DOT = "self.";
+    public static final String IF_NAME = "__name__";
+    public static final String MAIN_NAME = "__main__";
 
     public static final String COMMENT = "'''";
     public static final String STRING_LETERAL_1 = "\"";
