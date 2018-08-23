@@ -80,6 +80,9 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
         if(ctx.parameters() != null) {
             paraStrs = visitParameters(ctx.parameters());
         }
+        if(ctx.test() != null) {
+            visitTest(ctx.test());
+        }
 
         //a top-level function
         if(contextHelper.isOneComStmAtTopLevel(ctx) && moduleId != -1 && classId == -1) {
@@ -161,8 +164,14 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
     @Override
     public String visitDecorator(Python3Parser.DecoratorContext ctx) {
         String str = "";
-        if(ctx != null && ctx.dotted_name() != null) {
+        if(ctx == null) {
+            return str;
+        }
+        if(ctx.dotted_name() != null) {
             str =  visitDotted_name(ctx.dotted_name());
+        }
+        if(ctx.arglist() != null) {
+            visitArglist(ctx.arglist());
         }
         return str;
     }
@@ -281,7 +290,7 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
             String usage = ConstantString.NAME_USAGE_USE; //default usage
             boolean isLeftAssign = contextHelper.isAtomExprInLeftAssignment(ctx);
             boolean isLeftAugAssign = contextHelper.isAtomExprInLeftAugassignment(ctx);
-            System.out.println(str + ", isLeftAssignment= " +  isLeftAssign + "; isLeftAugAssign= " + isLeftAugAssign);
+            //System.out.println(str + ", isLeftAssignment= " +  isLeftAssign + "; isLeftAugAssign= " + isLeftAugAssign);
             if(isLeftAssign || isLeftAugAssign) {
                 usage = ConstantString.NAME_USAGE_SET;
             }
@@ -303,6 +312,18 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
     @Override
     public String visitAtom(Python3Parser.AtomContext ctx) {
         String str = "";
+        if(ctx == null) {
+            return str;
+        }
+        if(ctx.yield_expr() != null) {
+            visitYield_expr(ctx.yield_expr());
+        }
+        if(ctx.testlist_comp() != null) {
+            visitTestlist_comp(ctx.testlist_comp());
+        }
+        if(ctx.dictorsetmaker() != null) {
+            visitDictorsetmaker(ctx.dictorsetmaker());
+        }
         if(ctx.NAME() != null) {
             str += ctx.NAME().getText();
         }
@@ -370,6 +391,7 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
      | '**' tfpdef (',')?)?)?
      | '*' (tfpdef)? (',' tfpdef ('=' test)?)* (',' ('**' tfpdef (',')?)?)?
      | '**' tfpdef (',')?);
+
      tfpdef: NAME (':' test)?;
      * @param ctx
      * @return
@@ -377,18 +399,25 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
     @Override
     public String visitTypedargslist(Python3Parser.TypedargslistContext ctx) {
         String str = "";
+        if(ctx == null) {
+            return str;
+        }
         //ignore test's content. test is the default value of an argument in a function
-        if(ctx != null && ctx.tfpdef() != null && !ctx.tfpdef().isEmpty()) {
+        if(ctx.tfpdef() != null && !ctx.tfpdef().isEmpty()) {
             str += ctx.tfpdef(0).NAME().getText();
             for (int i = 1; i < ctx.tfpdef().size(); i++) {
                 str += ",";
                 str += ctx.tfpdef(i).NAME().getText();
             }
         }
+        if(ctx.test() != null && !ctx.test().isEmpty()) {
+            for (Python3Parser.TestContext testContext : ctx.test()) {
+                visitTest(testContext);
+            }
+        }
+
         return str;
     }
-
-
 
 
 }

@@ -73,23 +73,25 @@ public class PyContextHelper {
 
 
     /**
-     expr_stmt: testlist_star_expr_leftassign=testlist_star_expr ('=' (yield_expr|testlist_star_expr_rightassign=testlist_star_expr))*;
+     * expr_stmt: testlist_star_expr_annaassign
+     | testlist_star_expr_augaassign
+     | testlist_star_expr_equaassign
+     ;
+     testlist_star_expr_equaassign: testlist_star_expr_leftassign ('=' (yield_expr|testlist_star_expr_rightassign))*;
+     testlist_star_expr_leftassign: testlist_star_expr;
+     testlist_star_expr_rightassign: testlist_star_expr;
 
      * @param ctx
      * @return
      */
     public boolean isAtomExprInLeftAssignment(Python3Parser.Atom_exprContext ctx) {
-        RuleContext leftAssign = getTestliststarExprForAtomExpr(ctx);
-        if(leftAssign == null) {
+        RuleContext testlistStarExpr = getTestliststarExprForAtomExpr(ctx);
+        if(testlistStarExpr == null) {
             return false;
         }
 
-        RuleContext exprStmtCtx = getExprStmtCtxForTestliststarexpr(leftAssign);
-        if(exprStmtCtx == null) {
-            return false;
-        }
-
-        if( ((Python3Parser.Expr_stmtContext) exprStmtCtx).testlist_star_expr_leftassign.equals(leftAssign)) {
+        if(testlistStarExpr.parent != null
+                && testlistStarExpr.parent instanceof Python3Parser.Testlist_star_expr_leftassignContext) {
             return true;
         }
         return false;
@@ -98,24 +100,24 @@ public class PyContextHelper {
 
     /**
      *
-     * expr_stmt: testlist_star_expr_augaassign=testlist_star_expr augassign (yield_expr|testlist);
+     * expr_stmt: testlist_star_expr_annaassign
+     | testlist_star_expr_augaassign
+     | testlist_star_expr_equaassign
+     ;
+     testlist_star_expr_augaassign: testlist_star_expr augassign (yield_expr|testlist);
      * @param ctx
      * @return
      */
     public boolean isAtomExprInLeftAugassignment(Python3Parser.Atom_exprContext ctx) {
-        RuleContext leftAugAssign = getTestliststarExprForAtomExpr(ctx);
-        if(leftAugAssign == null) {
+        RuleContext testlistStarExpr = getTestliststarExprForAtomExpr(ctx);
+        if(testlistStarExpr == null) {
             return false;
         }
 
-        RuleContext exprStmtCtx = getExprStmtCtxForTestliststarexpr(leftAugAssign);
-        if(exprStmtCtx == null) {
-            return false;
-        }
-
-        if( ((Python3Parser.Expr_stmtContext) exprStmtCtx).testlist_star_expr_augaassign.equals(leftAugAssign)) {
+       if(testlistStarExpr.parent != null
+               && testlistStarExpr.parent instanceof Python3Parser.Testlist_star_expr_augaassignContext) {
             return true;
-        }
+       }
         return false;
     }
 
@@ -128,22 +130,27 @@ public class PyContextHelper {
      */
     private RuleContext getTestliststarExprForAtomExpr(RuleContext ctx) {
         RuleContext newCtx = getTermCtxForAtomExpr(ctx);
+        //System.out.println("getTermCtxForAtomExpr:" + newCtx.getClass());
+
         newCtx = getExprCtxForTerm(newCtx);
+        //System.out.println("getExprCtxForTerm:" + newCtx.getClass());
+
         newCtx = getCompCtxForExpr(newCtx);
+        //System.out.println("getCompCtxForExpr:" + newCtx.getClass());
+
         newCtx = getOrtestCtxForComp(newCtx);
+        //System.out.println("getOrtestCtxForComp:" + newCtx.getClass());
+
         newCtx = getTestCtxForOrtest(newCtx);
+        //System.out.println("getTestCtxForOrtest:" + newCtx.getClass());
+
         newCtx = getTestListStarExprCtxForTest(newCtx);
+        //System.out.println("getTestListStarExprCtxForTest:" + newCtx.getClass());
         return newCtx;
     }
 
 
 
-    private RuleContext getExprStmtCtxForTestliststarexpr(RuleContext ctx) {
-        if(ctx != null && ctx.parent != null && ctx.parent instanceof Python3Parser.Expr_stmtContext) {
-            return ctx.parent;
-        }
-        return null;
-    }
     /**
      * get testlist_star_expr for test
      *
@@ -210,10 +217,9 @@ public class PyContextHelper {
      * @return
      */
     private RuleContext getCompCtxForExpr(RuleContext ctx) {
-        if(ctx != null && ctx.parent != null) {
-            ctx = ctx.parent;
-        }
-        if(ctx.parent != null && ctx.parent instanceof Python3Parser.ComparisonContext) {
+        if(ctx != null
+                && ctx.parent != null
+                && ctx.parent instanceof Python3Parser.ComparisonContext) {
             return ctx.parent;
         }
         return null;
