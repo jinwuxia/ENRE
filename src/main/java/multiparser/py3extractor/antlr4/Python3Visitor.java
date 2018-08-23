@@ -1,6 +1,5 @@
 // Generated from Python3.g4 by ANTLR 4.7.1
 package multiparser.py3extractor.antlr4;
-
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -113,6 +112,36 @@ public interface Python3Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExpr_stmt(Python3Parser.Expr_stmtContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Python3Parser#testlist_star_expr_annaassign}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTestlist_star_expr_annaassign(Python3Parser.Testlist_star_expr_annaassignContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Python3Parser#testlist_star_expr_augaassign}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTestlist_star_expr_augaassign(Python3Parser.Testlist_star_expr_augaassignContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Python3Parser#testlist_star_expr_equaassign}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTestlist_star_expr_equaassign(Python3Parser.Testlist_star_expr_equaassignContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Python3Parser#testlist_star_expr_leftassign}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTestlist_star_expr_leftassign(Python3Parser.Testlist_star_expr_leftassignContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Python3Parser#testlist_star_expr_rightassign}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTestlist_star_expr_rightassign(Python3Parser.Testlist_star_expr_rightassignContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Python3Parser#annassign}.
 	 * @param ctx the parse tree

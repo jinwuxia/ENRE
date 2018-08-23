@@ -170,10 +170,16 @@ small_stmt: (expr_stmt | del_stmt | pass_stmt | flow_stmt |
 //expr_stmt: testlist_star_expr (   annassign     | augassign (yield_expr|testlist)     |    ('=' (yield_expr|testlist_star_expr) )*     );
 
 //jwx modification
-expr_stmt: testlist_star_expr_annaassign=testlist_star_expr annassign
-         | testlist_star_expr_augaassign=testlist_star_expr augassign (yield_expr|testlist)
-         | testlist_star_expr_leftassign=testlist_star_expr ('=' (yield_expr|testlist_star_expr_rightassign=testlist_star_expr))*
+expr_stmt: testlist_star_expr_annaassign
+         | testlist_star_expr_augaassign
+         | testlist_star_expr_equaassign
          ;
+
+testlist_star_expr_annaassign: testlist_star_expr annassign;
+testlist_star_expr_augaassign: testlist_star_expr augassign (yield_expr|testlist);
+testlist_star_expr_equaassign: testlist_star_expr_leftassign ('=' (yield_expr|testlist_star_expr_rightassign))*;
+testlist_star_expr_leftassign: testlist_star_expr;
+testlist_star_expr_rightassign: testlist_star_expr;
 
 annassign: ':' test ('=' test)?;
 testlist_star_expr: (test|star_expr) (',' (test|star_expr))* (',')?;
