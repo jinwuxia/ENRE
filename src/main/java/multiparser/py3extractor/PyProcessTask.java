@@ -225,12 +225,12 @@ public class PyProcessTask {
                 //atom_expr is class variable: X
                 processClassVar(classId, str);
             }
-            else if(isInitMethod(functionId) && str.startsWith(ConstantString.SELF_DOT)) {
-                //atom_expr is a instance variable: x
+            else if(isInitMethod(functionId) && str.startsWith(ConstantString.SELF_DOT) && !isStrACallee(str)) {
+                //atom_expr is a instance variable: self.x, exclude self.y().
                 processInstVar(classId, str);
             }
-            else {//atom_expr is a local or global variable: x, or a local or global name: x.y
-                if(!str.contains(ConstantString.DOT)) { // a variable
+            else {
+                if(isStrAVar(str)) { //atom_expr is a local or global variable: x
                     processLocOrGloVar(parentId, str);
                 }
                 //it a local Name or global Name, save into Name
