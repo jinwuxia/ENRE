@@ -182,34 +182,35 @@ public class FinalRelation {
         }
     }
 
-    public void outputAllClassVars() {
-        System.out.println("\nClass vars:");
+
+    public void outputClassVarDetail() {
+        System.out.println("\nClass detail:");
         SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
         for(Entity entity : singleCollect.getEntities()) {
-            if(entity instanceof ClassVarEntity) {
+            if(entity instanceof ClassEntity) {
                 System.out.println(entity);
+                System.out.println("parent: " + singleCollect.getEntities().get(entity.getParentId()).getName());
+                for (int childId : entity.getChildrenIds()) {
+                    if(singleCollect.getEntities().get(childId) instanceof VarEntity) {
+                        System.out.println("child: " + singleCollect.getEntities().get(childId));
+                    }
+                }
             }
         }
     }
 
-    public void outputAllInstVars() {
-        System.out.println("\nInst vars:");
-        SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
-        for(Entity entity : singleCollect.getEntities()) {
-            if(entity instanceof InstVarEntity) {
-                System.out.println(entity);
-            }
-        }
-    }
 
-    public void outputAllLocOrGloVars() {
-        System.out.println("\nLocal or Global vars:");
+    public void outputGloVars() {
+        System.out.println("\nGlobal vars in modules:");
         SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
         for(Entity entity : singleCollect.getEntities()) {
-            if( entity instanceof VarEntity
-                && !(entity instanceof InstVarEntity)
-                && !(entity instanceof ClassVarEntity)) {
+            if( entity instanceof ModuleEntity) {
                 System.out.println(entity);
+                for (int childId : entity.getChildrenIds()) {
+                    if(singleCollect.getEntities().get(childId) instanceof VarEntity) {
+                        System.out.println("child var: " + singleCollect.getEntities().get(childId));
+                    }
+                }
             }
         }
     }
@@ -218,11 +219,7 @@ public class FinalRelation {
 
     public void outputAllFunctions() {
         for (Entity functionEntity : singleCollect.getEntities()) {
-            if (functionEntity instanceof FunctionEntity
-                    && !(functionEntity instanceof MethodEntity)
-                    && !(functionEntity instanceof ClassStaticMethodEntity)
-                    && !(functionEntity instanceof ClassMethodEntity)
-                    && !(functionEntity instanceof InstMethodEntity)) {
+            if (functionEntity instanceof FunctionEntity) {
                 System.out.println("Function: " + functionEntity.getName());
                 System.out.println("in file: " + singleCollect.getEntities().get(functionEntity.getParentId()).getName());
                 for(int id : ((FunctionEntity) functionEntity).getParameters()) {
@@ -244,9 +241,9 @@ public class FinalRelation {
                     System.out.println("---" + localBlock);
                 }
 
-                System.out.println("---name2IDmap:" + ((FunctionEntity) functionEntity).getName2IdMap());
-                System.out.println("---name2Rolemap:" + ((FunctionEntity) functionEntity).getName2RoleMap());
-                System.out.println("---name2Usagemap:" + ((FunctionEntity) functionEntity).getName2UsageMap());
+                //System.out.println("---name2IDmap:" + ((FunctionEntity) functionEntity).getName2IdMap());
+                //System.out.println("---name2Rolemap:" + ((FunctionEntity) functionEntity).getName2RoleMap());
+                //System.out.println("---name2Usagemap:" + ((FunctionEntity) functionEntity).getName2UsageMap());
                 System.out.println("\n");
             }// end if
         }//end for
