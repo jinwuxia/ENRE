@@ -1,9 +1,6 @@
 package multiparser.py3extractor;
 
-import multiparser.entity.FunctionEntity;
-import multiparser.entity.LocalName;
-import multiparser.entity.PackageEntity;
-import multiparser.entity.VarEntity;
+import multiparser.entity.*;
 import multiparser.extractor.SingleCollect;
 import multiparser.py3extractor.pyentity.*;
 
@@ -409,20 +406,16 @@ public class PyProcessTask {
 
     /**
      * the name with dot.
-     * it must be X.Y.  X should be already added into var, so just add X.Y into localName
+     * it must be X.Y.  X should be already added into var, so just add X into localName
      * @param parentId  moduleId or functionId
      * @param str
      */
     private void processNameWithDot(int parentId, String str, String usage) {
-        LocalName localName = new LocalName(str, -1, "", "");
-        localName.updateUsage(usage);
-        //maybe duplicated.
-        if (singleCollect.getEntities().get(parentId) instanceof ModuleEntity) {
-            ((ModuleEntity) singleCollect.getEntities().get(parentId)).addLocalName(localName);
-        }
-        else if(singleCollect.getEntities().get(parentId) instanceof FunctionEntity) {
-            ((FunctionEntity) singleCollect.getEntities().get(parentId)).addLocalName(localName);
-        }
+        //leave x alone from x.y
+        String[] arr = str.split("\\."); //cannot use ConstantString.DOT
+        str = arr[0];
+
+        processNameWithoutDot(parentId, str, usage);
     }
 
 
@@ -434,17 +427,90 @@ public class PyProcessTask {
      * @param str
      */
     private void processNameWithoutDot(int parentId, String str, String usage) {
-        LocalName localName = new LocalName(str, -1, "", "");
-        localName.updateUsage(usage);
-        //maybe duplicated.
-        if (singleCollect.getEntities().get(parentId) instanceof ModuleEntity) {
-            ((ModuleEntity) singleCollect.getEntities().get(parentId)).addLocalName(localName);
+        //maybe duplicated, check if exist.
+        if(str.equals("self")) {  //if local name = self, do not process, then return.
+            return;
         }
-        else if(singleCollect.getEntities().get(parentId) instanceof FunctionEntity) {
-            ((FunctionEntity) singleCollect.getEntities().get(parentId)).addLocalName(localName);
+
+        if(singleCollect.getEntities().get(parentId) instanceof ModuleEntity) {
+            processNameInModule(parentId, str, usage);
+        }
+        else if (singleCollect.getEntities().get(parentId) instanceof FunctionEntity) {
+            processNameInFunction(parentId, str, usage);
+        }
+
+    }
+
+
+    /** process name "x" in the module
+     *
+     * @param moduleId
+     * @param name
+     * @param usage
+     */
+    private void processNameInModule(int moduleId, String name, String usage) {
+        int localNameIndex = getLocalNameId(moduleId, name);
+        if(localNameIndex != -1) { //exist
+            ((ModuleEntity) singleCollect.getEntities().get(moduleId)).getLocalNames().get(localNameIndex).updateUsage(usage);
+            ((ModuleEntity) singleCollect.getEntities().get(moduleId)).getLocalNames().get(localNameIndex).updateWeighedUsage(usage);
+        }
+        else { //not exist
+            LocalName localName = new LocalName(name, -1, "", "");
+            localName.updateWeighedUsage(usage);
+            localName.updateUsage(usage);
+            ((ModuleEntity) singleCollect.getEntities().get(moduleId)).addLocalName(localName);
         }
     }
 
+
+    /**
+     * process name "x" in the function
+     * @param functionId
+     * @param name
+     * @param usage
+     */
+    private void processNameInFunction(int functionId, String name, String usage) {
+        int localNameIndex = getLocalNameId(functionId, name);
+        if(localNameIndex != -1) { //exist
+            ((FunctionEntity) singleCollect.getEntities().get(functionId)).getLocalNames().get(localNameIndex).updateUsage(usage);
+            ((FunctionEntity) singleCollect.getEntities().get(functionId)).getLocalNames().get(localNameIndex).updateWeighedUsage(usage);
+        }
+        else { //not exist
+            LocalName localName = new LocalName(name, -1, "", "");
+            localName.updateUsage(usage);
+            localName.updateWeighedUsage(usage);
+            ((FunctionEntity) singleCollect.getEntities().get(functionId)).addLocalName(localName);
+        }
+    }
+
+    /**
+     * get localname index in funciton or module
+     * @param parentId
+     * @param name
+     * @return
+     */
+    private int getLocalNameId(int parentId, String name) {
+        Entity entity = singleCollect.getEntities().get(parentId);
+        ArrayList<LocalName> localNames = null;
+
+        if(entity instanceof ModuleEntity) {
+            localNames = ((ModuleEntity) entity).getLocalNames();
+        }
+        else if(entity instanceof FunctionEntity) {
+            localNames = ((FunctionEntity) entity).getLocalNames();
+        }
+        if(localNames == null) {
+            return -1;
+        }
+
+        for (int index = 0; index < localNames.size(); index ++) {
+            LocalName localName = localNames.get(index);
+            if(localName.getName().equals(name)) {
+                return index;
+            }
+        }
+        return -1;
+    }
 
     /** judge str is a simple var or not
      * var does not contain "." and "(" and ")".

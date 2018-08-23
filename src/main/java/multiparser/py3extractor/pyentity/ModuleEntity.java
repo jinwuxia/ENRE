@@ -45,8 +45,9 @@ public class ModuleEntity extends FileEntity{
         this.localNames.add(localName);
     }
 
-
-
+    public ArrayList<LocalName> getLocalNames() {
+        return localNames;
+    }
 
     @Override
     public String toString() {

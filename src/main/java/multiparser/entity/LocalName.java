@@ -1,6 +1,7 @@
 package multiparser.entity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * LocalNameEntity is for the name appearing inside a function or method
@@ -16,6 +17,8 @@ public class LocalName{
     private String value;
     private int localBlockId;
     private ArrayList<String> usages = new ArrayList<String>(); //{"use", "set"} or {package}
+    //map={set, number}
+    private HashMap<String, Integer> weightedUsages = new HashMap<String, Integer>();
 
 
     public LocalName(String name, int localBlockId, String type, String value) {
@@ -71,6 +74,19 @@ public class LocalName{
         this.usages.add(usage);
     }
 
+    public HashMap<String, Integer> getWeightedUsages() {
+        return weightedUsages;
+    }
+
+    public void updateWeighedUsage(String usage) {
+        if(weightedUsages.containsKey(usage)) {
+            weightedUsages.put(usage, weightedUsages.get(usage) + 1);
+        }
+        else {
+            weightedUsages.put(usage, 1);
+        }
+    }
+
     @Override
     public String toString() {
         String str = "";
@@ -79,7 +95,8 @@ public class LocalName{
         str += ("localBlockId:" + localBlockId + ",");
         str += ("type:" + type + ",");
         str += ("value:" + value + ",");
-        str += ("usages:" + usages);
+        str += ("usages:" + usages + ",");
+        str += ("usages with weight:" + weightedUsages);
         str += ")";
         return str;
     }
