@@ -4,12 +4,14 @@ import multiparser.entity.FileEntity;
 import multiparser.entity.LocalName;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ModuleEntity extends FileEntity{
     private String moduleSimpleName; // without path, a simple name
 
     //init form of functioncalls
     private ArrayList<String> calledFunctions = new ArrayList<String>();
+    //private HashMap<String, Integer> calledWeightedFunctions = new HashMap<String, Integer>();
     protected ArrayList<LocalName> localNames = new ArrayList<LocalName>(); //the initial Names appear in a function
 
     public ModuleEntity(int moduleId, String name) {
@@ -32,6 +34,19 @@ public class ModuleEntity extends FileEntity{
     public void setCalledFunctions(ArrayList<String> calledFunctions) {
         this.calledFunctions = calledFunctions;
     }
+
+    /*public HashMap<String, Integer> getCalledWeightedFunctions() {
+        return calledWeightedFunctions;
+    }
+
+    public void updateCalledWeightedFunction(String calleeStr) {
+        if(calledWeightedFunctions.containsKey(calleeStr)) {
+            calledWeightedFunctions.put(calleeStr, calledWeightedFunctions.get(calleeStr) + 1);
+        }
+        else {
+            calledWeightedFunctions.put(calleeStr, 1);
+        }
+    }*/
 
     /**
      * even if calleeStr is already added, it still be added
@@ -58,7 +73,9 @@ public class ModuleEntity extends FileEntity{
         //str += ("packageId:" + packageId + ",");
         //str += ("includes:" + includedEntities + "\n");
         str += ("parentId:" + parentId + ",");
-        str += ("childrenIds:" + childrenIds + ")\n");
+        str += ("childrenIds:" + childrenIds + ",");
+        str += ("calledFunctions" + calledFunctions + ")\n");
+        //str += ("calledFunctions with weight" + calledWeightedFunctions + ")\n");
         return str;
     }
 }

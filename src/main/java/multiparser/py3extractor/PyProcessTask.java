@@ -374,7 +374,7 @@ public class PyProcessTask {
         if(isStrAVar(str)) { // without (), without dot
             processNameWithoutDot(moduleOrFunctionId,  str, usage);
         }
-        else if(isStrACallee(str)) { //such as x.y(), y()
+        else if(isStrACallee(str)) { //such as x.y(), y(), self.y()
             processCallee(moduleOrFunctionId, str);
         }
         else if(isStrAObjectAttribute(str)) { //with dot, but without (). such as x.y
@@ -542,16 +542,20 @@ public class PyProcessTask {
 
 
     /**
-     * just add to list (may be duplicated), process further int the future.
+     *
      * @param parentId moduleId or functionId
-     * @param str
+     * @param str  callee fun form with parameter
      */
     private void processCallee(int parentId, String str) {
         if(singleCollect.getEntities().get(parentId) instanceof ModuleEntity) {
             ((ModuleEntity) singleCollect.getEntities().get(parentId)).addFunctionCall(str);
+            //((ModuleEntity) singleCollect.getEntities().get(parentId)).updateCalledWeightedFunction(str);
+
         }
         else if (singleCollect.getEntities().get(parentId) instanceof FunctionEntity) {
             ((FunctionEntity) singleCollect.getEntities().get(parentId)).addCalledFunction(str);
+            //((FunctionEntity) singleCollect.getEntities().get(parentId)).updateCalledWeightedFunction(str);
+
         }
     }
 

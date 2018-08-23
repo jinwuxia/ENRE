@@ -8,6 +8,7 @@ public class FunctionEntity extends Entity {
     protected ArrayList<Integer> parameters = new ArrayList<Integer>();
     protected ArrayList<Integer> returns = new ArrayList<Integer>();
     protected ArrayList<String> calledFunctions = new ArrayList<String>();
+    //protected HashMap<String, Integer> calledWeightedFunctions = new HashMap<String, Integer>();
 
     //generate in the first visit. will be further processed in the second visit.
     //in the second visit, all these information is atored in name2IdMap, name2UsageMap, name2RoleMap.
@@ -66,6 +67,19 @@ public class FunctionEntity extends Entity {
     public ArrayList<String> getCalledFunctions() {
         return calledFunctions;
     }
+
+   /* public HashMap<String, Integer> getCalledWeightedFunctions() {
+        return calledWeightedFunctions;
+    }
+
+    public void updateCalledWeightedFunction(String calleeStr) {
+        if(calledWeightedFunctions.containsKey(calleeStr)) {
+            calledWeightedFunctions.put(calleeStr, calledWeightedFunctions.get(calleeStr) + 1);
+        }
+        else {
+            calledWeightedFunctions.put(calleeStr, 1);
+        }
+    }*/
 
     /**
      * multiparser.goextractor.search the localName under same localBlock or parentBlock,
