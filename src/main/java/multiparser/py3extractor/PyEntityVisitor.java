@@ -264,7 +264,6 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
         }
         if(ctx.trailer() != null && !ctx.trailer().isEmpty()) {
             for (Python3Parser.TrailerContext trailerContext : ctx.trailer()) {
-
                 if(trailerContext instanceof Python3Parser.AttributetrailerContext) {
                     str += visitAttributetrailer((Python3Parser.AttributetrailerContext) trailerContext);
                 }
@@ -277,13 +276,16 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
             }
         }
 
-        String usage = ConstantString.NAME_USAGE_USE; //default usage
-        if(contextHelper.isAtomExprInLeft(ctx)) {
-            usage = ConstantString.NAME_USAGE_SET;
-        }
-        //if it is "", it must bse literal tring, number, [...], (...), none, true, false,..
+        //if it is "", it must bse literal string, number, [...], (...), none, true, false,..
         if(!str.equals(ConstantString.NULL_STRING)) {
-            processTask.processAtomExpr(moduleId, classId, functionId, str, usage);
+            String usage = ConstantString.NAME_USAGE_USE; //default usage
+            boolean isLeftAssign = contextHelper.isAtomExprInLeftAssignment(ctx);
+            boolean isLeftAugAssign = contextHelper.isAtomExprInLeftAugassignment(ctx);
+            System.out.println(str + ", isLeftAssignment= " +  isLeftAssign + "; isLeftAugAssign= " + isLeftAugAssign);
+            if(isLeftAssign || isLeftAugAssign) {
+                usage = ConstantString.NAME_USAGE_SET;
+            }
+            processTask.processAtomExpr(isLeftAssign, moduleId, classId, functionId, str, usage);
         }
         return str;
     }

@@ -9,8 +9,6 @@ import multiparser.py3extractor.pyentity.*;
 
 import java.util.ArrayList;
 
-import static java.lang.System.exit;
-
 public class PyProcessTask {
 
     SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
@@ -204,49 +202,53 @@ public class PyProcessTask {
     }
 
 
+
     /**
      * process atom_expr: note, here atom_expr only include names but not string_literal , number_literal...
+     * only name appears in left assign, it may be a var
+     *
+     * @param isLeftAssign
      * @param moduleId
      * @param classId
      * @param functionId
      * @param str
+     * @param usage
      */
-    public void processAtomExpr(int moduleId, int classId, int functionId, String str, String usage) {
-        //atom_expr is class variable: X
-        if(classId != -1 && functionId == -1) {
-            processClassVar(classId, str);
+    public void processAtomExpr(boolean isLeftAssign, int moduleId, int classId, int functionId, String str, String usage) {
+        int parentId = moduleId;
+        if(functionId != -1) {
+            parentId = functionId;
         }
-        //atom_expr is a simple variable in global scope: x, __name__, __main__, x.y, x.y(),x/new()
-        else if (classId == -1 && functionId == -1) {
-            processGlobalOrLocalName(moduleId, str, usage);
-        }
-        //atom_expr is a simple variable in function scope: x, x.y, x.y(), x/new()
-        else if (classId == -1 && functionId != -1) {
-            processGlobalOrLocalName(functionId, str, usage);
-        }
-        //atom_expr is  variable in method scope: self.X, x, x.y, x.y(), x/new()
-        else{ // classId != -1 && functionId != -1
-            if(isInitMethod(functionId) && str.startsWith(ConstantString.SELF_DOT)) {
+        //only appear in left assign, it may be a new varibaleEntity
+        if(isLeftAssign) {
+            if(classId != -1 && functionId == -1) {
+                //atom_expr is class variable: X
+                processClassVar(classId, str);
+            }
+            else if(isInitMethod(functionId) && str.startsWith(ConstantString.SELF_DOT)) {
+                //atom_expr is a instance variable: x
                 processInstVar(classId, str);
             }
-            else {  //regular a var inside a method
-                processGlobalOrLocalName(functionId, str, usage);
+            else {//atom_expr is a local or global variable: x, or a local or global name: x.y
+                if(!str.contains(ConstantString.DOT)) { // a variable
+                    processLocOrGloVar(parentId, str);
+                }
+                //it a local Name or global Name, save into Name
+                processLocOrGloName(parentId, str, usage);
             }
-
         }
-
-        //atom_expr is functionCall: X(...) or new a class object
-        //atom_expr is object's variable reference: x.y
-        //atom_expr is object's method reference/call: x.y()
+        //it a local Name or global Name:  self.X, x, x.y, x.y(), x/new()
+        else {
+            processLocOrGloName(parentId, str, usage);
+        }
     }
-
 
     /**
      * process class variable
      * @param classId
      * @param str  a class variable
      */
-    public void processClassVar(int classId, String str) {
+    private void processClassVar(int classId, String str) {
         int varId = singleCollect.getCurrentIndex();
         //it should not be duplicated
         ClassVarEntity classVarEntity = new ClassVarEntity(varId, str);
@@ -261,7 +263,7 @@ public class PyProcessTask {
      * @param classId
      * @param str a instance variable: self.x
      */
-    public void processInstVar(int classId, String str) {
+    private void processInstVar(int classId, String str) {
         //it should not be duplicated
         if(str.startsWith(ConstantString.SELF_DOT)) {
             String varName = str.substring(ConstantString.SELF_DOT.length(), str.length());
@@ -274,6 +276,22 @@ public class PyProcessTask {
         }
     }
 
+    /** process global var inside a module, or local var inside a function.
+     * class var and instVar has been processed in single way, see processClassVar() and processInstVar()
+     * new varEntity, and save
+     * @param moduleOrFunctionId
+     * @param str
+     */
+    private void processLocOrGloVar(int moduleOrFunctionId, String str) {
+        int varId = singleCollect.getCurrentIndex();
+        VarEntity varEntity = new VarEntity(varId, "", str);
+        varEntity.setParentId(moduleOrFunctionId);
+        singleCollect.getEntities().add(varEntity);
+
+        singleCollect.getEntities().get(moduleOrFunctionId).addChildId(varId);
+    }
+
+
     /**
      * process name in global scope(module) or local scope(function)
      * str is a simple variable in global scope: x, __name__, __main__, x.y, x.y(),x/new(), self.x
@@ -281,17 +299,16 @@ public class PyProcessTask {
      * @param str
      * @param usage
      */
-    public void processGlobalOrLocalName(int moduleOrFunctionId, String str, String usage) {
+    private void processLocOrGloName(int moduleOrFunctionId, String str, String usage) {
         if(isStrAVar(str)) { // without (), without dot
-            processLocOrGloVar(moduleOrFunctionId, str);
             processNameWithoutDot(moduleOrFunctionId,  str, usage);
         }
-        else if(isStrACallee(str)) { //with ()
+        else if(isStrACallee(str)) { //such as x.y(), y()
             processCallee(moduleOrFunctionId, str);
         }
-        else if(isStrAObjectAttribute(str)) { //with dot, but without ()
+        else if(isStrAObjectAttribute(str)) { //with dot, but without (). such as x.y
             //because the name has dot: x.y, so x should be already appear in var in a separate way.
-            processNameWithDot(moduleOrFunctionId,  str, usage);
+            processNameWithDot(moduleOrFunctionId, str, usage);
         }
     }
 
@@ -382,20 +399,7 @@ public class PyProcessTask {
         return false;
     }
 
-    /** process global var inside a module, or local var inside a function.
-     * class var and instVar has been processed in single way, see processClassVar() and processInstVar()
-     * new varEntity, and save
-     * @param moduleOrFunctionId
-     * @param str
-     */
-    private void processLocOrGloVar(int moduleOrFunctionId, String str) {
-        int varId = singleCollect.getCurrentIndex();
-        VarEntity varEntity = new VarEntity(varId, "", str);
-        varEntity.setParentId(moduleOrFunctionId);
-        singleCollect.getEntities().add(varEntity);
 
-        singleCollect.getEntities().get(moduleOrFunctionId).addChildId(varId);
-    }
 
     /**
      * just add to list (may be duplicated), process further int the future.

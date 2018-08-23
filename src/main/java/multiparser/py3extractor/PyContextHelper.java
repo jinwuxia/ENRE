@@ -78,7 +78,7 @@ public class PyContextHelper {
      * @param ctx
      * @return
      */
-    private boolean isAtomExprInLeftAssignment(Python3Parser.Atom_exprContext ctx) {
+    public boolean isAtomExprInLeftAssignment(Python3Parser.Atom_exprContext ctx) {
         RuleContext leftAssign = getTestliststarExprForAtomExpr(ctx);
         if(leftAssign == null) {
             return false;
@@ -102,7 +102,7 @@ public class PyContextHelper {
      * @param ctx
      * @return
      */
-    private boolean isAtomExprInLeftAugassignment(Python3Parser.Atom_exprContext ctx) {
+    public boolean isAtomExprInLeftAugassignment(Python3Parser.Atom_exprContext ctx) {
         RuleContext leftAugAssign = getTestliststarExprForAtomExpr(ctx);
         if(leftAugAssign == null) {
             return false;
