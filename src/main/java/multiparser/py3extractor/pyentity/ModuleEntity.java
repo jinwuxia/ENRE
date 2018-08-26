@@ -12,7 +12,10 @@ public class ModuleEntity extends FileEntity{
     //init form of functioncalls
     private ArrayList<String> calledFunctions = new ArrayList<String>();
     //private HashMap<String, Integer> calledWeightedFunctions = new HashMap<String, Integer>();
-    protected ArrayList<LocalName> localNames = new ArrayList<LocalName>(); //the initial Names appear in a function
+    private ArrayList<LocalName> localNames = new ArrayList<LocalName>(); //the initial Names appear in a function
+
+    private ArrayList<ImportStmt> importStmts = new ArrayList<ImportStmt>();
+
 
     public ModuleEntity(int moduleId, String name) {
         this.id = moduleId;
@@ -64,6 +67,18 @@ public class ModuleEntity extends FileEntity{
         return localNames;
     }
 
+    public ArrayList<ImportStmt> getImportStmts() {
+        return importStmts;
+    }
+
+    public void addImportStmt(ImportStmt stmt) {
+        importStmts.add(stmt);
+    }
+    public void addImportStmts(ArrayList<ImportStmt> stmts) {
+        importStmts.addAll(stmts);
+    }
+
+
     @Override
     public String toString() {
         String str = "";
@@ -74,7 +89,8 @@ public class ModuleEntity extends FileEntity{
         //str += ("includes:" + includedEntities + "\n");
         str += ("parentId:" + parentId + ",");
         str += ("childrenIds:" + childrenIds + ",");
-        str += ("calledFunctions" + calledFunctions + ")\n");
+        str += ("calledFunctions:" + calledFunctions + ",");
+        str += ("imports:" + importStmts + ")\n");
         //str += ("calledFunctions with weight" + calledWeightedFunctions + ")\n");
         return str;
     }
