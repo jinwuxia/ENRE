@@ -242,6 +242,8 @@ public class FinalRelation {
                 }
 
                 System.out.println("---calledfunctions" + ((FunctionEntity) functionEntity).getCalledFunctions());
+
+                System.out.println("---imports: " + ((FunctionEntity) functionEntity).getImportStmts());
                 //System.out.println("---calledfunctions with weight" + ((FunctionEntity) functionEntity).getCalledWeightedFunctions());
 
                 //System.out.println("---name2IDmap:" + ((FunctionEntity) functionEntity).getName2IdMap());
