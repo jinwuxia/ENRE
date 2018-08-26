@@ -99,7 +99,7 @@ public class PyProcessTask {
      */
     public int processFunction(int moduleId, String functionName, String paraStrs) {
         int functionId = singleCollect.getCurrentIndex();
-        FunctionEntity functionEntity = new FunctionEntity(functionId, functionName);
+        PyFunctionEntity functionEntity = new PyFunctionEntity(functionId, functionName);
         functionEntity.setParentId(moduleId);
         singleCollect.addEntity(functionEntity);
         singleCollect.getEntities().get(moduleId).addChildId(functionId);
@@ -120,7 +120,7 @@ public class PyProcessTask {
      */
     public int processMethod(String methodDecorators, int classId, String functionName, String paraStrs) {
         int functionId = singleCollect.getCurrentIndex();
-        FunctionEntity functionEntity;
+        PyFunctionEntity functionEntity;
         if (methodDecorators.equals(ConstantString.NULL_STRING)) {
             functionEntity = new InstMethodEntity(functionId, functionName);
         }
@@ -158,7 +158,7 @@ public class PyProcessTask {
             singleCollect.addEntity(paraVarEntity); // its parent id is not the functionID.
 
             // set parameters
-            ( (FunctionEntity) singleCollect.getEntities().get(functionId)).addParameter(paraId);
+            ( (PyFunctionEntity) singleCollect.getEntities().get(functionId)).addParameter(paraId);
         }
     }
 
@@ -309,7 +309,7 @@ public class PyProcessTask {
         if(functionId == -1) {
             return false;
         }
-        if(!(singleCollect.getEntities().get(functionId) instanceof FunctionEntity)) {
+        if(!(singleCollect.getEntities().get(functionId) instanceof PyFunctionEntity)) {
             return false;
         }
         for (int childId : singleCollect.getEntities().get(functionId).getChildrenIds()) {
@@ -333,10 +333,10 @@ public class PyProcessTask {
         if(functionId == -1) {
             return false;
         }
-        if(!(singleCollect.getEntities().get(functionId) instanceof FunctionEntity)) {
+        if(!(singleCollect.getEntities().get(functionId) instanceof PyFunctionEntity)) {
             return false;
         }
-        for (int parameterId : ((FunctionEntity) singleCollect.getEntities().get(functionId)).getParameters()) {
+        for (int parameterId : ((PyFunctionEntity) singleCollect.getEntities().get(functionId)).getParameters()) {
             if(singleCollect.getEntities().get(parameterId).getName().equals(str)) {
                 return true;
             }
@@ -438,7 +438,7 @@ public class PyProcessTask {
         if(singleCollect.getEntities().get(parentId) instanceof ModuleEntity) {
             processNameInModule(parentId, str, usage);
         }
-        else if (singleCollect.getEntities().get(parentId) instanceof FunctionEntity) {
+        else if (singleCollect.getEntities().get(parentId) instanceof PyFunctionEntity) {
             processNameInFunction(parentId, str, usage);
         }
 
@@ -475,14 +475,14 @@ public class PyProcessTask {
     private void processNameInFunction(int functionId, String name, String usage) {
         int localNameIndex = getLocalNameId(functionId, name);
         if(localNameIndex != -1) { //exist
-            ((FunctionEntity) singleCollect.getEntities().get(functionId)).getLocalNames().get(localNameIndex).updateUsage(usage);
-            ((FunctionEntity) singleCollect.getEntities().get(functionId)).getLocalNames().get(localNameIndex).updateWeighedUsage(usage);
+            ((PyFunctionEntity) singleCollect.getEntities().get(functionId)).getLocalNames().get(localNameIndex).updateUsage(usage);
+            ((PyFunctionEntity) singleCollect.getEntities().get(functionId)).getLocalNames().get(localNameIndex).updateWeighedUsage(usage);
         }
         else { //not exist
             LocalName localName = new LocalName(name, -1, "", "");
             localName.updateUsage(usage);
             localName.updateWeighedUsage(usage);
-            ((FunctionEntity) singleCollect.getEntities().get(functionId)).addLocalName(localName);
+            ((PyFunctionEntity) singleCollect.getEntities().get(functionId)).addLocalName(localName);
         }
     }
 
@@ -499,8 +499,8 @@ public class PyProcessTask {
         if(entity instanceof ModuleEntity) {
             localNames = ((ModuleEntity) entity).getLocalNames();
         }
-        else if(entity instanceof FunctionEntity) {
-            localNames = ((FunctionEntity) entity).getLocalNames();
+        else if(entity instanceof PyFunctionEntity) {
+            localNames = ((PyFunctionEntity) entity).getLocalNames();
         }
         if(localNames == null) {
             return -1;
@@ -555,8 +555,8 @@ public class PyProcessTask {
             //((ModuleEntity) singleCollect.getEntities().get(parentId)).updateCalledWeightedFunction(str);
 
         }
-        else if (singleCollect.getEntities().get(parentId) instanceof FunctionEntity) {
-            ((FunctionEntity) singleCollect.getEntities().get(parentId)).addCalledFunction(str);
+        else if (singleCollect.getEntities().get(parentId) instanceof PyFunctionEntity) {
+            ((PyFunctionEntity) singleCollect.getEntities().get(parentId)).addCalledFunction(str);
             //((FunctionEntity) singleCollect.getEntities().get(parentId)).updateCalledWeightedFunction(str);
 
         }
@@ -624,8 +624,8 @@ public class PyProcessTask {
      */
     private void saveImportsInFuncOrModule(ArrayList<ImportStmt> importStmts, int functionOrModuleId) {
         if(functionOrModuleId != -1) {
-            if(singleCollect.getEntities().get(functionOrModuleId) instanceof FunctionEntity) {
-                ((FunctionEntity) singleCollect.getEntities().get(functionOrModuleId)).addImportStmts(importStmts);
+            if(singleCollect.getEntities().get(functionOrModuleId) instanceof PyFunctionEntity) {
+                ((PyFunctionEntity) singleCollect.getEntities().get(functionOrModuleId)).addImportStmts(importStmts);
             }
             else if(singleCollect.getEntities().get(functionOrModuleId) instanceof ModuleEntity) {
                 ((ModuleEntity) singleCollect.getEntities().get(functionOrModuleId)).addImportStmts(importStmts);

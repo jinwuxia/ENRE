@@ -26,7 +26,6 @@ public class FunctionEntity extends Entity {
     //generate in the first visit. it will be used for localName multiparser.goextractor.search.
     protected ArrayList<LocalBlock> localBlocks = new ArrayList<LocalBlock>();
 
-    protected ArrayList<ImportStmt> importStmts = new ArrayList<ImportStmt>();
 
     public FunctionEntity() {}
 
@@ -182,17 +181,7 @@ public class FunctionEntity extends Entity {
     }
 
 
-    public ArrayList<ImportStmt> getImportStmts() {
-        return importStmts;
-    }
 
-    public void addImportStmt(ImportStmt stmt) {
-        importStmts.add(stmt);
-    }
-
-    public void addImportStmts(ArrayList<ImportStmt> stmts) {
-        importStmts.addAll(stmts);
-    }
 
     @Override
     public String toString() {
