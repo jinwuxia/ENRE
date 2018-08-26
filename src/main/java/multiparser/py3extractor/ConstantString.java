@@ -8,6 +8,8 @@ public class ConstantString {
     public static final String LEFT_PARENTHESES = "(";
     public static final String RIGHT_PARENTHESES = ")";
     public static final String DOT = ".";
+    public static final String SEMICOLON = ";";
+    public static final String STAR = "*";
 
     public static final String INIT_FILE_NAME = "__init__.py";
     public static final String CLASS_STATIC_METHOD = "staticmethod";

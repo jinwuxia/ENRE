@@ -484,4 +484,157 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
         return firstExprStr;
     }
 
+
+    /**
+     *
+     import_from: ('from' (('.' | '...')* dotted_name | ('.' | '...')+)
+                 'import' ('*' | '(' import_as_names ')' | import_as_names));
+     */
+    @Override
+    public String visitImport_from(Python3Parser.Import_fromContext ctx) {
+        String from = "";
+        String importStr = "";
+        String str = "";
+
+        if(ctx == null) {
+            return str;
+        }
+        if(ctx.dotted_name() != null) {
+            from = visitDotted_name(ctx.dotted_name());
+        }
+        if(ctx.children.get(3).getText().equals(ConstantString.STAR)) {
+            importStr = ConstantString.STAR;
+        }
+        if(ctx.import_as_names() != null) {
+            importStr = visitImport_as_names(ctx.import_as_names());
+        }
+        if(functionId != -1) {
+            //System.out.println("process in from function: " + importStr);
+            processTask.processFromImport(from, importStr, functionId);
+        }
+        else {
+            //System.out.println("process in from module: " + importStr);
+            processTask.processFromImport(from, importStr, moduleId);
+        }
+        return str;
+    }
+
+    /**
+     * import_as_names: import_as_name (',' import_as_name)* (',')?;
+     * @param ctx
+     * @return
+     */
+    @Override
+    public String visitImport_as_names(Python3Parser.Import_as_namesContext ctx) {
+        String str = "";
+        if(ctx == null) {
+            return str;
+        }
+        if(ctx.import_as_name() != null && !ctx.import_as_name().isEmpty()) {
+            str = visitImport_as_name(ctx.import_as_name(0));
+            for (int i = 1; i < ctx.import_as_name().size(); i ++) {
+                str += ConstantString.COMMA;
+                str += visitImport_as_name(ctx.import_as_name(i));
+            }
+        }
+        return str;
+    }
+
+    /**
+     * import_as_name: NAME ('as' NAME)?;
+     * x;y
+     * @param ctx
+     * @return
+     */
+    @Override
+    public String visitImport_as_name(Python3Parser.Import_as_nameContext ctx) {
+        String str = "";
+        if(ctx == null) {
+            return str;
+        }
+        if(ctx.NAME() != null && !ctx.NAME().isEmpty()) {
+            str += ctx.NAME(0);
+            if(ctx.NAME().size() > 1) {
+                str += ConstantString.SEMICOLON;
+                str += ctx.NAME(1);
+            }
+        }
+        return str;
+    }
+
+    /**
+     * import_stmt: import_name | import_from;
+     * import_name: 'import' dotted_as_names;
+     * @param ctx
+     * @return
+     */
+    @Override
+    public String visitImport_name(Python3Parser.Import_nameContext ctx) {
+        String str = "";
+        if(ctx == null) {
+            return str;
+        }
+        if(ctx.dotted_as_names() != null) {
+            str = visitDotted_as_names(ctx.dotted_as_names());
+            if(functionId != -1) {
+                //System.out.println("process in function: " + str);
+                processTask.processImportName(str, functionId);
+            }
+            else {
+                //System.out.println("process in module: " + str);
+                processTask.processImportName(str, moduleId);
+            }
+        }
+        return str;
+    }
+
+    /**
+     * dotted_as_names: dotted_as_name (',' dotted_as_name)*;
+     * @param ctx
+     * @return x;y, m;n, z,l
+     */
+    @Override
+    public String visitDotted_as_names(Python3Parser.Dotted_as_namesContext ctx) {
+        String str = "";
+        if(ctx == null) {
+            return str;
+        }
+        if(ctx.dotted_as_name() == null) {
+            return str;
+        }
+        if(ctx.dotted_as_name().isEmpty()) {
+            return str;
+        }
+
+        str += visitDotted_as_name(ctx.dotted_as_name(0));
+        for (int i = 1; i < ctx.dotted_as_name().size(); i ++) {
+            str += (ConstantString.COMMA + visitDotted_as_name(ctx.dotted_as_name(i)));
+        }
+        return str;
+    }
+
+    /**
+     * dotted_as_name: dotted_name ('as' NAME)?;
+     * @param ctx
+     * @return xx;yy (import xx as yy)
+     */
+    @Override
+    public String visitDotted_as_name(Python3Parser.Dotted_as_nameContext ctx) {
+        String str = "";
+        if(ctx == null) {
+            return str;
+        }
+        if(ctx.dotted_name() != null) {
+            str += visitDotted_name(ctx.dotted_name());
+        }
+        if(ctx.NAME() != null) {
+            str += (ConstantString.SEMICOLON + ctx.NAME().getText());
+        }
+        return str;
+    }
+
+
+
+
+
 }

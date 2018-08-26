@@ -1,8 +1,11 @@
 package multiparser.py3extractor;
 
+import com.sun.tools.classfile.ConstantPool;
 import multiparser.entity.*;
 import multiparser.extractor.SingleCollect;
 import multiparser.py3extractor.pyentity.*;
+import org.omg.CORBA.IMP_LIMIT;
+import sun.security.pkcs11.Secmod;
 
 import java.util.ArrayList;
 
@@ -559,6 +562,76 @@ public class PyProcessTask {
         }
     }
 
+    /**
+     *
+     * @param from
+     * @param importStr
+     * @param functionOrModuleId
+     */
+    public void processFromImport(String from, String importStr, int functionOrModuleId) {
+        if(importStr.equals(ConstantString.NULL_STRING)) {
+            return;
+        }
+        ArrayList<ImportStmt> importStmts = new ArrayList<ImportStmt>();
+        String [] arr = importStr.split(ConstantString.COMMA);
+        for (String str : arr) {
+            String [] arr1 = str.split(ConstantString.SEMICOLON);
+            String impor = arr1[0];
+            String as = "";
+            if(arr1.length > 1) {
+                as = arr1[1];
+            }
+            ImportStmt importStmt = new ImportStmt(from, impor, as);
+            importStmts.add(importStmt);
+        }
+        saveImportsInFuncOrModule(importStmts, functionOrModuleId);
+    }
+
+
+
+    /**process import string
+     * impport str or imprt str1 as str2
+     * x1;y1, x2, x3, x4;y4
+     * @param importStr
+     * @param functionOrMoudleId
+     */
+    public void processImportName(String importStr, int functionOrMoudleId) {
+        if(importStr.equals(ConstantString.NULL_STRING)) {
+            return;
+        }
+
+        ArrayList<ImportStmt> importStmts = new ArrayList<ImportStmt>();
+        String from = "";
+        String [] arr = importStr.split(ConstantString.COMMA);
+        for (String str : arr) {
+            String [] arr1 = str.split(ConstantString.SEMICOLON);
+            String impor = arr1[0];
+            String as = "";
+            if(arr1.length > 1) {
+                as = arr1[1];
+            }
+            ImportStmt importStmt = new ImportStmt(from, impor, as);
+            importStmts.add(importStmt);
+        }
+        saveImportsInFuncOrModule(importStmts, functionOrMoudleId);
+    }
+
+
+    /**
+     * save import list into  module entity or function entity.
+     * @param importStmts
+     * @param functionOrModuleId
+     */
+    private void saveImportsInFuncOrModule(ArrayList<ImportStmt> importStmts, int functionOrModuleId) {
+        if(functionOrModuleId != -1) {
+            if(singleCollect.getEntities().get(functionOrModuleId) instanceof FunctionEntity) {
+                ((FunctionEntity) singleCollect.getEntities().get(functionOrModuleId)).addImportStmts(importStmts);
+            }
+            else if(singleCollect.getEntities().get(functionOrModuleId) instanceof ModuleEntity) {
+                ((ModuleEntity) singleCollect.getEntities().get(functionOrModuleId)).addImportStmts(importStmts);
+            }
+        }
+    }
 
 
 }
