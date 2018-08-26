@@ -25,6 +25,7 @@ public class PackageEntity extends Entity {
         str += ("fullpath:" + fullPath + ",");
         str += ("name:" + name + ",");
         str += ("childrenIds:" + childrenIds);
+        str += ("parentId:" + parentId);
         str += ")\n";
         return str;
     }

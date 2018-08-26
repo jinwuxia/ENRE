@@ -25,6 +25,7 @@ public class PythonWork extends TemplateWork {
 
     @Override
     protected void identifyDeps() {
-
+        BasicDepVisitor basicDepVisitor = new BasicDepVisitor();
+        basicDepVisitor.setDep();
     }
 }
