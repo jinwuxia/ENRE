@@ -242,8 +242,9 @@ public class FinalRelation {
                 }
 
                 System.out.println("---calledfunctions" + ((FunctionEntity) functionEntity).getCalledFunctions());
-
-                System.out.println("---imports: " + ((FunctionEntity) functionEntity).getImportStmts());
+                if(functionEntity instanceof PyFunctionEntity) {
+                    System.out.println("---imports: " + ((PyFunctionEntity) functionEntity).getImportStmts());
+                }
                 //System.out.println("---calledfunctions with weight" + ((FunctionEntity) functionEntity).getCalledWeightedFunctions());
 
                 //System.out.println("---name2IDmap:" + ((FunctionEntity) functionEntity).getName2IdMap());
