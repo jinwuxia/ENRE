@@ -114,8 +114,9 @@ abstract public class TemplateWork {
     public final void testRun() {
         FinalRelation relationOutput = new FinalRelation();
 
-        //relationOutput.outputAllpackages();
+        relationOutput.outputAllpackages();
         relationOutput.outputAllModules();
+
         //relationOutput.outputAllClasses();
         //relationOutput.outputAllClassStaticMethods();
         //relationOutput.outputAllClassMethods();
@@ -123,9 +124,9 @@ abstract public class TemplateWork {
 
 
         //test vars
-        relationOutput.outputClassVarDetail();
-        relationOutput.outputGloVars();
-        relationOutput.outputAllFunctions();
+        //relationOutput.outputClassVarDetail();
+        //relationOutput.outputGloVars();
+        //relationOutput.outputAllFunctions();
 
 
 
