@@ -53,7 +53,9 @@ public class PyProcessTask {
      */
     public int processModule(String fileName) {
         String[] tmpArr = fileName.split("/");
-        String moduleSimpleName = tmpArr[tmpArr.length - 1];
+        String tmp = tmpArr[tmpArr.length - 1];
+        String moduleSimpleName = tmp.split(ConstantString.DOT_PY)[0];
+
 
         int moduleId = singleCollect.getCurrentIndex();
         ModuleEntity moduleEntity = new ModuleEntity(moduleId, fileName);

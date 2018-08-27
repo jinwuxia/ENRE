@@ -11,6 +11,7 @@ public class ConstantString {
     public static final String SEMICOLON = ";";
     public static final String STAR = "*";
 
+    public static final String DOT_PY = ".py";
     public static final String INIT_FILE_NAME = "__init__.py";
     public static final String CLASS_STATIC_METHOD = "staticmethod";
     public static final String CLASS_METHOD = "classmethod";
@@ -32,6 +33,14 @@ public class ConstantString {
     public static final String ENTITY_INST_METHOD = "instance_method";
     public static final String ENTITY_FUNCTION = "function";
 
+
+    //module/function->package/module/object
+    public static final String RELATION_IMPORT = "Import";
+    public static final String RELATION_IMPORTED_BY = "Imported by";
+
+    //function-function; function->method; method->function; method->method
+    public static final String RELATION_CALL = "Call";
+    public static final String RELATION_CALLED_BY = "Called by";
 
     public static final String [] KEYWORDS =  {
             "False",
