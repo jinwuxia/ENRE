@@ -15,6 +15,8 @@ public class ModuleEntity extends FileEntity{
     private ArrayList<LocalName> localNames = new ArrayList<LocalName>(); //the initial Names appear in a function
 
     private ArrayList<ImportStmt> importStmts = new ArrayList<ImportStmt>();
+    private HashMap<Integer, Integer> importedId2Indexs = new HashMap<Integer, Integer>(); //[importedId, aboveIndex]
+
 
 
     public ModuleEntity(int moduleId, String name) {
@@ -76,6 +78,9 @@ public class ModuleEntity extends FileEntity{
     }
     public void addImportStmts(ArrayList<ImportStmt> stmts) {
         importStmts.addAll(stmts);
+    }
+    public void updateImportedId2Indexs(int importedId, int index)  {
+        importedId2Indexs.put(importedId, index);
     }
 
 

@@ -1,5 +1,6 @@
 package multiparser.py3extractor.visitor.secondpass;
 
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import multiparser.entity.Entity;
 import multiparser.entity.PackageEntity;
 import multiparser.extractor.SingleCollect;
@@ -8,6 +9,7 @@ import multiparser.py3extractor.pyentity.ImportStmt;
 import multiparser.py3extractor.pyentity.ModuleEntity;
 import multiparser.py3extractor.pyentity.PyFunctionEntity;
 import multiparser.util.Tuple;
+import sun.security.pkcs11.Secmod;
 
 
 import java.util.ArrayList;
@@ -133,6 +135,8 @@ public class BasicDepVisitor {
                 int scope = -1; //should get it based on from.
                 int id = findImportedEntity(impstr, scope);
                 if(id != -1) {
+                    //save (importedID, importsList_index) into entity
+                    saveId2Id(entity.getId(), id, index);
                     saveRelation(entity.getId(), id, ConstantString.RELATION_IMPORT, ConstantString.RELATION_IMPORTED_BY);
                 }
                 else  {
@@ -141,6 +145,7 @@ public class BasicDepVisitor {
             }
         }
     }
+
 
 
     /**
@@ -251,5 +256,22 @@ public class BasicDepVisitor {
                 new Tuple<String, Integer>(relationType2, entityId1);
         singleCollect.getEntities().get(entityId2).addRelation(relation2);
     }
+
+
+    /**
+     * save (importedID, importsList_index) into entity
+     * @param entityId
+     * @param importedId
+     * @param index
+     */
+    private void saveId2Id(int entityId, int importedId, int index) {
+        if(singleCollect.getEntities().get(entityId) instanceof ModuleEntity) {
+            ((ModuleEntity) singleCollect.getEntities().get(entityId)).updateImportedId2Indexs(importedId, index);
+        }
+        else if (singleCollect.getEntities().get(entityId) instanceof PyFunctionEntity) {
+            ((PyFunctionEntity) singleCollect.getEntities().get(entityId)).updateImportedId2Indexs(importedId, index);
+        }
+    }
+
 
 }
