@@ -1,4 +1,4 @@
-package multiparser.py3extractor;
+package multiparser.py3extractor.visitor.secondpass;
 
 import multiparser.entity.Entity;
 import multiparser.entity.PackageEntity;

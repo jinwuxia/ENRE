@@ -1,8 +1,9 @@
-package multiparser.py3extractor;
+package multiparser.py3extractor.visitor.firstpass;
 
 
 import multiparser.py3extractor.antlr4.Python3Lexer;
 import multiparser.py3extractor.antlr4.Python3Parser;
+import multiparser.py3extractor.visitor.firstpass.PyEntityVisitor;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;

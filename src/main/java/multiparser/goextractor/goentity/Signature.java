@@ -1,4 +1,4 @@
-package multiparser.goextractor;
+package multiparser.goextractor.goentity;
 
 import java.util.ArrayList;
 

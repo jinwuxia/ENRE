@@ -1,6 +1,8 @@
 package multiparser.py3extractor;
 
 import multiparser.extractor.TemplateWork;
+import multiparser.py3extractor.visitor.firstpass.FileParser;
+import multiparser.py3extractor.visitor.secondpass.BasicDepVisitor;
 import multiparser.util.Configure;
 import multiparser.util.FileUtil;
 

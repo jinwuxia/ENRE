@@ -1,5 +1,6 @@
-package multiparser.py3extractor;
+package multiparser.py3extractor.visitor.firstpass;
 
+import multiparser.py3extractor.ConstantString;
 import multiparser.py3extractor.antlr4.Python3BaseVisitor;
 import multiparser.py3extractor.antlr4.Python3Parser;
 
@@ -23,6 +24,7 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
             //its parent is a package or none. after finishing all packages, we should set the parentId for each package
             //save into singlecollection.entities.
             int packageId = processTask.processPackage(fileFullPath);
+            moduleId = processTask.processModule(fileFullPath);
         }
         //this file is a module
         else {
