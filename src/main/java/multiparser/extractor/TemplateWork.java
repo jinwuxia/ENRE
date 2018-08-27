@@ -117,16 +117,16 @@ abstract public class TemplateWork {
         relationOutput.outputAllpackages();
         relationOutput.outputAllModules();
 
-        //relationOutput.outputAllClasses();
-        //relationOutput.outputAllClassStaticMethods();
-        //relationOutput.outputAllClassMethods();
-        //relationOutput.outputAllInstMethods();
+        relationOutput.outputAllClasses();
+        relationOutput.outputAllClassStaticMethods();
+        relationOutput.outputAllClassMethods();
+        relationOutput.outputAllInstMethods();
 
 
         //test vars
-        //relationOutput.outputClassVarDetail();
-        //relationOutput.outputGloVars();
-        //relationOutput.outputAllFunctions();
+        relationOutput.outputClassVarDetail();
+        relationOutput.outputGloVars();
+        relationOutput.outputAllFunctions();
 
 
 

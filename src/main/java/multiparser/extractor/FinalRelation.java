@@ -148,6 +148,7 @@ public class FinalRelation {
         for(Entity entity : singleCollect.getEntities()) {
             if(entity instanceof ModuleEntity) {
                 System.out.println(entity);
+                System.out.println(entity.getRelations());
             }
         }
     }
@@ -245,6 +246,7 @@ public class FinalRelation {
                 if(functionEntity instanceof PyFunctionEntity) {
                     System.out.println("---imports: " + ((PyFunctionEntity) functionEntity).getImportStmts());
                 }
+                System.out.println(functionEntity.getRelations());
                 //System.out.println("---calledfunctions with weight" + ((FunctionEntity) functionEntity).getCalledWeightedFunctions());
 
                 //System.out.println("---name2IDmap:" + ((FunctionEntity) functionEntity).getName2IdMap());
