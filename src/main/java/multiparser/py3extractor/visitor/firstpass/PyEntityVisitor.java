@@ -489,7 +489,7 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
 
     /**
      *
-     import_from: ('from' (('.' | '...')* dotted_name | ('.' | '...')+)
+     import_from: ('from' (    ('.' | '...')* dotted_name        |         ('.' | '...')+      )
                  'import' ('*' | '(' import_as_names ')' | import_as_names));
      */
     @Override

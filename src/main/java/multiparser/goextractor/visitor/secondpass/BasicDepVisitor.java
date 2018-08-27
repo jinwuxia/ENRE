@@ -15,7 +15,7 @@ import java.util.Map;
  * second pass to fill the relationName with entityId
  */
 public class BasicDepVisitor {
-    SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
+    private SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
 
 
     public void setUnsuredDeps() {
