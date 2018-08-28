@@ -42,6 +42,11 @@ public class ConstantString {
     public static final String RELATION_CALL = "Call";
     public static final String RELATION_CALLED_BY = "Called by";
 
+    //class->class
+    public static final String RELATION_INHERIT = "Inherit";
+    public static final String RELATION_INHERITED = "Inherited by";
+
+
     public static final String [] KEYWORDS =  {
             "False",
             "class",

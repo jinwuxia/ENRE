@@ -1,36 +1,32 @@
 package multiparser.py3extractor.visitor.secondpass;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import multiparser.entity.Entity;
 import multiparser.entity.PackageEntity;
-import multiparser.extractor.SingleCollect;
 import multiparser.py3extractor.ConstantString;
 import multiparser.py3extractor.pyentity.ImportStmt;
 import multiparser.py3extractor.pyentity.ModuleEntity;
 import multiparser.py3extractor.pyentity.PyFunctionEntity;
-import multiparser.util.Tuple;
-import sun.security.pkcs11.Secmod;
 
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class BasicDepVisitor {
+public class ImportVisitor extends DepVisitor {
 
-    private SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
     private HashMap<String, Integer> pkg2IdMap = new HashMap<String, Integer>();
     private HashMap<String, Integer> mod2IdMap = new HashMap<String, Integer>();
 
-    public BasicDepVisitor() {
+    public ImportVisitor() {
         buildPkgMap(); //fullpathname->id
         //buildModuleMap(); //simplename->id
     }
 
+    @Override
     public void setDep() {
         bindPkg2Pkg();
         bindMod2Pkg();
 
-        setImportDep();
+        setImportDep(); //import
     }
 
     /**
@@ -239,23 +235,6 @@ public class BasicDepVisitor {
     }
 
 
-    /**
-     * relationType1: entityId1 -> entityId2
-     * relationType2: entityId2 -> entityId1
-     * @param entityId1
-     * @param entityId2
-     * @param relationType1
-     * @param relationType2
-     */
-    private void saveRelation(int entityId1, int entityId2, String relationType1, String relationType2) {
-        Tuple<String, Integer> relation1 =
-                new Tuple<String, Integer>(relationType1, entityId2);
-        singleCollect.getEntities().get(entityId1).addRelation(relation1);
-
-        Tuple<String, Integer> relation2 =
-                new Tuple<String, Integer>(relationType2, entityId1);
-        singleCollect.getEntities().get(entityId2).addRelation(relation2);
-    }
 
 
     /**
@@ -272,6 +251,12 @@ public class BasicDepVisitor {
             ((PyFunctionEntity) singleCollect.getEntities().get(entityId)).updateImportedId2Indexs(importedId, index);
         }
     }
+
+
+
+
+
+
 
 
 }

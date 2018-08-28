@@ -2,7 +2,9 @@ package multiparser.py3extractor;
 
 import multiparser.extractor.TemplateWork;
 import multiparser.py3extractor.visitor.firstpass.FileParser;
-import multiparser.py3extractor.visitor.secondpass.BasicDepVisitor;
+import multiparser.py3extractor.visitor.secondpass.DepVisitor;
+import multiparser.py3extractor.visitor.secondpass.ImportVisitor;
+import multiparser.py3extractor.visitor.secondpass.InheritVisitor;
 import multiparser.util.Configure;
 import multiparser.util.FileUtil;
 
@@ -27,7 +29,10 @@ public class PythonWork extends TemplateWork {
 
     @Override
     protected void identifyDeps() {
-        BasicDepVisitor basicDepVisitor = new BasicDepVisitor();
-        basicDepVisitor.setDep();
+        DepVisitor depVisitor = new ImportVisitor();
+        depVisitor.setDep();
+
+        depVisitor = new InheritVisitor();
+        depVisitor.setDep();
     }
 }
