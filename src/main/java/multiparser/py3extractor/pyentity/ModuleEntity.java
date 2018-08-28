@@ -83,6 +83,9 @@ public class ModuleEntity extends FileEntity{
         importedId2Indexs.put(importedId, index);
     }
 
+    public HashMap<Integer, Integer> getImportedId2Indexs() {
+        return importedId2Indexs;
+    }
 
     @Override
     public String toString() {

@@ -22,6 +22,9 @@ public class ClassEntity extends Entity{
         baseClassIdList.add(baseId);
     }
 
+    public ArrayList<String> getBaseClassNameList() {
+        return baseClassNameList;
+    }
 
     @Override
     public String toString() {
