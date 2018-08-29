@@ -1,12 +1,9 @@
 package multiparser.py3extractor.visitor.firstpass;
 
-import com.sun.tools.classfile.ConstantPool;
 import multiparser.entity.*;
 import multiparser.extractor.SingleCollect;
 import multiparser.py3extractor.ConstantString;
 import multiparser.py3extractor.pyentity.*;
-import org.omg.CORBA.IMP_LIMIT;
-import sun.security.pkcs11.Secmod;
 
 import java.util.ArrayList;
 
@@ -217,7 +214,8 @@ public class PyProcessTask {
      * @param str
      * @param usage
      */
-    public void processAtomExpr(boolean isLeftAssign, int moduleId, int classId, int functionId, String str, String usage) {
+    public int processAtomExpr(boolean isLeftAssign, int moduleId, int classId, int functionId, String str, String usage) {
+        int resId = -1;
         int parentId = moduleId;
         if(functionId != -1) {
             parentId = functionId;
@@ -226,24 +224,25 @@ public class PyProcessTask {
         if(isLeftAssign) {
             if(classId != -1 && functionId == -1) {
                 //atom_expr is class variable: X
-                processClassVar(classId, str);
+                resId = processClassVar(classId, str);
             }
             else if(isInitMethod(functionId) && str.startsWith(ConstantString.SELF_DOT) && !isStrACallee(str)) {
                 //atom_expr is a instance variable: self.x, exclude self.y().
-                processInstVar(classId, str);
+                resId = processInstVar(classId, str);
             }
             else {
                 if(isStrAVar(str)) { //atom_expr is a local or global variable: x
-                    processLocOrGloVar(parentId, str);
+                    resId = processLocOrGloVar(parentId, str);
                 }
                 //it a local Name or global Name, save into Name
-                processLocOrGloName(parentId, str, usage);
+                resId = processLocOrGloName(parentId, str, usage);
             }
         }
         //it a local Name or global Name:  self.X, x, x.y, x.y(), x/new()
         else {
-            processLocOrGloName(parentId, str, usage);
+            resId = processLocOrGloName(parentId, str, usage);
         }
+        return resId;
     }
 
     /**
@@ -251,7 +250,7 @@ public class PyProcessTask {
      * @param classId
      * @param str  a class variable
      */
-    private void processClassVar(int classId, String str) {
+    private int processClassVar(int classId, String str) {
         int varId = singleCollect.getCurrentIndex();
         //it should not be duplicated
         ClassVarEntity classVarEntity = new ClassVarEntity(varId, str);
@@ -259,6 +258,7 @@ public class PyProcessTask {
         singleCollect.getEntities().add(classVarEntity);
 
         singleCollect.getEntities().get(classId).addChildId(varId);
+        return varId;
     }
 
     /**
@@ -266,17 +266,16 @@ public class PyProcessTask {
      * @param classId
      * @param str a instance variable: self.x
      */
-    private void processInstVar(int classId, String str) {
+    private int processInstVar(int classId, String str) {
         //it should not be duplicated
-        if(str.startsWith(ConstantString.SELF_DOT)) {
-            String varName = str.substring(ConstantString.SELF_DOT.length(), str.length());
-            int varId = singleCollect.getCurrentIndex();
-            InstVarEntity instVarEntity = new InstVarEntity(varId, varName);
-            instVarEntity.setParentId(classId);
-            singleCollect.getEntities().add(instVarEntity);
+        String varName = str.substring(ConstantString.SELF_DOT.length(), str.length());
+        int varId = singleCollect.getCurrentIndex();
+        InstVarEntity instVarEntity = new InstVarEntity(varId, varName);
+        instVarEntity.setParentId(classId);
+        singleCollect.getEntities().add(instVarEntity);
+        singleCollect.getEntities().get(classId).addChildId(varId);
 
-            singleCollect.getEntities().get(classId).addChildId(varId);
-        }
+        return varId;
     }
 
     /**
@@ -285,21 +284,21 @@ public class PyProcessTask {
      * @param moduleId
      * @return
      */
-    private boolean IsRepeatedGlobalVar(String str, int moduleId) {
+    private int findRepeatedGlobalVar(String str, int moduleId) {
         if(moduleId == -1) {
-            return false;
+            return -1;
         }
         if(!(singleCollect.getEntities().get(moduleId) instanceof ModuleEntity)) {
-            return false;
+            return -1;
         }
         for (int childId : singleCollect.getEntities().get(moduleId).getChildrenIds()) {
             if(singleCollect.getEntities().get(childId) instanceof VarEntity) {
                 if(singleCollect.getEntities().get(childId).getName().equals(str)) {
-                    return true;
+                    return childId;
                 }
             }
         }
-        return false;
+        return -1;
     }
 
     /**
@@ -308,21 +307,21 @@ public class PyProcessTask {
      * @param functionId
      * @return
      */
-    private boolean IsRepeatedLocalVar(String str, int functionId) {
+    private int findRepeatedLocalVar(String str, int functionId) {
         if(functionId == -1) {
-            return false;
+            return -1;
         }
         if(!(singleCollect.getEntities().get(functionId) instanceof PyFunctionEntity)) {
-            return false;
+            return -1;
         }
         for (int childId : singleCollect.getEntities().get(functionId).getChildrenIds()) {
             if(singleCollect.getEntities().get(childId) instanceof VarEntity) {
                 if(singleCollect.getEntities().get(childId).getName().equals(str)) {
-                    return true;
+                    return childId;
                 }
             }
         }
-        return false;
+        return -1;
     }
 
 
@@ -332,19 +331,19 @@ public class PyProcessTask {
      * @param functionId
      * @return
      */
-    private boolean IsParameterVar(String str, int functionId) {
+    private int findParameterVar(String str, int functionId) {
         if(functionId == -1) {
-            return false;
+            return -1;
         }
         if(!(singleCollect.getEntities().get(functionId) instanceof PyFunctionEntity)) {
-            return false;
+            return -1;
         }
         for (int parameterId : ((PyFunctionEntity) singleCollect.getEntities().get(functionId)).getParameters()) {
             if(singleCollect.getEntities().get(parameterId).getName().equals(str)) {
-                return true;
+                return parameterId;
             }
         }
-        return false;
+        return -1;
     }
 
     /** process global var inside a module, or local var inside a function.
@@ -353,19 +352,28 @@ public class PyProcessTask {
      * @param moduleOrFunctionId
      * @param str
      */
-    private void processLocOrGloVar(int moduleOrFunctionId, String str) {
-        if(IsRepeatedGlobalVar(str, moduleOrFunctionId)
-                || IsRepeatedLocalVar(str, moduleOrFunctionId)
-                || IsParameterVar(str, moduleOrFunctionId)) {
-            return;
+    private int processLocOrGloVar(int moduleOrFunctionId, String str) {
+        int varId = -1;
+        varId = findRepeatedGlobalVar(str, moduleOrFunctionId);
+        if(varId != -1) {
+            return varId;
+        }
+        varId = findRepeatedLocalVar(str, moduleOrFunctionId);
+        if(varId != -1) {
+            return varId;
+        }
+        varId = findParameterVar(str, moduleOrFunctionId);
+        if(varId != -1){
+            return varId;
         }
 
-        int varId = singleCollect.getCurrentIndex();
+        varId = singleCollect.getCurrentIndex();
         VarEntity varEntity = new VarEntity(varId, "", str);
         varEntity.setParentId(moduleOrFunctionId);
         singleCollect.getEntities().add(varEntity);
 
         singleCollect.getEntities().get(moduleOrFunctionId).addChildId(varId);
+        return varId;
     }
 
 
@@ -376,17 +384,19 @@ public class PyProcessTask {
      * @param str
      * @param usage
      */
-    private void processLocOrGloName(int moduleOrFunctionId, String str, String usage) {
+    private int processLocOrGloName(int moduleOrFunctionId, String str, String usage) {
+        int resId = -1;
         if(isStrAVar(str)) { // without (), without dot
-            processNameWithoutDot(moduleOrFunctionId,  str, usage);
+            resId = processNameWithoutDot(moduleOrFunctionId,  str, usage);
         }
         else if(isStrACallee(str)) { //such as x.y(), y(), self.y()
-            processCallee(moduleOrFunctionId, str);
+            resId = processCallee(moduleOrFunctionId, str);
         }
         else if(isStrAObjectAttribute(str)) { //with dot, but without (). such as x.y
             //because the name has dot: x.y, so x should be already appear in var in a separate way.
-            processNameWithDot(moduleOrFunctionId, str, usage);
+            resId = processNameWithDot(moduleOrFunctionId, str, usage);
         }
+        return resId;
     }
 
 
@@ -416,12 +426,13 @@ public class PyProcessTask {
      * @param parentId  moduleId or functionId
      * @param str
      */
-    private void processNameWithDot(int parentId, String str, String usage) {
+    private int processNameWithDot(int parentId, String str, String usage) {
         //leave x alone from x.y
         String[] arr = str.split("\\."); //cannot use ConstantString.DOT
         str = arr[0];
 
-        processNameWithoutDot(parentId, str, usage);
+        int nameIndex = processNameWithoutDot(parentId, str, usage);
+        return nameIndex;
     }
 
 
@@ -432,18 +443,20 @@ public class PyProcessTask {
      * @param parentId  moduleId or functionId
      * @param str
      */
-    private void processNameWithoutDot(int parentId, String str, String usage) {
+    private int processNameWithoutDot(int parentId, String str, String usage) {
+        int nameIndex = -1;
         //maybe duplicated, check if exist.
         if(str.equals("self")) {  //if local name = self, do not process, then return.
-            return;
+            return nameIndex;
         }
 
         if(singleCollect.getEntities().get(parentId) instanceof ModuleEntity) {
-            processNameInModule(parentId, str, usage);
+            nameIndex = processNameInModule(parentId, str, usage);
         }
         else if (singleCollect.getEntities().get(parentId) instanceof PyFunctionEntity) {
-            processNameInFunction(parentId, str, usage);
+            nameIndex = processNameInFunction(parentId, str, usage);
         }
+        return nameIndex;
 
     }
 
@@ -454,18 +467,21 @@ public class PyProcessTask {
      * @param name
      * @param usage
      */
-    private void processNameInModule(int moduleId, String name, String usage) {
+    private int processNameInModule(int moduleId, String name, String usage) {
         int localNameIndex = getLocalNameId(moduleId, name);
         if(localNameIndex != -1) { //exist
             ((ModuleEntity) singleCollect.getEntities().get(moduleId)).getLocalNames().get(localNameIndex).updateUsage(usage);
             ((ModuleEntity) singleCollect.getEntities().get(moduleId)).getLocalNames().get(localNameIndex).updateWeighedUsage(usage);
         }
         else { //not exist
+            localNameIndex = ((ModuleEntity) singleCollect.getEntities().get(moduleId)).getLocalNames().size();
             LocalName localName = new LocalName(name, -1, "", "");
             localName.updateWeighedUsage(usage);
             localName.updateUsage(usage);
             ((ModuleEntity) singleCollect.getEntities().get(moduleId)).addLocalName(localName);
+
         }
+        return localNameIndex;
     }
 
 
@@ -475,18 +491,20 @@ public class PyProcessTask {
      * @param name
      * @param usage
      */
-    private void processNameInFunction(int functionId, String name, String usage) {
+    private int processNameInFunction(int functionId, String name, String usage) {
         int localNameIndex = getLocalNameId(functionId, name);
         if(localNameIndex != -1) { //exist
             ((PyFunctionEntity) singleCollect.getEntities().get(functionId)).getLocalNames().get(localNameIndex).updateUsage(usage);
             ((PyFunctionEntity) singleCollect.getEntities().get(functionId)).getLocalNames().get(localNameIndex).updateWeighedUsage(usage);
         }
         else { //not exist
+            localNameIndex = ((PyFunctionEntity) singleCollect.getEntities().get(functionId)).getLocalNames().size();
             LocalName localName = new LocalName(name, -1, "", "");
             localName.updateUsage(usage);
             localName.updateWeighedUsage(usage);
             ((PyFunctionEntity) singleCollect.getEntities().get(functionId)).addLocalName(localName);
         }
+        return localNameIndex;
     }
 
     /**
@@ -552,17 +570,19 @@ public class PyProcessTask {
      * @param parentId moduleId or functionId
      * @param str  callee fun form with parameter
      */
-    private void processCallee(int parentId, String str) {
+    private int processCallee(int parentId, String str) {
+        int nameIndex = -1;
         if(singleCollect.getEntities().get(parentId) instanceof ModuleEntity) {
+            nameIndex = ((ModuleEntity) singleCollect.getEntities().get(parentId)).getCalledFunctions().size();
             ((ModuleEntity) singleCollect.getEntities().get(parentId)).addFunctionCall(str);
             //((ModuleEntity) singleCollect.getEntities().get(parentId)).updateCalledWeightedFunction(str);
-
         }
         else if (singleCollect.getEntities().get(parentId) instanceof PyFunctionEntity) {
+            nameIndex = ((PyFunctionEntity) singleCollect.getEntities().get(parentId)).getCalledFunctions().size();
             ((PyFunctionEntity) singleCollect.getEntities().get(parentId)).addCalledFunction(str);
             //((FunctionEntity) singleCollect.getEntities().get(parentId)).updateCalledWeightedFunction(str);
-
         }
+        return nameIndex;
     }
 
     /**
