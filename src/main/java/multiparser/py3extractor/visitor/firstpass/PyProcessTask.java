@@ -202,6 +202,16 @@ public class PyProcessTask {
     }
 
 
+    /**
+     * save right value to the existed left var
+     * @param value
+     * @param leftId
+     */
+    public void processRightAssignValue(String value, int leftId) {
+        ((VarEntity) singleCollect.getEntities().get(leftId)).setValue(value);
+        System.out.println("left: " + singleCollect.getEntities().get(leftId).getName() + "; right: " + value);
+    }
+
 
     /**
      * process atom_expr: note, here atom_expr only include names but not string_literal , number_literal...
@@ -213,6 +223,7 @@ public class PyProcessTask {
      * @param functionId
      * @param str
      * @param usage
+     * return varID, or -1(if localName, not var)
      */
     public int processAtomExpr(boolean isLeftAssign, int moduleId, int classId, int functionId, String str, String usage) {
         int resId = -1;
@@ -235,12 +246,12 @@ public class PyProcessTask {
                     resId = processLocOrGloVar(parentId, str);
                 }
                 //it a local Name or global Name, save into Name
-                resId = processLocOrGloName(parentId, str, usage);
+                processLocOrGloName(parentId, str, usage);
             }
         }
         //it a local Name or global Name:  self.X, x, x.y, x.y(), x/new()
         else {
-            resId = processLocOrGloName(parentId, str, usage);
+            processLocOrGloName(parentId, str, usage);
         }
         return resId;
     }
@@ -584,6 +595,8 @@ public class PyProcessTask {
         }
         return nameIndex;
     }
+
+
 
     /**
      *

@@ -12,6 +12,7 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
     private int moduleId = -1;
     private int classId = -1;
     private int functionId = -1;
+    private int leftVarId = -1;
 
     private String classDecoration = ""; // once the classentity forms, clear it
     private String methodDecoration = ""; //once the methodentity forms, clear it
@@ -286,7 +287,16 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
                 }
             }
         }
+        furtherVisitAtomExpr(str, ctx);
+        return str;
+    }
 
+    /**
+     * process atom_expr, it maybe var name, callee, localname,....
+     * @param str
+     * @param ctx
+     */
+    private void furtherVisitAtomExpr(String str, Python3Parser.Atom_exprContext ctx) {
         //if it is "", it must bse literal string, number, [...], (...), none, true, false,..
         if(!str.equals(ConstantString.NULL_STRING)) {
             String usage = ConstantString.NAME_USAGE_USE; //default usage
@@ -296,9 +306,34 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
             if(isLeftAssign || isLeftAugAssign) {
                 usage = ConstantString.NAME_USAGE_SET;
             }
-            processTask.processAtomExpr(isLeftAssign, moduleId, classId, functionId, str, usage);
+            int nameId = processTask.processAtomExpr(isLeftAssign, moduleId, classId, functionId, str, usage);
+            //System.out.println(str + " " + nameId);
+            //the following is for post-processing the existed leftVar with rightValue
+            if(isLeftAssign) {
+                leftVarId = nameId;
+            }
+            else {
+                boolean isRightAssign = contextHelper.isAtomExprInRightAssignment(ctx);
+                if (isRightAssign && leftVarId != -1) {
+                    processTask.processRightAssignValue(str, leftVarId);
+                }
+            }
         }
-        return str;
+    }
+
+    /**
+     * testlist_star_expr_equaassign:
+                  testlist_star_expr_leftassign
+                  ('=' (yield_expr  |   testlist_star_expr_rightassign))*;
+
+     * @param ctx
+     * @return
+     */
+    @Override
+    public String visitTestlist_star_expr_equaassign(Python3Parser.Testlist_star_expr_equaassignContext ctx) {
+        super.visitTestlist_star_expr_equaassign(ctx);
+        leftVarId = -1;
+        return "";
     }
 
     /** only returns the name,

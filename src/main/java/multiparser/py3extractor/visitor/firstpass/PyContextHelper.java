@@ -101,6 +101,25 @@ public class PyContextHelper {
 
 
     /**
+     * similar to above:  isAtomExprInLeftAssignment()
+     * @param ctx
+     * @return
+     */
+    public boolean isAtomExprInRightAssignment(Python3Parser.Atom_exprContext ctx) {
+        RuleContext testlistStarExpr = getTestliststarExprForAtomExpr(ctx);
+        if(testlistStarExpr == null) {
+            return false;
+        }
+
+        if(testlistStarExpr.parent != null
+                && testlistStarExpr.parent instanceof Python3Parser.Testlist_star_expr_rightassignContext) {
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
      *
      * expr_stmt: testlist_star_expr_annaassign
      | testlist_star_expr_augaassign
