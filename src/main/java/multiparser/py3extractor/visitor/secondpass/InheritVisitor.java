@@ -14,15 +14,15 @@ public class InheritVisitor extends DepVisitor{
             if(entity instanceof ClassEntity) {
                 for (String baseClassStr : ((ClassEntity) entity).getBaseClassNameList()) {
                     int baseId = findBaseClass(baseClassStr, entity.getId());
-                    
+
                     ((ClassEntity) singleCollect.getEntities().get(entity.getId())).addBaseClassId(baseId);
 
                     if(baseId != -1) {
-                        System.out.println("entityclass: " + entity.getName() + "; baseclass: " + baseClassStr + "; basedId: " +  baseId);
+                        //System.out.println("entityclass: " + entity.getName() + "; baseclass: " + baseClassStr + "; basedId: " +  baseId);
                         saveRelation(entity.getId(), baseId, ConstantString.RELATION_INHERIT, ConstantString.RELATION_INHERITED);
                     }
                     else {
-                        System.out.println("entityclass: " + entity.getName() + "; baseclass: " + baseClassStr + " not found");
+                        //System.out.println("entityclass: " + entity.getName() + "; baseclass: " + baseClassStr + " not found");
                     }
                 }
             }
