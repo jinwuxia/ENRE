@@ -26,6 +26,10 @@ public class ClassEntity extends Entity{
         return baseClassNameList;
     }
 
+    public ArrayList<Integer> getBaseClassIdList() {
+        return baseClassIdList;
+    }
+
     @Override
     public String toString() {
         String str = "";

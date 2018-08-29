@@ -33,4 +33,7 @@ public class PyFunctionEntity extends FunctionEntity{
         importedId2Indexs.put(importedId, index);
     }
 
+    public HashMap<Integer, Integer> getImportedId2Indexs() {
+        return importedId2Indexs;
+    }
 }

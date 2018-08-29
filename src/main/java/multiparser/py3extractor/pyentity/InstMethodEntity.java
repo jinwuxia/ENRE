@@ -1,6 +1,6 @@
 package multiparser.py3extractor.pyentity;
 
-public class InstMethodEntity extends PyFunctionEntity{
+public class InstMethodEntity extends PyMethodEntity{
 
     public InstMethodEntity(int id, String name) {
         this.id = id;
