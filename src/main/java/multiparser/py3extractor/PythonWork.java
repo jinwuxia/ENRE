@@ -1,6 +1,7 @@
 package multiparser.py3extractor;
 
 import multiparser.extractor.TemplateWork;
+import multiparser.py3extractor.infer.TypeInfer;
 import multiparser.py3extractor.search.NameSearch;
 import multiparser.py3extractor.visitor.firstpass.FileParser;
 import multiparser.py3extractor.visitor.secondpass.DepVisitor;
@@ -36,9 +37,15 @@ public class PythonWork extends TemplateWork {
         depVisitor = new InheritVisitor();
         depVisitor.setDep();
 
-        NameSearch nameSearch = new NameSearch();
+        NameSearch nameSearch = NameSearch.getNameSearchInstance();
         nameSearch.buildNameScope();
-        System.out.println(nameSearch.getNameMap());
+        //System.out.println(nameSearch.getNameMap());
+
+        TypeInfer typeInfer = new TypeInfer();
+        typeInfer.inferTypeForVarEntity();
+
+
+
 
     }
 }

@@ -21,6 +21,10 @@ import java.util.HashMap;
  *  Method: children, parameter, self, BaseClass full name, located module's visible name, imported name.
  */
 public class NameSearch {
+    private static NameSearch nameSearchInstance = new NameSearch();
+
+    private NameSearch() {};
+
 
     private SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
 
@@ -29,6 +33,10 @@ public class NameSearch {
 
     public HashMap<Integer, HashMap<String, Integer>> getNameMap() {
         return nameMap;
+    }
+
+    public static NameSearch getNameSearchInstance() {
+        return nameSearchInstance;
     }
 
     /**
