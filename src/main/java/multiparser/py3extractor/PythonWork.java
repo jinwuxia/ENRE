@@ -4,6 +4,7 @@ import multiparser.extractor.TemplateWork;
 import multiparser.py3extractor.infer.TypeInfer;
 import multiparser.py3extractor.search.NameSearch;
 import multiparser.py3extractor.visitor.firstpass.FileParser;
+import multiparser.py3extractor.visitor.secondpass.CallVisitor;
 import multiparser.py3extractor.visitor.secondpass.DepVisitor;
 import multiparser.py3extractor.visitor.secondpass.ImportVisitor;
 import multiparser.py3extractor.visitor.secondpass.InheritVisitor;
@@ -44,6 +45,8 @@ public class PythonWork extends TemplateWork {
         TypeInfer typeInfer = new TypeInfer();
         typeInfer.inferTypeForVarEntity();
 
+        depVisitor = new CallVisitor();
+        depVisitor.setDep();
 
 
 

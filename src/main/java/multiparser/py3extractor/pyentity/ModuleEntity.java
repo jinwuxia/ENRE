@@ -36,8 +36,10 @@ public class ModuleEntity extends FileEntity{
         return calledFunctions;
     }
 
+
     public void setCalledFunctions(ArrayList<String> calledFunctions) {
-        this.calledFunctions = calledFunctions;
+        this.calledFunctions.clear();
+        this.calledFunctions.addAll(calledFunctions);
     }
 
     /*public HashMap<String, Integer> getCalledWeightedFunctions() {

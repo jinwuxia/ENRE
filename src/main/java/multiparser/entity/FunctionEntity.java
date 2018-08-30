@@ -70,6 +70,11 @@ public class FunctionEntity extends Entity {
         return calledFunctions;
     }
 
+    public void setCalledFunctions(ArrayList<String> calledFunctions) {
+        this.calledFunctions.clear();
+        this.calledFunctions.addAll(calledFunctions);
+    }
+
    /* public HashMap<String, Integer> getCalledWeightedFunctions() {
         return calledWeightedFunctions;
     }
