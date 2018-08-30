@@ -127,7 +127,7 @@ public class ImportVisitor extends DepVisitor {
                 if(!importStmt.getFrom().equals(ConstantString.NULL_STRING)) {
                     impstr = (importStmt.getFrom() + ConstantString.DOT + impstr);
                 }
-                System.out.println("looking for " + impstr);
+                //System.out.println("looking for " + impstr);
                 int scope = -1; //should get it based on from.
                 int id = findImportedEntity(impstr, scope);
                 if(id != -1) {
@@ -136,7 +136,7 @@ public class ImportVisitor extends DepVisitor {
                     saveRelation(entity.getId(), id, ConstantString.RELATION_IMPORT, ConstantString.RELATION_IMPORTED_BY);
                 }
                 else  {
-                    System.out.println("setImportDep: cannot find " + impstr);
+                    //System.out.println("setImportDep: cannot find " + impstr);
                 }
             }
         }

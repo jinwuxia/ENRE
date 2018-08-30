@@ -209,7 +209,7 @@ public class PyProcessTask {
      */
     public void processRightAssignValue(String value, int leftId) {
         ((VarEntity) singleCollect.getEntities().get(leftId)).setValue(value);
-        System.out.println("left: " + singleCollect.getEntities().get(leftId).getName() + "; right: " + value);
+        //System.out.println("left: " + singleCollect.getEntities().get(leftId).getName() + "; right: " + value);
     }
 
 
