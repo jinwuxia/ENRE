@@ -20,6 +20,7 @@ public class ConstantString {
     public static final String SELF = "self";
     public static final String IF_NAME = "__name__";
     public static final String MAIN_NAME = "__main__";
+    public static final String CLASS_METHOD_CLS_PARAMETER = "cls";
 
     public static final String COMMENT = "'''";
     public static final String STRING_LETERAL_1 = "\"";
