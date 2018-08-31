@@ -457,7 +457,7 @@ public class PyProcessTask {
     private int processNameWithoutDot(int parentId, String str, String usage) {
         int nameIndex = -1;
         //maybe duplicated, check if exist.
-        if(str.equals("self")) {  //if local name = self, do not process, then return.
+        if(str.equals(ConstantString.SELF)) {  //if local name = self, do not process, then return.
             return nameIndex;
         }
 
