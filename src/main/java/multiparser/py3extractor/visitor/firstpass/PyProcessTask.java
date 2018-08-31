@@ -91,6 +91,39 @@ public class PyProcessTask {
     }
 
     /**
+     * if __init__ is not explicitly defined inside class,
+     * we should added this init method to class's child
+     * @param classId
+     */
+    public void supplementInitMethod(int classId) {
+        if(!classHasExplicitInitMethod(classId)) {
+            int methodId = singleCollect.getCurrentIndex();
+            InstMethodEntity methodEntity = new InstMethodEntity(methodId, ConstantString.INIT_METHOD_NAME);
+            methodEntity.setParentId(classId);
+            singleCollect.addEntity(methodEntity);
+            singleCollect.getEntities().get(classId).addChildId(methodId);
+        }
+    }
+
+
+    /**
+     * check if __init__ is explicitly defined inside class or not
+     * @param classId
+     * @return
+     */
+    private boolean classHasExplicitInitMethod(int classId) {
+        for(int childId : singleCollect.getEntities().get(classId).getChildrenIds()) {
+            if(singleCollect.getEntities().get(childId) instanceof InstMethodEntity) {
+                if(singleCollect.getEntities().get(childId).getName().equals(ConstantString.INIT_METHOD_NAME)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    /**
      * process top-level functionEntity
      * @param moduleId
      * @param functionName

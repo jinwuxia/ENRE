@@ -65,6 +65,7 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
         if(ctx.suite() != null) {
             visitSuite(ctx.suite());
         }
+        processTask.supplementInitMethod(classId);
         classId = -1;
 
         str += ("class " + className + "(" + baseStrs + ")");
