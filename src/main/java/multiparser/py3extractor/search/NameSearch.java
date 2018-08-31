@@ -146,8 +146,11 @@ public class NameSearch {
                 int methodId = entity.getId();
                 int parentId = singleCollect.getEntities().get(methodId).getParentId();
                 addInChildren(methodId, methodId);
-                addInParas(methodId, methodId);
+                //self is conflicted with the parameter "self".
+                //parameter self is a new variable with different id with class.
+                //so we need to add self first, then add parameter in order to not cover the previous one.
                 addNameMap(methodId, ConstantString.SELF, parentId);
+                addInParas(methodId, methodId);
                 addInBaseClassName(methodId, parentId);
 
                 int grandPaId = singleCollect.getEntities().get(parentId).getParentId();
