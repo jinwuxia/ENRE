@@ -35,6 +35,15 @@ public class NameSearch {
         return nameMap;
     }
 
+    public HashMap<String, Integer> getNameMapOfScope(int scopeId) {
+        if(nameMap.containsKey(scopeId)) {
+            return nameMap.get(scopeId);
+        }
+        else {
+            return null;
+        }
+    }
+
     public static NameSearch getNameSearchInstance() {
         return nameSearchInstance;
     }
@@ -80,7 +89,7 @@ public class NameSearch {
     }
 
     /**
-     * Function: children, parameter, located module's visible name, imported name.
+     * Function: children, parameter, located module's visible name(module children + module import), imported name.
      */
     private void buildNameScopeForFunctions() {
         for(Entity entity : singleCollect.getEntities()) {
@@ -93,6 +102,7 @@ public class NameSearch {
                 int grandPaId = getGrandParentId(functionId);
                 if(grandPaId != -1 && singleCollect.getEntities().get(grandPaId) instanceof ModuleEntity) {
                     addInChildren(functionId, grandPaId);
+                    addInImports(functionId, grandPaId);
                 }
 
                 addInImports(functionId, functionId);
@@ -105,7 +115,7 @@ public class NameSearch {
      * Class: children, "self",
      *         BaseClass full name,
      *         BaseClass's children (from left to right, breadth first, no-diplicated),
-     *         located module's visible name.
+     *         located module's visible name = module's chidren + module's import
      */
     private void buildNameScopeForClasses() {
         for(Entity entity : singleCollect.getEntities()) {
@@ -119,6 +129,7 @@ public class NameSearch {
                 int parentId = singleCollect.getEntities().get(classId).getParentId();
                 if(parentId != -1 && singleCollect.getEntities().get(parentId) instanceof ModuleEntity) {
                     addInChildren(classId, parentId);
+                    addInImports(classId, parentId);
                 }
 
 
@@ -142,6 +153,7 @@ public class NameSearch {
                 int grandPaId = singleCollect.getEntities().get(parentId).getParentId();
                 if(grandPaId != -1 && singleCollect.getEntities().get(grandPaId) instanceof ModuleEntity) {
                     addInChildren(methodId, grandPaId);
+                    addInImports(methodId, grandPaId);
                 }
 
                 addInImports(methodId, methodId);
