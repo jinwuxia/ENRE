@@ -66,10 +66,39 @@ public class CallVisitor extends DepVisitor {
     private int searchCallee(String simpleCalleeStr, int modOrFunId) {
         String destStr = simpleCalleeStr.split("\\(")[0];
         System.out.println("newCallee= " + destStr);
+
         if(isBuiltinFunction(destStr)) {
             System.out.println("1.it is builtin function. scopeId= " + modOrFunId + "; str= " + destStr);
             return -1;
         }
+        if(destStr.equals(ConstantString.SUPER)) {
+            return searchCalleeIfSuper(destStr, modOrFunId);
+        }
+        else {
+            return searchCalleeOthercases(destStr, modOrFunId);
+        }
+    }
+
+    /**
+     * if super(),call parent.init()
+     * if super().method1(),  and if parent are more than one,
+     * we don't know which parent the super will refer to, until we see method1().
+     * beacuse not every parent has method1() method member.
+     * @param str  super
+     * @param modOrFunId
+     * @return
+     */
+    private int searchCalleeIfSuper(String str, int modOrFunId) {
+        return -1;
+    }
+
+    /**
+     * search callee which are not "super", not builtin functions.
+     * @param destStr
+     * @param modOrFunId
+     * @return
+     */
+    private int searchCalleeOthercases(String destStr, int modOrFunId) {
         int scopeId = modOrFunId;
         int flag = 0;
         while(!destStr.equals(ConstantString.NULL_STRING)) {
@@ -98,6 +127,8 @@ public class CallVisitor extends DepVisitor {
         } //end while
         return scopeId;
     }
+
+
 
     /**
      * judge whether str is builtin function or not.
