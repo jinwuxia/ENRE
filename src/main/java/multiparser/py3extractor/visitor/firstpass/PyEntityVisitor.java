@@ -466,6 +466,7 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
      */
     @Override
     public String visitIf_stmt(Python3Parser.If_stmtContext ctx) {
+        boolean isMainFunc = false;
         String str = "";
         if(ctx == null) {
             return str;
@@ -476,6 +477,7 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
         if(contextHelper.isOneComStmAtTopLevel(ctx)
                 && str.equals(ConstantString.IF_NAME)) {
             functionId = processTask.processFunction(moduleId, ConstantString.MAIN_NAME, "");
+            isMainFunc = true;
         }
 
         if(ctx.test() != null) {
@@ -488,7 +490,9 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
                 visitSuite(suiteContext);
             }
         }
-        functionId = -1;
+        if(isMainFunc) {
+            functionId = -1;
+        }
         return str;
     }
 
