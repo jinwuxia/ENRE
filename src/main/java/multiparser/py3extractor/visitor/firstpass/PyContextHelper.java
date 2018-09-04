@@ -93,7 +93,10 @@ public class PyContextHelper {
         }
 
         if(testlistStarExpr.parent != null
-                && testlistStarExpr.parent instanceof Python3Parser.Testlist_star_expr_leftassignContext) {
+                && testlistStarExpr.parent instanceof Python3Parser.Testlist_star_expr_leftassignContext
+                && testlistStarExpr.parent.parent != null
+                && testlistStarExpr.parent.parent instanceof Python3Parser.Testlist_star_expr_equaassignContext
+                && ((Python3Parser.Testlist_star_expr_equaassignContext) testlistStarExpr.parent.parent).testlist_star_expr_rightassign() != null) {
             return true;
         }
         return false;
