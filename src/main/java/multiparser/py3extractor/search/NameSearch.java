@@ -1,6 +1,7 @@
 package multiparser.py3extractor.search;
 
 import multiparser.entity.Entity;
+import multiparser.entity.PackageEntity;
 import multiparser.extractor.SingleCollect;
 import multiparser.py3extractor.ConstantString;
 import multiparser.py3extractor.pyentity.*;
@@ -8,6 +9,7 @@ import multiparser.util.Tuple;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * build scopeMap for each entity
@@ -72,7 +74,54 @@ public class NameSearch {
         buildNameScopeForFunctions();
         buildNameScopeForClasses();
         buildNameScopeForMethods();
+        buildNameScopeForPackages();
     }
+
+
+    /**
+     * package: itschildren's name- module simple Name,  init_file's namescope
+     */
+    private void buildNameScopeForPackages() {
+        for (Entity entity : singleCollect.getEntities()) {
+            if (entity instanceof PackageEntity) {
+                int packageId = entity.getId();
+                addInChildren(packageId, packageId);
+                int initId = findInitModule(packageId);
+                if(initId == -1) {  //package should always have init file
+                    //System.out.println("Not found init module for " + ((PackageEntity) entity).getFullPath());
+                    continue;
+                }
+                if(!nameMap.containsKey(initId)) { //package may have init file which is empty.
+                    //System.out.println("null");
+                    continue;
+                }
+                for(Map.Entry<String, Integer> entry : nameMap.get(initId).entrySet()) {
+                    String key = entry.getKey();
+                    int id = entry.getValue();
+                    addNameMap(packageId, key, id);
+                }
+            }
+        }
+    }
+
+
+    /**
+     * for packageId, find its init module id
+     * @param packageId
+     * @return
+     */
+    private int findInitModule(int packageId) {
+        for(int childId : singleCollect.getEntities().get(packageId).getChildrenIds()) {
+            if (singleCollect.getEntities().get(childId) instanceof ModuleEntity) {
+                String childName = ((ModuleEntity) singleCollect.getEntities().get(childId)).getModuleSimpleName();
+                if (childName.equals(ConstantString.INIT_MODULE_NAME)) {
+                    return childId;
+                }
+            }
+        }
+        return -1;
+    }
+
 
 
     /**
@@ -193,6 +242,9 @@ public class NameSearch {
         }
         for(int childId : singleCollect.getEntities().get(entityId).getChildrenIds()) {
             String childName = singleCollect.getEntities().get(childId).getName();
+            if(singleCollect.getEntities().get(childId) instanceof ModuleEntity) {
+                childName = ((ModuleEntity) singleCollect.getEntities().get(childId)).getModuleSimpleName();
+            }
             addNameMap(scopeId, childName, childId);
         }
     }
