@@ -148,14 +148,19 @@ public class NameSearch {
                 addInChildren(functionId, functionId);
                 addInParas(functionId, functionId);
 
-                int grandPaId = getGrandParentId(functionId);
-                if(grandPaId != -1 && singleCollect.getEntities().get(grandPaId) instanceof ModuleEntity) {
-                    addInChildren(functionId, grandPaId);
-                    addInImports(functionId, grandPaId);
+                int parentId = entity.getParentId();
+                if(parentId != -1 && singleCollect.getEntities().get(parentId) instanceof ModuleEntity) {
+                    addInChildren(functionId, parentId);
+                    addInImports(functionId, parentId);
                 }
 
                 addInImports(functionId, functionId);
+
+                if(entity.getName().equals(ConstantString.MAIN_NAME)) {
+                    nameMap.get(functionId).remove(ConstantString.MAIN_NAME);
+                }
             }
+
         }
 
     }
