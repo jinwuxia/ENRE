@@ -1,6 +1,5 @@
 package multiparser.py3extractor.visitor.firstpass;
 
-import com.oracle.tools.packager.JreUtils;
 import multiparser.py3extractor.ConstantString;
 import multiparser.py3extractor.antlr4.Python3Parser;
 import org.antlr.v4.runtime.RuleContext;

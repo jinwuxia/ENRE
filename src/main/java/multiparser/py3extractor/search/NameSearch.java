@@ -6,6 +6,7 @@ import multiparser.entity.VarEntity;
 import multiparser.extractor.SingleCollect;
 import multiparser.py3extractor.ConstantString;
 import multiparser.py3extractor.pyentity.*;
+import multiparser.util.Configure;
 import multiparser.util.Tuple;
 
 import java.util.ArrayList;
@@ -300,7 +301,7 @@ public class NameSearch {
                 int importedId = relation.y;
                 ImportStmt importStmt = importStmts.get(importedId2Indexes.get(importedId));
                 String importedName = importStmt.getImpor();
-                if(!importStmt.getAs().equals(ConstantString.NULL_STRING)) {
+                if(!importStmt.getAs().equals(Configure.NULL_STRING)) {
                     importedName = importStmt.getAs();
                 }
                 addNameMap(scopeId, importedName, importedId);

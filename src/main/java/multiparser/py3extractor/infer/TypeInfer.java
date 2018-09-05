@@ -7,6 +7,7 @@ import multiparser.py3extractor.ConstantString;
 import multiparser.py3extractor.pyentity.ClassEntity;
 import multiparser.py3extractor.pyentity.ClassMethodEntity;
 import multiparser.py3extractor.search.NameSearch;
+import multiparser.util.Configure;
 
 import java.util.ArrayList;
 
@@ -19,8 +20,8 @@ public class TypeInfer {
 
             if(entity instanceof VarEntity) {
                 if(((VarEntity) entity).getValue() != null &&
-                        ((VarEntity) entity).getValue().contains(ConstantString.LEFT_PARENTHESES)
-                        && ((VarEntity) entity).getValue().contains(ConstantString.RIGHT_PARENTHESES)) {
+                        ((VarEntity) entity).getValue().contains(Configure.LEFT_PARENTHESES)
+                        && ((VarEntity) entity).getValue().contains(Configure.RIGHT_PARENTHESES)) {
                     inferTypeForClassObjectVar(entity.getId());
                 }
             }

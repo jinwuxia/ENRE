@@ -4,8 +4,12 @@ import multiparser.entity.*;
 import multiparser.extractor.SingleCollect;
 import multiparser.py3extractor.ConstantString;
 import multiparser.py3extractor.pyentity.*;
+import multiparser.util.Configure;
+import multiparser.util.OsUtil;
 
 import java.util.ArrayList;
+
+import static java.lang.System.exit;
 
 public class PyProcessTask {
 
@@ -21,7 +25,17 @@ public class PyProcessTask {
      * @return packageId
      */
     public int processPackage(String fileName) {
-        String [] tmp = fileName.split("/");
+        String [] tmp = null;
+        if(OsUtil.isWindows()) {
+            tmp = fileName.split("\\\\");
+        }
+        else if(OsUtil.isLinux() || OsUtil.isMac()) {
+            tmp = fileName.split("/");
+        }
+        else {
+            System.out.println("cannot process files on this OS: " + OsUtil.getOsName());
+            exit(1);
+        }
         String dirStr = tmp[0];
         for (int i = 1; i < tmp.length -1; i++) {
             dirStr += "/";
@@ -49,7 +63,17 @@ public class PyProcessTask {
      * @return moduleId
      */
     public int processModule(String fileName) {
-        String[] tmpArr = fileName.split("/");
+        String[] tmpArr = null;
+        if(OsUtil.isMac() || OsUtil.isLinux()) {
+            tmpArr = fileName.split("/");
+        }
+        else if(OsUtil.isWindows()) {
+            tmpArr = fileName.split("\\\\");
+        }
+        else {
+            System.out.println("cannot process files on this OS: " + OsUtil.getOsName());
+            exit(1);
+        }
         String tmp = tmpArr[tmpArr.length - 1];
         String moduleSimpleName = tmp.split(ConstantString.DOT_PY)[0];
 
@@ -78,8 +102,8 @@ public class PyProcessTask {
         classEntity.setParentId(parentId);
 
         //add original baseName
-        if(!baseStrs.equals(ConstantString.NULL_STRING)) {
-            String [] baseArr = baseStrs.split(ConstantString.COMMA);
+        if(!baseStrs.equals(Configure.NULL_STRING)) {
+            String [] baseArr = baseStrs.split(Configure.COMMA);
             for (String baseName : baseArr) {
                 classEntity.addBaseClassName(baseName);
             }
@@ -154,7 +178,7 @@ public class PyProcessTask {
     public int processMethod(String methodDecorators, int classId, String functionName, String paraStrs) {
         int functionId = singleCollect.getCurrentIndex();
         PyFunctionEntity functionEntity;
-        if (methodDecorators.equals(ConstantString.NULL_STRING)) {
+        if (methodDecorators.equals(Configure.NULL_STRING)) {
             functionEntity = new InstMethodEntity(functionId, functionName);
         }
         else if (methodDecorators.contains(ConstantString.CLASS_METHOD)) {
@@ -202,14 +226,14 @@ public class PyProcessTask {
      */
     private ArrayList<VarEntity> extractParas(String paraStrs) {
         ArrayList<VarEntity> varEntities = new ArrayList<VarEntity>();
-        if(paraStrs.startsWith(ConstantString.LEFT_PARENTHESES)
-                && paraStrs.endsWith(ConstantString.RIGHT_PARENTHESES)) {
+        if(paraStrs.startsWith(Configure.LEFT_PARENTHESES)
+                && paraStrs.endsWith(Configure.RIGHT_PARENTHESES)) {
             paraStrs = paraStrs.substring(1, paraStrs.length() - 1);
         }
-        if(paraStrs.equals(ConstantString.NULL_STRING)) {
+        if(paraStrs.equals(Configure.NULL_STRING)) {
             return varEntities;
         }
-        String [] paraArr = paraStrs.split(ConstantString.COMMA);
+        String [] paraArr = paraStrs.split(Configure.COMMA);
         for (String para : paraArr) {
             VarEntity varEntity = new VarEntity();
             varEntity.setName(para);
@@ -451,13 +475,13 @@ public class PyProcessTask {
      * @return
      */
     private boolean isStrAObjectAttribute(String str) {
-        if(!str.contains(ConstantString.DOT)) {
+        if(!str.contains(Configure.DOT)) {
             return false;
         }
-        if(str.contains(ConstantString.LEFT_PARENTHESES)) {
+        if(str.contains(Configure.LEFT_PARENTHESES)) {
             return false;
         }
-        if(str.contains(ConstantString.RIGHT_PARENTHESES)) {
+        if(str.contains(Configure.RIGHT_PARENTHESES)) {
             return false;
         }
         return true;
@@ -586,10 +610,10 @@ public class PyProcessTask {
      * @return
      */
     private boolean isStrAVar(String str) {
-        if(str.contains(ConstantString.DOT)) {
+        if(str.contains(Configure.DOT)) {
             return false;
         }
-        if(str.contains(ConstantString.LEFT_PARENTHESES) && str.contains(ConstantString.RIGHT_PARENTHESES)) {
+        if(str.contains(Configure.LEFT_PARENTHESES) && str.contains(Configure.RIGHT_PARENTHESES)) {
             return false;
         }
         return true;
@@ -601,7 +625,7 @@ public class PyProcessTask {
      * @return
      */
     private boolean isStrACallee(String str) {
-        if(str.contains(ConstantString.LEFT_PARENTHESES) && str.contains(ConstantString.RIGHT_PARENTHESES)) {
+        if(str.contains(Configure.LEFT_PARENTHESES) && str.contains(Configure.RIGHT_PARENTHESES)) {
             return true;
         }
         return false;
@@ -638,13 +662,13 @@ public class PyProcessTask {
      * @param functionOrModuleId
      */
     public void processFromImport(String from, String importStr, int functionOrModuleId) {
-        if(importStr.equals(ConstantString.NULL_STRING)) {
+        if(importStr.equals(Configure.NULL_STRING)) {
             return;
         }
         ArrayList<ImportStmt> importStmts = new ArrayList<ImportStmt>();
-        String [] arr = importStr.split(ConstantString.COMMA);
+        String [] arr = importStr.split(Configure.COMMA);
         for (String str : arr) {
-            String [] arr1 = str.split(ConstantString.SEMICOLON);
+            String [] arr1 = str.split(Configure.SEMICOLON);
             String impor = arr1[0];
             String as = "";
             if(arr1.length > 1) {
@@ -665,15 +689,15 @@ public class PyProcessTask {
      * @param functionOrMoudleId
      */
     public void processImportName(String importStr, int functionOrMoudleId) {
-        if(importStr.equals(ConstantString.NULL_STRING)) {
+        if(importStr.equals(Configure.NULL_STRING)) {
             return;
         }
 
         ArrayList<ImportStmt> importStmts = new ArrayList<ImportStmt>();
         String from = "";
-        String [] arr = importStr.split(ConstantString.COMMA);
+        String [] arr = importStr.split(Configure.COMMA);
         for (String str : arr) {
-            String [] arr1 = str.split(ConstantString.SEMICOLON);
+            String [] arr1 = str.split(Configure.SEMICOLON);
             String impor = arr1[0];
             String as = "";
             if(arr1.length > 1) {

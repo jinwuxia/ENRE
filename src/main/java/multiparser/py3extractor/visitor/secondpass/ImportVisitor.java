@@ -6,6 +6,7 @@ import multiparser.py3extractor.ConstantString;
 import multiparser.py3extractor.pyentity.ImportStmt;
 import multiparser.py3extractor.pyentity.ModuleEntity;
 import multiparser.py3extractor.pyentity.PyFunctionEntity;
+import multiparser.util.Configure;
 
 
 import java.util.ArrayList;
@@ -124,8 +125,8 @@ public class ImportVisitor extends DepVisitor {
             for (int index = 0; index < importStmts.size(); index++) {
                 ImportStmt importStmt = importStmts.get(index);
                 String impstr = importStmt.getImpor();
-                if(!importStmt.getFrom().equals(ConstantString.NULL_STRING)) {
-                    impstr = (importStmt.getFrom() + ConstantString.DOT + impstr);
+                if(!importStmt.getFrom().equals(Configure.NULL_STRING)) {
+                    impstr = (importStmt.getFrom() + Configure.DOT + impstr);
                 }
                 //System.out.println("looking for " + impstr);
                 int scope = -1; //should get it based on from.
@@ -151,7 +152,7 @@ public class ImportVisitor extends DepVisitor {
      * @return
      */
     private int findImportedEntity(String impstr, int scope) {
-        while(impstr.contains(ConstantString.DOT)) {
+        while(impstr.contains(Configure.DOT)) {
             String [] arr = impstr.split("\\.");
             String pre = arr[0];
             String post = impstr.substring(pre.length() + 1, impstr.length());
@@ -171,7 +172,7 @@ public class ImportVisitor extends DepVisitor {
      * @return
      */
     private int findObject(String str, int parentId) {
-        if(str.equals(ConstantString.STAR)) {
+        if(str.equals(Configure.STAR)) {
             return parentId;
         }
         if(parentId == -1) { //import q (a is module or package)

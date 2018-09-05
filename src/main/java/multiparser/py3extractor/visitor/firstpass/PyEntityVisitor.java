@@ -3,6 +3,7 @@ package multiparser.py3extractor.visitor.firstpass;
 import multiparser.py3extractor.ConstantString;
 import multiparser.py3extractor.antlr4.Python3BaseVisitor;
 import multiparser.py3extractor.antlr4.Python3Parser;
+import multiparser.util.Configure;
 
 public class PyEntityVisitor extends Python3BaseVisitor<String> {
     private String fileFullPath;
@@ -299,7 +300,7 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
      */
     private void furtherVisitAtomExpr(String str, Python3Parser.Atom_exprContext ctx) {
         //if it is "", it must bse literal string, number, [...], (...), none, true, false,..
-        if(!str.equals(ConstantString.NULL_STRING)) {
+        if(!str.equals(Configure.NULL_STRING)) {
             String usage = ConstantString.NAME_USAGE_USE; //default usage
             boolean isLeftAssign = contextHelper.isAtomExprInLeftAssignment(ctx);
             boolean isLeftAugAssign = contextHelper.isAtomExprInLeftAugassignment(ctx);
@@ -398,11 +399,11 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
     @Override
     public String visitArglisttrailer(Python3Parser.ArglisttrailerContext ctx) {
         String str = "";
-        str += ConstantString.LEFT_PARENTHESES;
+        str += Configure.LEFT_PARENTHESES;
         if(ctx != null && ctx.arglist() != null) {
             str += visitArglist(ctx.arglist());
         }
-        str += ConstantString.RIGHT_PARENTHESES;
+        str += Configure.RIGHT_PARENTHESES;
         return str;
     }
 
@@ -544,8 +545,8 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
         if(ctx.dotted_name() != null) {
             from = visitDotted_name(ctx.dotted_name());
         }
-        if(ctx.children.get(3).getText().equals(ConstantString.STAR)) {
-            importStr = ConstantString.STAR;
+        if(ctx.children.get(3).getText().equals(Configure.STAR)) {
+            importStr = Configure.STAR;
         }
         if(ctx.import_as_names() != null) {
             importStr = visitImport_as_names(ctx.import_as_names());
@@ -575,7 +576,7 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
         if(ctx.import_as_name() != null && !ctx.import_as_name().isEmpty()) {
             str = visitImport_as_name(ctx.import_as_name(0));
             for (int i = 1; i < ctx.import_as_name().size(); i ++) {
-                str += ConstantString.COMMA;
+                str += Configure.COMMA;
                 str += visitImport_as_name(ctx.import_as_name(i));
             }
         }
@@ -597,7 +598,7 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
         if(ctx.NAME() != null && !ctx.NAME().isEmpty()) {
             str += ctx.NAME(0);
             if(ctx.NAME().size() > 1) {
-                str += ConstantString.SEMICOLON;
+                str += Configure.SEMICOLON;
                 str += ctx.NAME(1);
             }
         }
@@ -650,7 +651,7 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
 
         str += visitDotted_as_name(ctx.dotted_as_name(0));
         for (int i = 1; i < ctx.dotted_as_name().size(); i ++) {
-            str += (ConstantString.COMMA + visitDotted_as_name(ctx.dotted_as_name(i)));
+            str += (Configure.COMMA + visitDotted_as_name(ctx.dotted_as_name(i)));
         }
         return str;
     }
@@ -670,7 +671,7 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
             str += visitDotted_name(ctx.dotted_name());
         }
         if(ctx.NAME() != null) {
-            str += (ConstantString.SEMICOLON + ctx.NAME().getText());
+            str += (Configure.SEMICOLON + ctx.NAME().getText());
         }
         return str;
     }
