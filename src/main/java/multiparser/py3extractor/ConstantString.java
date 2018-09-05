@@ -13,6 +13,7 @@ public class ConstantString {
 
     public static final String DOT_PY = ".py";
     public static final String INIT_FILE_NAME = "__init__.py";
+    public static final String INIT_MODULE_NAME = "__init__";
     public static final String CLASS_STATIC_METHOD = "staticmethod";
     public static final String CLASS_METHOD = "classmethod";
     public static final String INIT_METHOD_NAME = "__init__";
