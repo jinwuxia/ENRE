@@ -1,5 +1,7 @@
 package multiparser.py3extractor;
 
+import multiparser.entity.Entity;
+import multiparser.extractor.SingleCollect;
 import multiparser.extractor.TemplateWork;
 import multiparser.py3extractor.infer.TypeInfer;
 import multiparser.py3extractor.search.NameSearch;
@@ -40,7 +42,12 @@ public class PythonWork extends TemplateWork {
 
         NameSearch nameSearch = NameSearch.getNameSearchInstance();
         nameSearch.buildNameScope();
-        //System.out.println(nameSearch.getNameMap());
+
+        for(Entity entity: SingleCollect.getSingleCollectInstance().getEntities()) {
+            System.out.println("id:  " +  entity.getId());
+            System.out.println("name:" + entity.getName());
+            System.out.println(nameSearch.getNameMapOfScope(entity.getId()) + "\n");
+        }
 
         TypeInfer typeInfer = new TypeInfer();
         typeInfer.inferTypeForVarEntity();
