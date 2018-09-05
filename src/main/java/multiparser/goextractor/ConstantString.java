@@ -94,19 +94,9 @@ public class ConstantString {
     };
 
 
-
-    public static final String POINTER = "*";
-    public static final String DOT = ".";
-    public static final String COMMA = ",";
-    public static final String BLANK_IDENTIFIER = "_";
     public static final String NIL = "nil";
     public static final String ANY_RETURN = "interface{}";
-    public static final String SQUARE_BRACKETS = "[]";
-    public static final String LEFT_SQUARE_BRACKET = "[";
-    public static final String RIGHT_SQUARE_BRACKET = "]";
-    public static final String ELLIPSIS = "...";
     public static final String MAP = "map";
-
     public static final String SCOPE_ONE = "Scope_1";
 
 

@@ -2,15 +2,6 @@ package multiparser.py3extractor;
 
 public class ConstantString {
 
-
-    public static final String NULL_STRING = "";
-    public static final String COMMA = ",";
-    public static final String LEFT_PARENTHESES = "(";
-    public static final String RIGHT_PARENTHESES = ")";
-    public static final String DOT = ".";
-    public static final String SEMICOLON = ";";
-    public static final String STAR = "*";
-
     public static final String DOT_PY = ".py";
     public static final String INIT_FILE_NAME = "__init__.py";
     public static final String INIT_MODULE_NAME = "__init__";

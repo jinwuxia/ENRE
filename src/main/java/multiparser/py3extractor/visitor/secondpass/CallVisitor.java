@@ -5,6 +5,7 @@ import multiparser.py3extractor.ConstantString;
 import multiparser.py3extractor.pyentity.ModuleEntity;
 import multiparser.py3extractor.pyentity.PyFunctionEntity;
 import multiparser.py3extractor.search.NameSearch;
+import multiparser.util.Configure;
 import multiparser.util.Tuple;
 
 import java.util.ArrayList;
@@ -101,8 +102,8 @@ public class CallVisitor extends DepVisitor {
     private int searchCalleeOthercases(String destStr, int modOrFunId) {
         int scopeId = modOrFunId;
         int flag = 0;
-        while(!destStr.equals(ConstantString.NULL_STRING)) {
-            if(destStr.startsWith(ConstantString.DOT)) {
+        while(!destStr.equals(Configure.NULL_STRING)) {
+            if(destStr.startsWith(Configure.DOT)) {
                 destStr = destStr.substring(1, destStr.length());
             }
             if (destStr.startsWith(ConstantString.CUSTOM_PRE)) {
@@ -136,7 +137,7 @@ public class CallVisitor extends DepVisitor {
      * @return
      */
     private boolean isBuiltinFunction(String str) {
-        if(str.contains(ConstantString.DOT)) {
+        if(str.contains(Configure.DOT)) {
             return false;
         }
         for(int i = 0; i < ConstantString.BUILT_IN_FUNCTIONS.length; i++) {
@@ -193,7 +194,7 @@ public class CallVisitor extends DepVisitor {
         for(Map.Entry<String, Integer> entry : submap.entrySet()) {
             String matchedName = entry.getKey();
             int matchedId = entry.getValue();
-            if(matchedName.contains(ConstantString.DOT) && str.startsWith(matchedName)) {
+            if(matchedName.contains(Configure.DOT) && str.startsWith(matchedName)) {
                 tuple.x = matchedId;
                 tuple.y = matchedName;
                 return tuple;
@@ -268,8 +269,8 @@ public class CallVisitor extends DepVisitor {
         String newStr = oldStr;
         int index = currentIndex;
         while(index > 0
-                && newStr.contains(ConstantString.RIGHT_PARENTHESES)
-                && newStr.contains(ConstantString.LEFT_PARENTHESES)) {
+                && newStr.contains(Configure.RIGHT_PARENTHESES)
+                && newStr.contains(Configure.LEFT_PARENTHESES)) {
             index = index - 1;
             String substr = calledFuns.get(index);
             int i = newStr.indexOf(substr);
@@ -280,8 +281,8 @@ public class CallVisitor extends DepVisitor {
             //if not found, please go on search.
         }
 
-        if(countAppearNumber(newStr, ConstantString.LEFT_PARENTHESES) == 1
-                && countAppearNumber(newStr, ConstantString.RIGHT_PARENTHESES) == 1) {
+        if(countAppearNumber(newStr, Configure.LEFT_PARENTHESES) == 1
+                && countAppearNumber(newStr, Configure.RIGHT_PARENTHESES) == 1) {
             //System.out.println("Simplifying old: " + oldStr + "; new: " + newStr);
         }
         else {
@@ -346,12 +347,12 @@ public class CallVisitor extends DepVisitor {
             //System.out.println("callee:" + callee);
             String[] arr = callee.split("\\.");
             for (int index = 0; index < arr.length; index++) {
-                if(arr[index].contains(ConstantString.LEFT_PARENTHESES) && arr[index].contains(ConstantString.RIGHT_PARENTHESES)) {
-                    String pre = ConstantString.NULL_STRING;
+                if(arr[index].contains(Configure.LEFT_PARENTHESES) && arr[index].contains(Configure.RIGHT_PARENTHESES)) {
+                    String pre = Configure.NULL_STRING;
                     if(index != 0) {
                         for (int i = 0; i < index; i++) {
                             pre += arr[i];
-                            pre += ConstantString.DOT;
+                            pre += Configure.DOT;
                         }
                     }
                     String newStr = pre + arr[index];
@@ -377,8 +378,8 @@ public class CallVisitor extends DepVisitor {
      * @return
      */
     private boolean isMatchedParenthese(String str) {
-        int leftParenthesis = countAppearNumber(str, ConstantString.LEFT_PARENTHESES);
-        int rightParenthesis = countAppearNumber(str, ConstantString.RIGHT_PARENTHESES);
+        int leftParenthesis = countAppearNumber(str, Configure.LEFT_PARENTHESES);
+        int rightParenthesis = countAppearNumber(str, Configure.RIGHT_PARENTHESES);
 
         if(leftParenthesis == rightParenthesis) {
             return true;

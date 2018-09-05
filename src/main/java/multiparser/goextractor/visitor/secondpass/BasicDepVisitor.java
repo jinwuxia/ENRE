@@ -4,6 +4,7 @@ import multiparser.entity.*;
 import multiparser.goextractor.ConstantString;
 import multiparser.goextractor.goentity.Signature;
 import multiparser.goextractor.goentity.*;
+import multiparser.util.Configure;
 import multiparser.util.Tuple;
 import multiparser.extractor.SingleCollect;
 
@@ -142,7 +143,7 @@ public class BasicDepVisitor {
                 int receiverVarId =((MethodEntity) methodEntity).getReceiverVarId();
                 String receiverType = ((VarEntity) singleCollect.getEntities().get(receiverVarId)).getType();
                 //System.out.print("receiver pre: " + receiverType);
-                if (receiverType.startsWith(ConstantString.POINTER)) {
+                if (receiverType.startsWith(Configure.POINTER)) {
                     receiverType = receiverType.substring(1, receiverType.length());
                 }
                 //System.out.print(";  post: " + receiverType);

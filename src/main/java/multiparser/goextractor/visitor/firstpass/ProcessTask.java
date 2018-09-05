@@ -3,11 +3,13 @@ package multiparser.goextractor.visitor.firstpass;
 import multiparser.goextractor.antlr4.GolangParser;
 import multiparser.entity.*;
 import multiparser.goextractor.goentity.*;
+import multiparser.util.OsUtil;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import multiparser.util.Configure;
 import multiparser.goextractor.ConstantString;
 import multiparser.util.Tuple;
 import multiparser.extractor.SingleCollect;
+
 
 import java.util.ArrayList;
 
@@ -24,10 +26,10 @@ public class ProcessTask {
     public VarEntity getReceiver(String receiverStr) {
         String type = "";
         String name = "";
-        if (receiverStr.startsWith("(") && receiverStr.endsWith(")")) {
+        if (receiverStr.startsWith(Configure.LEFT_PARENTHESES) && receiverStr.endsWith(Configure.RIGHT_PARENTHESES)) {
             receiverStr = receiverStr.substring(1, receiverStr.length() - 1);
         }
-        String[] tmp = receiverStr.split(" ");
+        String[] tmp = receiverStr.split(Configure.ONE_SPACE_STRING);
         //System.out.println(receiverStr + "; " + tmp);
         if (tmp.length == 2) {
             name = tmp[0];
@@ -242,12 +244,27 @@ public class ProcessTask {
 
 
     public String getPackagePath(String fileFullPath) {
-        String[] arr = fileFullPath.split("/");
+        String[] arr;
+        if(OsUtil.isLinux() || OsUtil.isMac()) {
+            arr = fileFullPath.split("/");
+        }
+        else {
+            arr = fileFullPath.split("\\\\");
+        }
+
         String[] newArr = new String[arr.length - 1];
         for (int index = 0; index < newArr.length; index++) {
             newArr[index] = arr[index];
         }
-        String packagePath = String.join("/", newArr);
+
+        String packagePath;
+        if(OsUtil.isLinux() || OsUtil.isMac()) {
+            packagePath = String.join("/", newArr);
+        }
+        else {
+            packagePath = String.join("\\\\", newArr);
+        }
+
         int startIndex = packagePath.indexOf(configure.getInputSrcPath());
 
         //substitute the input package dir by the imported form.
@@ -281,13 +298,13 @@ public class ProcessTask {
             return varEntities;
         }
         ArrayList<Tuple<String, String>> tmpVarList = new ArrayList<Tuple<String, String>>();
-        String [] strArr = parameterStr.split(",");
+        String [] strArr = parameterStr.split(Configure.COMMA);
         for (String var : strArr) {
             String varName = "";
             String varType = "";
             //have type
             if (var.contains(" ")) {
-                String [] tmp = var.split(" ");
+                String [] tmp = var.split(Configure.ONE_SPACE_STRING);
                 if (tmp.length == 2) {
                     varName = tmp[0];
                     varType = tmp[1];
@@ -356,7 +373,7 @@ public class ProcessTask {
 
 
     public void processImport(String importNameAndPath, int fileIndex){
-        String[] tmp = importNameAndPath.split(";");
+        String[] tmp = importNameAndPath.split(Configure.SEMI_COLON);
         String importName = tmp[0];
         String importPath = tmp[1];
         importPath = importPath.substring(1, importPath.length() - 1); //delete " and "
@@ -391,7 +408,7 @@ public class ProcessTask {
      */
     public void processVarInFunction(TerminalNode node, String type, String value, int functionIndex, int localBlockId) {
         String name = node.getText();
-        if(name.equals(ConstantString.BLANK_IDENTIFIER) || name.equals(ConstantString.NIL)) {
+        if(name.equals(Configure.BLANK_IDENTIFIER) || name.equals(ConstantString.NIL)) {
             return;
         }
         String usage = ConstantString.OPERAND_NAME_USAGE_SET;
@@ -417,11 +434,11 @@ public class ProcessTask {
      * @param rightExps
      */
     public void processShortDeclVarInFunction(String leftOperands, String rightExps, int functionIndex, int localBlockId) {
-        String[] leftNames = leftOperands.split(ConstantString.COMMA);
-        String[] rightValues = rightExps.split(ConstantString.COMMA);
+        String[] leftNames = leftOperands.split(Configure.COMMA);
+        String[] rightValues = rightExps.split(Configure.COMMA);
         for (int i = 0; i < leftNames.length; i++) {
             String name = leftNames[i];
-            if(name.equals(ConstantString.BLANK_IDENTIFIER) || name.equals(ConstantString.NIL)) {
+            if(name.equals(Configure.BLANK_IDENTIFIER) || name.equals(ConstantString.NIL)) {
                 return;
             }
             String value = "";
@@ -490,7 +507,7 @@ public class ProcessTask {
     public void processOperandNameInFunction(String str, GolangParser.OperandNameContext ctx,
                                              int functionIndex, int localBlockId) {
         String name = str.split("\\.")[0];
-        if(name.equals(ConstantString.BLANK_IDENTIFIER) || name.equals(ConstantString.NIL) ) {
+        if(name.equals(Configure.BLANK_IDENTIFIER) || name.equals(ConstantString.NIL) ) {
             return;
         }
         FunctionEntity functionEntity = (FunctionEntity) singleCollect.getEntities().get(functionIndex);

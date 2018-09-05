@@ -5,6 +5,7 @@ import multiparser.goextractor.search.NameSearchFile;
 import multiparser.goextractor.search.NameSearchPackage;
 import multiparser.goextractor.ConstantString;
 import multiparser.extractor.SingleCollect;
+import multiparser.util.Configure;
 
 
 public class TypeInfer {
@@ -66,23 +67,23 @@ public class TypeInfer {
         if(str.equals("")) {
             return str;
         }
-        while (str.contains(ConstantString.POINTER)) {
-            str = substituate(str, ConstantString.POINTER, "");
+        while (str.contains(Configure.POINTER)) {
+            str = substituate(str, Configure.POINTER, "");
         }
         while (str.contains(ConstantString.ANY_RETURN)) {
             str = substituate(str, ConstantString.ANY_RETURN, "");
         }
-        while (str.contains(ConstantString.SQUARE_BRACKETS)) {
-            str = substituate(str, ConstantString.SQUARE_BRACKETS, "");
+        while (str.contains(Configure.SQUARE_BRACKETS)) {
+            str = substituate(str, Configure.SQUARE_BRACKETS, "");
         }
-        while (str.contains(ConstantString.LEFT_SQUARE_BRACKET) && str.contains(ConstantString.RIGHT_SQUARE_BRACKET)) {
-            int i = str.indexOf(ConstantString.LEFT_SQUARE_BRACKET);
-            int j = str.indexOf(ConstantString.RIGHT_SQUARE_BRACKET);
+        while (str.contains(Configure.LEFT_SQUARE_BRACKET) && str.contains(Configure.RIGHT_SQUARE_BRACKET)) {
+            int i = str.indexOf(Configure.LEFT_SQUARE_BRACKET);
+            int j = str.indexOf(Configure.RIGHT_SQUARE_BRACKET);
             String substr = str.substring(i, j + 1);
             str  = substituate(str, substr, "");
         }
-        while(str.contains(ConstantString.ELLIPSIS)) {
-            str = substituate(str, ConstantString.ELLIPSIS, "");
+        while(str.contains(Configure.ELLIPSIS)) {
+            str = substituate(str, Configure.ELLIPSIS, "");
         }
         while(str.contains(ConstantString.MAP)) {
             str = substituate(str, ConstantString.MAP, "");

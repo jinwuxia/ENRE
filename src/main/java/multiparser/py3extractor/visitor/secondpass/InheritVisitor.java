@@ -4,6 +4,7 @@ import multiparser.entity.Entity;
 import multiparser.py3extractor.ConstantString;
 import multiparser.py3extractor.pyentity.ClassEntity;
 import multiparser.py3extractor.pyentity.ModuleEntity;
+import multiparser.util.Configure;
 import multiparser.util.Tuple;
 
 public class InheritVisitor extends DepVisitor{
@@ -40,7 +41,7 @@ public class InheritVisitor extends DepVisitor{
     private int findBaseClass(String baseClassStr, int classId) {
         int scopeId = singleCollect.getEntities().get(classId).getParentId();
         int flag = 1;
-        while(baseClassStr.contains(ConstantString.DOT)) { //imported
+        while(baseClassStr.contains(Configure.DOT)) { //imported
             Tuple<Integer, String> matchedRes;
             if(flag == 1) {
                 // the first time, it's the imported.
@@ -99,7 +100,7 @@ public class InheritVisitor extends DepVisitor{
                 //int importedId = relation.y;
                 int index = moduleEntity.getImportedId2Indexs().get(relation.y);
                 String importedName = moduleEntity.getImportStmts().get(index).getImpor();
-                if(!moduleEntity.getImportStmts().get(index).getAs().equals(ConstantString.NULL_STRING)) {
+                if(!moduleEntity.getImportStmts().get(index).getAs().equals(Configure.NULL_STRING)) {
                     importedName = moduleEntity.getImportStmts().get(index).getAs();
                 }
                 if(baseStr.startsWith(importedName)) {

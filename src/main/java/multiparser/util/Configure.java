@@ -3,6 +3,27 @@ package multiparser.util;
 public class Configure {
     private Configure() {}
 
+    public static final String WINDOWS = "Windows";
+    public static final String LINUX = "linux";
+    public static final String MAC = "mac";
+
+    public static final String NULL_STRING = "";
+    public static final String COMMA = ",";
+    public static final String LEFT_PARENTHESES = "(";
+    public static final String RIGHT_PARENTHESES = ")";
+    public static final String DOT = ".";
+    public static final String SEMICOLON = ";";
+    public static final String STAR = "*";
+    public static final String POINTER = "*";
+    public static final String ONE_SPACE_STRING = " ";
+    public static final String SEMI_COLON = ";";
+    public static final String BLANK_IDENTIFIER = "_";
+    public static final String SQUARE_BRACKETS = "[]";
+    public static final String LEFT_SQUARE_BRACKET = "[";
+    public static final String RIGHT_SQUARE_BRACKET = "]";
+    public static final String ELLIPSIS = "...";
+
+
     public static final String GO_LANG = "golang";
     public static final String PYTHON_LANG = "python";
     public static final String GO_PRO_SUFFIX = ".go";
