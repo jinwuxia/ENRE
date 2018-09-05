@@ -2,6 +2,7 @@ package multiparser.py3extractor.search;
 
 import multiparser.entity.Entity;
 import multiparser.entity.PackageEntity;
+import multiparser.entity.VarEntity;
 import multiparser.extractor.SingleCollect;
 import multiparser.py3extractor.ConstantString;
 import multiparser.py3extractor.pyentity.*;
@@ -21,6 +22,8 @@ import java.util.Map;
  *         BaseClass's chilren (from left to right, depth first, no-diplicated),
  *         located module's visible name.
  *  Method: children, parameter, self, BaseClass full name, located module's visible name, imported name.
+ *  package: init's scope, childname.
+ *  class object: class's child
  */
 public class NameSearch {
     private static NameSearch nameSearchInstance = new NameSearch();
@@ -75,8 +78,22 @@ public class NameSearch {
         buildNameScopeForClasses();
         buildNameScopeForMethods();
         buildNameScopeForPackages();
+        buildNameScopeForObjectVar();
     }
 
+
+    /**
+     * class object scope: class's children
+     */
+    private void buildNameScopeForObjectVar() {
+        for(Entity entity : singleCollect.getEntities()) {
+            if (entity instanceof VarEntity) {
+                int scopeId = entity.getId();
+                int typeId = ((VarEntity) entity).getTypeId();
+                addInChildren(scopeId, typeId);
+            }
+        }
+    }
 
     /**
      * package: itschildren's name- module simple Name,  init_file's namescope
