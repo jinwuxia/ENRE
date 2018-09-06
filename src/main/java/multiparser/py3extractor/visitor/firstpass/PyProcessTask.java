@@ -26,22 +26,31 @@ public class PyProcessTask {
      */
     public int processPackage(String fileName) {
         String [] tmp = null;
+        String packageName = "";
+        String dirStr = "";
         if(OsUtil.isWindows()) {
             tmp = fileName.split("\\\\");
+            dirStr = tmp[0];
+            for (int i = 1; i < tmp.length -1; i++) {
+                dirStr += "\\";
+                dirStr += tmp[i];
+            }
+            packageName = tmp[tmp.length - 2];
         }
         else if(OsUtil.isLinux() || OsUtil.isMac()) {
             tmp = fileName.split("/");
+            dirStr = tmp[0];
+            for (int i = 1; i < tmp.length -1; i++) {
+                dirStr += "/";
+                dirStr += tmp[i];
+            }
+            packageName = tmp[tmp.length - 2];
         }
         else {
             System.out.println("cannot process files on this OS: " + OsUtil.getOsName());
             exit(1);
         }
-        String dirStr = tmp[0];
-        for (int i = 1; i < tmp.length -1; i++) {
-            dirStr += "/";
-            dirStr += tmp[i];
-        }
-        String packageName = tmp[tmp.length - 2];
+
 
         // new packageEntity
         int packageId = singleCollect.getCurrentIndex();

@@ -7,6 +7,7 @@ import multiparser.py3extractor.pyentity.ImportStmt;
 import multiparser.py3extractor.pyentity.ModuleEntity;
 import multiparser.py3extractor.pyentity.PyFunctionEntity;
 import multiparser.util.Configure;
+import multiparser.util.OsUtil;
 
 
 import java.util.ArrayList;
@@ -97,12 +98,28 @@ public class ImportVisitor extends DepVisitor {
 
 
     private String getDir(String name) {
-        String [] arr = name.split("/");
-        String dirName = arr[0];
-        for(int i = 1; i < arr.length - 1; i++ ) {
-            dirName += "/";
-            dirName += arr[i];
+        //System.out.println("osna= " + OsUtil.getOsName());
+        //System.out.println("orig= " + name);
+        String arr[];
+        String dirName;
+        if(OsUtil.isLinux() || OsUtil.isMac()) {
+            arr = name.split("/");
+            dirName = arr[0];
+            for(int i = 1; i < arr.length - 1; i++ ) {
+                dirName += "/";
+                dirName += arr[i];
+            }
         }
+        else {
+            arr = name.split("\\\\");
+            dirName = arr[0];
+            for(int i = 1; i < arr.length - 1; i++ ) {
+                dirName += "\\";
+                dirName += arr[i];
+            }
+        }
+
+        //System.out.println("test= " +dirName);
         return dirName;
     }
 
