@@ -24,8 +24,8 @@ public class ProcessTask {
 
 
     public VarEntity getReceiver(String receiverStr) {
-        String type = "";
-        String name = "";
+        String type = Configure.NULL_STRING;
+        String name = Configure.NULL_STRING;
         if (receiverStr.startsWith(Configure.LEFT_PARENTHESES) && receiverStr.endsWith(Configure.RIGHT_PARENTHESES)) {
             receiverStr = receiverStr.substring(1, receiverStr.length() - 1);
         }
@@ -289,21 +289,21 @@ public class ProcessTask {
      * @return
      */
     public ArrayList<VarEntity> getVarFromParameters(String parameterStr) {
-        if (parameterStr.indexOf("(") == 0
-                && parameterStr.indexOf(")") == parameterStr.length() -1 ) {
+        if (parameterStr.indexOf(Configure.LEFT_PARENTHESES) == 0
+                && parameterStr.indexOf(Configure.RIGHT_PARENTHESES) == parameterStr.length() -1 ) {
             parameterStr = parameterStr.substring(1, parameterStr.length() - 1);
         }
         ArrayList<VarEntity> varEntities = new ArrayList<VarEntity>();
-        if(parameterStr.equals("")) {
+        if(parameterStr.equals(Configure.NULL_STRING)) {
             return varEntities;
         }
         ArrayList<Tuple<String, String>> tmpVarList = new ArrayList<Tuple<String, String>>();
         String [] strArr = parameterStr.split(Configure.COMMA);
         for (String var : strArr) {
-            String varName = "";
-            String varType = "";
+            String varName = Configure.NULL_STRING;
+            String varType = Configure.NULL_STRING;
             //have type
-            if (var.contains(" ")) {
+            if (var.contains(Configure.ONE_SPACE_STRING)) {
                 String [] tmp = var.split(Configure.ONE_SPACE_STRING);
                 if (tmp.length == 2) {
                     varName = tmp[0];
@@ -336,23 +336,23 @@ public class ProcessTask {
             for (int i = 0; i < tupleArrayList.size(); i++) {
                 String type = tupleArrayList.get(i).y; // name is acturally the type
                 tupleArrayList.get(i).setX(type);
-                tupleArrayList.get(i).setY("");
+                tupleArrayList.get(i).setY(Configure.NULL_STRING);
             }
             return tupleArrayList;
         }
 
         for (int i = 0; i < tupleArrayList.size(); i++) {
             String type = tupleArrayList.get(i).x;
-            String possibleType = "";
-            if (type.equals("")) {
+            String possibleType = Configure.NULL_STRING;
+            if (type.equals(Configure.NULL_STRING)) {
                 for (int j = i + 1; j < tupleArrayList.size(); j++) {
                     possibleType = tupleArrayList.get(j).x;
-                    if (!possibleType.equals("")) {
+                    if (!possibleType.equals(Configure.NULL_STRING)) {
                         break;
                     }
                 }
             }
-            if(!possibleType.equals("")) {
+            if(!possibleType.equals(Configure.NULL_STRING)) {
                 tupleArrayList.get(i).setX(possibleType);
             }
         }
@@ -364,7 +364,7 @@ public class ProcessTask {
     private boolean isReturnTypeList(ArrayList<Tuple<String, String>> tupleArrayList) {
         for (int i = 0; i < tupleArrayList.size(); i++) {
             String type = tupleArrayList.get(i).x;
-            if (!type.equals("")) {
+            if (!type.equals(Configure.NULL_STRING)) {
                 return false;
             }
         }
@@ -441,9 +441,9 @@ public class ProcessTask {
             if(name.equals(Configure.BLANK_IDENTIFIER) || name.equals(ConstantString.NIL)) {
                 return;
             }
-            String value = "";
+            String value = Configure.NULL_STRING;
             String usage = ConstantString.OPERAND_NAME_USAGE_SET;
-            String type = "";
+            String type = Configure.NULL_STRING;
             if (rightValues.length <= i) {
                 value = rightValues[0];
             } else {
@@ -478,7 +478,7 @@ public class ProcessTask {
 
             //it 's not in localName, add this new multiparser.entity
             String name = terminalNode.getText();
-            String value = "";
+            String value = Configure.NULL_STRING;
             String usage = ConstantString.OPERAND_NAME_USAGE_USE;
             //it 's not in localName, add this new multiparser.entity
             saveLocalName(functionIndex, name, localBlockId, type, value, usage);
@@ -516,7 +516,7 @@ public class ProcessTask {
             String usage = ConstantString.OPERAND_NAME_USAGE_SET;
             int id = functionEntity.searchLocalName(name, localBlockId);
             if(id == -1) {
-                LocalName localName = new LocalName(name, localBlockId, "", "");
+                LocalName localName = new LocalName(name, localBlockId, Configure.NULL_STRING, Configure.NULL_STRING);
                 localName.updateUsage(usage);
                 ((FunctionEntity) singleCollect.getEntities().get(functionIndex)).addLocalName(localName);
             }
@@ -531,8 +531,8 @@ public class ProcessTask {
             String usage = ConstantString.OPERAND_NAME_USAGE_USE;
             if(id == -1) {
                 String scope = ConstantString.SCOPE_ONE;
-                String type = "";
-                String value = "";
+                String type = Configure.NULL_STRING;
+                String value = Configure.NULL_STRING;
                 saveLocalName(functionIndex, name, localBlockId, type, value, usage);
             }
             else

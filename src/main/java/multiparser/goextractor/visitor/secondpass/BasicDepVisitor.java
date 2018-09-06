@@ -67,7 +67,7 @@ public class BasicDepVisitor {
                     Entity fieldEntity = singleCollect.getEntities().get(fieldId);
                     if (fieldEntity instanceof StructFieldEntity) {
                         if (fieldEntity.getName().equals(ConstantString.STRUCT_FIELD_IS_ANONYMOUS)) {
-                            String fileName1 = "";
+                            String fileName1 = Configure.NULL_STRING;
                             if (entity.getParentId() != -1) {
                                 fileName1 = singleCollect.getEntities().get(entity.getParentId()).getName();
                             }
@@ -79,7 +79,7 @@ public class BasicDepVisitor {
                                         ConstantString.RELATION_EMBED, ConstantString.RELATION_EMBEDED_BY);
                                 //String entityName2 = singleCollect.getEntities().get(embededEntityId).getName();
                                 int entity2ParentId = singleCollect.getEntities().get(embededEntityId).getParentId();
-                                String fileName2 = "";
+                                String fileName2 = Configure.NULL_STRING;
                                 if (entity2ParentId != -1) {
                                     fileName2 = singleCollect.getEntities().get(entity2ParentId).getName();
                                 }
@@ -104,7 +104,7 @@ public class BasicDepVisitor {
                     Entity fieldEntity = singleCollect.getEntities().get(fieldId);
                     if (fieldEntity instanceof InterfaceFieldEntity) {
                         if (((InterfaceFieldEntity) fieldEntity).getType().equals(ConstantString.INTERFACE_FIELD_IS_TYPE)) {
-                            String fileName1 = "";
+                            String fileName1 = Configure.NULL_STRING;
                             if (singleCollect.getEntities().get(interfaceEntityId).getParentId() != -1) {
                                 fileName1 = singleCollect.getEntities().get(singleCollect.getEntities().get(interfaceEntityId).getParentId()).getName();
                             }
@@ -112,7 +112,7 @@ public class BasicDepVisitor {
                             String embededInterfaceName = fieldEntity.getName();
                             int embededEntityId = searchEmbededInterface(interfaceEntityId, embededInterfaceName);
                             if (embededEntityId != -1) {
-                                String fileName2 = "";
+                                String fileName2 = Configure.NULL_STRING;
                                 if(singleCollect.getEntities().get(embededEntityId).getParentId() != -1) {
                                     fileName2 = singleCollect.getEntities().get(singleCollect.getEntities().get(embededEntityId).getParentId()).getName();
                                 }
@@ -395,15 +395,15 @@ public class BasicDepVisitor {
      * @return
      */
     private String transformRemote2LocalName(String alias, int packageId, String remoteName) {
-        String localName = "";
-        if (alias.equals("")) {   // the reference way is packageName.X, so return X
+        String localName = Configure.NULL_STRING;
+        if (alias.equals(Configure.NULL_STRING)) {   // the reference way is packageName.X, so return X
             String packageName = singleCollect.getEntities().get(packageId).getName();
             if(remoteName.startsWith(packageName)) {
                 localName = remoteName.substring(packageName.length(), remoteName.length());
             }
 
         }
-        else if (alias.equals(".")) {// the reference way is X, so return X
+        else if (alias.equals(Configure.DOT)) {// the reference way is X, so return X
             localName = remoteName;
         }
         else {                     //the reference way is alias.X, so return x

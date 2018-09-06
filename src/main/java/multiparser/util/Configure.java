@@ -22,6 +22,12 @@ public class Configure {
     public static final String LEFT_SQUARE_BRACKET = "[";
     public static final String RIGHT_SQUARE_BRACKET = "]";
     public static final String ELLIPSIS = "...";
+    public static final String LEFT_CURLY_BRACE = "{";
+    public static final String RIGHT_CURLY_BRACE = "}";
+    public static final String STRING_COLON = ":";
+    public static final String EQUAL = "=";
+
+
 
 
     public static final String GO_LANG = "golang";

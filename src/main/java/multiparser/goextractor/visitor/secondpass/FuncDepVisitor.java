@@ -7,6 +7,7 @@ import multiparser.goextractor.goentity.StructEntity;
 import multiparser.goextractor.goentity.StructFieldEntity;
 import multiparser.goextractor.search.*;
 import multiparser.goextractor.ConstantString;
+import multiparser.util.Configure;
 import multiparser.util.Tuple;
 import multiparser.extractor.SingleCollect;
 
@@ -146,7 +147,7 @@ public class FuncDepVisitor {
                     if (calleeEntityId != -1) {
                         saveRelation(callerEntityId, calleeEntityId, ConstantString.RELATION_CALL, ConstantString.RELATION_CALLED_BY);
                         //for debug
-                        String calleeFileName = "";
+                        String calleeFileName = Configure.NULL_STRING;
                         int calleeFileId = singleCollect.getEntities().get(calleeEntityId).getParentId();
                         if (calleeFileId != -1) {
                             calleeFileName = singleCollect.getEntities().get(calleeFileId).getName();
@@ -176,7 +177,7 @@ public class FuncDepVisitor {
 
         //the return Type for substituting the matchedStr
         String newSubStr = ConstantString.UNKNOWN_TYPE;
-        String preStr = "";
+        String preStr = Configure.NULL_STRING;
         if (calleeIndex > 0) {
             //because the order of functionsStr in calledFunctions, we only need look at the currentIndex -1
             preStr = calleeFunctionStrs.get(calleeIndex - 1);
@@ -188,7 +189,7 @@ public class FuncDepVisitor {
                 newSubStr = ConstantString.CUSTOME_TYPE + Integer.toString(preEntityId);
             }
         }
-        if(!preStr.equals("")) {
+        if(!preStr.equals(Configure.NULL_STRING)) {
             int startIndex = originalCalleeStr.indexOf(preStr);
             //if the full match, it means the same function is called several times.
             if (startIndex != -1 && !originalCalleeStr.equals(preStr)) {

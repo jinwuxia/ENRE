@@ -100,6 +100,15 @@ public class ConstantString {
     public static final String SCOPE_ONE = "Scope_1";
 
 
+    public static final String STRING_IF = "if";
+    public static final String STRING_ELSE = "else";
+    public static final String STRING_STRUCT = "struct";
+    public static final String INTERFACE = "interface";
+    public static final String SELECT = "select";
+    public static final String STRING_FOR = "for";
+    public static final String STRING_SWITCH = "switch";
+    public static final String STRING_FUNC = "func";
+
     // struct->method
     public static final String RELATION_RECEIVED_BY = "Received by";
     public static final String RELATION_RECEIVE = "Receive";

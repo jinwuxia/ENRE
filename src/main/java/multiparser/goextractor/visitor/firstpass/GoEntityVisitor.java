@@ -2,9 +2,11 @@ package multiparser.goextractor.visitor.firstpass;
 
 import multiparser.goextractor.antlr4.GolangBaseVisitor;
 import multiparser.goextractor.antlr4.GolangParser;
+import multiparser.util.Configure;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import multiparser.goextractor.ConstantString;
 import multiparser.extractor.SingleCollect;
+import sun.security.krb5.Config;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -84,17 +86,17 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitImportSpec(GolangParser.ImportSpecContext ctx) {
-        String importName = "";
-        String importPath = "";
+        String importName = Configure.NULL_STRING;
+        String importPath = Configure.NULL_STRING;
 
-        if (ctx.getChild(0).equals(".")) {
-            importName = ".";
+        if (ctx.getChild(0).equals(Configure.DOT)) {
+            importName = Configure.DOT;
         } else if (ctx.IDENTIFIER() != null) {
             importName = ctx.IDENTIFIER().getText();
         }
 
         importPath = visitImportPath(ctx.importPath());
-        return importName + ";" + importPath;
+        return importName + Configure.SEMICOLON + importPath;
 
     }
 
@@ -117,7 +119,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitConstSpec(GolangParser.ConstSpecContext ctx) {
-        String type = "";
+        String type = Configure.NULL_STRING;
         if (ctx.type() != null) {
             type = visitType(ctx.type());
         }
@@ -157,13 +159,13 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
             if (varSpecContext.type() != null) {
                 type = varSpecContext.type().getText();
             } else {
-                type = "";
+                type = Configure.NULL_STRING;
             }
 
             for (TerminalNode node : varSpecContext.identifierList().IDENTIFIER())
             {
                 //value has a problem????????????
-                String value = "";
+                String value = Configure.NULL_STRING;
                 if (varSpecContext.expressionList() != null) {
                     value = visitExpressionList(varSpecContext.expressionList());
                 }
@@ -250,14 +252,14 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
     @Override
     public String visitStructType(GolangParser.StructTypeContext ctx) {
         if (!helperVisitor.isStructTypeInTypeDecl(ctx)) {
-            String str = "struct{";
+            String str = ConstantString.STRING_STRUCT + Configure.LEFT_CURLY_BRACE;
             if (ctx.fieldDecl() != null && !ctx.fieldDecl().isEmpty()) {
                 str += visitFieldDecl(ctx.fieldDecl(0));
                 for (int i = 1; i < ctx.fieldDecl().size(); i++) {
-                    str += (";" + visitFieldDecl(ctx.fieldDecl(i)));
+                    str += (Configure.SEMICOLON + visitFieldDecl(ctx.fieldDecl(i)));
                 }
             }
-            str += "}";
+            str += Configure.RIGHT_CURLY_BRACE;
             return str;
         } else {
             tmpEntitiesIds.clear();
@@ -295,7 +297,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitFieldDecl(GolangParser.FieldDeclContext ctx) {
-        String str = "";
+        String str = Configure.NULL_STRING;
         if (ctx.type() != null) {
             str += visitIdentifierList(ctx.identifierList());
             str += visitType(ctx.type());
@@ -318,8 +320,8 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
     @Override
     public String visitAnonymousField(GolangParser.AnonymousFieldContext ctx) {
         String str = visitTypeName(ctx.typeName());
-        if (ctx.getChild(0).equals("*")) {
-            return ("*" + str);
+        if (ctx.getChild(0).equals(Configure.STAR)) {
+            return (Configure.STAR + str);
         } else {
             return str;
         }
@@ -338,14 +340,14 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
     public String visitInterfaceType(GolangParser.InterfaceTypeContext ctx) {
         //it is not for interface type declaration
         if (!helperVisitor.isInterfaceypeInTypeDecl(ctx)) {
-            String str = "interface{";
+            String str = ConstantString.INTERFACE + Configure.LEFT_CURLY_BRACE;
             if (ctx.methodSpec().size() != 0) {
                 str += visitMethodSpec(ctx.methodSpec(0));
                 for (int i = 1; i < ctx.methodSpec().size(); i++) {
-                    str += (";" + visitMethodSpec(ctx.methodSpec(i)));
+                    str += (Configure.SEMICOLON + visitMethodSpec(ctx.methodSpec(i)));
                 }
             }
-            str += "}";
+            str += Configure.RIGHT_CURLY_BRACE;
             return str;
         }
         //it is for interface type declaration
@@ -369,7 +371,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
                         name = methodSpecContext.IDENTIFIER().getText();
                         //parse methodSignature, grammar: signature: parameters result?;
                         String methodSignatureParas = visitParameters(methodSpecContext.signature().parameters());
-                        String methodSignatureReturns = "";
+                        String methodSignatureReturns = Configure.NULL_STRING;
                         if (methodSpecContext.signature().result() != null) {
                             methodSignatureReturns = visitResult(methodSpecContext.signature().result());
                         }
@@ -439,7 +441,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitArrayType(GolangParser.ArrayTypeContext ctx) {
-        return "[" + visitArrayLength(ctx.arrayLength()) + "]" + visitElementType(ctx.elementType());
+        return Configure.LEFT_SQUARE_BRACKET + visitArrayLength(ctx.arrayLength()) + Configure.RIGHT_SQUARE_BRACKET + visitElementType(ctx.elementType());
     }
 
     /**
@@ -450,7 +452,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitPointerType(GolangParser.PointerTypeContext ctx) {
-        return "*" + visitType(ctx.type());
+        return Configure.STAR + visitType(ctx.type());
     }
 
     /**
@@ -461,7 +463,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitFunctionType(GolangParser.FunctionTypeContext ctx) {
-        return "func " + visitSignature(ctx.signature());
+        return ConstantString.STRING_FUNC + Configure.ONE_SPACE_STRING + visitSignature(ctx.signature());
     }
 
     /**
@@ -472,7 +474,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitSliceType(GolangParser.SliceTypeContext ctx) {
-        return "[]" + visitElementType(ctx.elementType());
+        return Configure.LEFT_SQUARE_BRACKET + Configure.RIGHT_SQUARE_BRACKET + visitElementType(ctx.elementType());
     }
 
     /**
@@ -483,7 +485,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitMapType(GolangParser.MapTypeContext ctx) {
-        return "map" + "[" + visitType(ctx.type()) + "]" + visitElementType(ctx.elementType());
+        return ConstantString.MAP + Configure.LEFT_SQUARE_BRACKET + visitType(ctx.type()) + Configure.RIGHT_SQUARE_BRACKET + visitElementType(ctx.elementType());
     }
 
     /**
@@ -521,7 +523,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
         } else if (ctx.typeLit() != null) {
             return visitTypeLit(ctx.typeLit());
         } else if (ctx.type() != null) {
-            return ("(" + visitType(ctx.type()) + ")");
+            return (Configure.LEFT_PARENTHESES + visitType(ctx.type()) + Configure.RIGHT_PARENTHESES);
         }
         return null;
     }
@@ -550,7 +552,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitQualifiedIdent(GolangParser.QualifiedIdentContext ctx) {
-        return ctx.IDENTIFIER(0).getText() + "." + ctx.IDENTIFIER(1).getText();
+        return ctx.IDENTIFIER(0).getText() + Configure.DOT + ctx.IDENTIFIER(1).getText();
     }
 
     /**
@@ -562,7 +564,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
     @Override
     public String visitSignature(GolangParser.SignatureContext ctx) {
         if (ctx.result() != null) {
-            return visitParameters(ctx.parameters()) + " " + visitResult(ctx.result());
+            return visitParameters(ctx.parameters()) + Configure.ONE_SPACE_STRING + visitResult(ctx.result());
         } else {
             return visitParameters(ctx.parameters());
         }
@@ -577,15 +579,15 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
     @Override
     public String visitParameters(GolangParser.ParametersContext ctx) {
         if (ctx.parameterList() != null) {
-            String str = "(";
+            String str = Configure.LEFT_PARENTHESES;
             str += visitParameterList(ctx.parameterList());
             if (ctx.getChildCount() == 4) {
-                str += ",";
+                str += Configure.COMMA;
             }
-            str += ")";
+            str += Configure.RIGHT_PARENTHESES;
             return str;
         } else {
-            return "()";
+            return Configure.LEFT_PARENTHESES + Configure.RIGHT_PARENTHESES;
         }
     }
 
@@ -597,11 +599,11 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitParameterList(GolangParser.ParameterListContext ctx) {
-        String str = "";
+        String str = Configure.NULL_STRING;
         str += visitParameterDecl(ctx.parameterDecl(0));
         if (ctx.parameterDecl().size() > 1) {
             for (int i = 1; i < ctx.parameterDecl().size(); i++) {
-                str += ("," + visitParameterDecl(ctx.parameterDecl(i)));
+                str += (Configure.COMMA + visitParameterDecl(ctx.parameterDecl(i)));
             }
         }
         return str;
@@ -615,17 +617,17 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitParameterDecl(GolangParser.ParameterDeclContext ctx) {
-        String str = "";
+        String str = Configure.NULL_STRING;
         //parameters (having identifierList)
         if (ctx.identifierList() != null) {
             str += visitIdentifierList(ctx.identifierList());
 
             if (ctx.getChildCount() >= 2 &&
-                    (ctx.getChild(0).getText().equals("...") || ctx.getChild(1).getText().equals("..."))) {
-                str += " ...";
+                    (ctx.getChild(0).getText().equals(Configure.ELLIPSIS) || ctx.getChild(1).getText().equals(Configure.ELLIPSIS))) {
+                str += (Configure.ONE_SPACE_STRING + Configure.ELLIPSIS);
                 str += visitType(ctx.type());
             } else {
-                str += (" " + visitType(ctx.type()));
+                str += (Configure.ONE_SPACE_STRING + visitType(ctx.type()));
             }
         }
         //returns (having no identifierList, just having type)
@@ -649,11 +651,11 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
     public String visitIdentifierList(GolangParser.IdentifierListContext ctx) {
         //processTask.processIdentifierList(ctx, functionIndex);
 
-        String str = "";
+        String str = Configure.NULL_STRING;
         str += ctx.IDENTIFIER(0).getText();
         if (ctx.IDENTIFIER().size() > 1) {
             for (int i = 1; i < ctx.IDENTIFIER().size(); i++) {
-                str += ("," + ctx.IDENTIFIER(i).getText());
+                str += (Configure.COMMA + ctx.IDENTIFIER(i).getText());
             }
         }
         return str;
@@ -737,7 +739,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitOperandPrimaryExpr(GolangParser.OperandPrimaryExprContext ctx) {
-        String str = "";
+        String str = Configure.NULL_STRING;
         if (ctx != null) {
             str = visitOperand(ctx.operand());
             //processTask.processOperandInFunctionEntity(ctx, str, functionIndex);
@@ -753,7 +755,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitConversionPrimaryExpr(GolangParser.ConversionPrimaryExprContext ctx) {
-        String str = "";
+        String str = Configure.NULL_STRING;
         if (ctx != null) {
             str = visitConversion(ctx.conversion());
             //processTask.processOperandInFunctionEntity(ctx, str, functionIndex);
@@ -769,7 +771,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitSelectorPrimaryExpr(GolangParser.SelectorPrimaryExprContext ctx) {
-        String str = "";
+        String str = Configure.NULL_STRING;
         if (ctx != null) {
             str = visitPrimaryExpr(ctx.primaryExpr()) + visitSelector(ctx.selector());
             //processTask.processOperandInFunctionEntity(ctx, str, functionIndex);
@@ -785,7 +787,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitIndexPrimaryExpr(GolangParser.IndexPrimaryExprContext ctx) {
-        String str = "";
+        String str = Configure.NULL_STRING;
         if (ctx != null) {
             str = visitPrimaryExpr(ctx.primaryExpr()) + visitIndex(ctx.index());
             //processTask.processOperandInFunctionEntity(ctx, str, functionIndex);
@@ -801,7 +803,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitSlicePrimaryExpr(GolangParser.SlicePrimaryExprContext ctx) {
-        String str = "";
+        String str = Configure.NULL_STRING;
         if (ctx != null) {
             str = visitPrimaryExpr(ctx.primaryExpr()) + visitSlice(ctx.slice());
         }
@@ -816,7 +818,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitTypeAssertionPrimaryExpr(GolangParser.TypeAssertionPrimaryExprContext ctx) {
-        String str = "";
+        String str = Configure.NULL_STRING;
         if (ctx != null) {
             str = visitPrimaryExpr(ctx.primaryExpr()) + visitTypeAssertion(ctx.typeAssertion());
         }
@@ -831,7 +833,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitMethodCallPrimaryExpr(GolangParser.MethodCallPrimaryExprContext ctx) {
-        String str = "";
+        String str = Configure.NULL_STRING;
         if (ctx != null) {
             str = visitPrimaryExpr(ctx.primaryExpr()) + visitArguments(ctx.arguments());
         }
@@ -887,7 +889,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
         } else if (ctx.methodExpr() != null) {
             return visitMethodExpr(ctx.methodExpr());
         } else if (ctx.expression() != null) {
-            return "(" + visitExpression(ctx.expression()) + ")";
+            return Configure.LEFT_PARENTHESES + visitExpression(ctx.expression()) + Configure.RIGHT_PARENTHESES;
         } else {
             return null;
         }
@@ -900,7 +902,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitOperandName(GolangParser.OperandNameContext ctx) {
-        String str = "";
+        String str = Configure.NULL_STRING;
         if (ctx.IDENTIFIER() != null) {
             str = ctx.IDENTIFIER().getText();
         } else {
@@ -927,7 +929,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitMethodExpr(GolangParser.MethodExprContext ctx) {
-        return visitReceiverType(ctx.receiverType()) + "." + ctx.IDENTIFIER().getText();
+        return visitReceiverType(ctx.receiverType()) + Configure.DOT + ctx.IDENTIFIER().getText();
     }
 
     /**
@@ -941,9 +943,9 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
         if (ctx.getChildCount() == 1 && ctx.typeName() != null) {
             return visitTypeName(ctx.typeName());
         } else if (ctx.getChildCount() > 1 && ctx.typeName() != null) {
-            return "(*" + visitTypeName(ctx.typeName()) + ")";
+            return Configure.LEFT_PARENTHESES + Configure.STAR + visitTypeName(ctx.typeName()) + Configure.RIGHT_PARENTHESES;
         } else if (ctx.getChildCount() > 1 && ctx.receiverType() != null) {
-            return "(" + visitReceiverType(ctx.receiverType()) + ")";
+            return Configure.LEFT_PARENTHESES + visitReceiverType(ctx.receiverType()) + Configure.RIGHT_PARENTHESES;
         }
         return null;
     }
@@ -1012,7 +1014,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
         } else if (ctx.arrayType() != null) {
             return visitArrayType(ctx.arrayType());
         } else if (ctx.elementType() != null) {
-            return "[...]" + visitElementType(ctx.elementType());
+            return Configure.LEFT_SQUARE_BRACKET + Configure.ELLIPSIS + Configure.RIGHT_SQUARE_BRACKET + visitElementType(ctx.elementType());
         } else if (ctx.sliceType() != null) {
             return visitSliceType(ctx.sliceType());
         } else if (ctx.mapType() != null) {
@@ -1032,9 +1034,9 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
     @Override
     public String visitLiteralValue(GolangParser.LiteralValueContext ctx) {
         if (ctx.elementList() != null) {
-            return ("{" + visitElementList(ctx.elementList()) + "}");
+            return (Configure.LEFT_CURLY_BRACE + visitElementList(ctx.elementList()) + Configure.RIGHT_CURLY_BRACE);
         } else {
-            return "{}";
+            return Configure.LEFT_CURLY_BRACE + Configure.RIGHT_CURLY_BRACE;
         }
     }
 
@@ -1049,7 +1051,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
         String str = visitKeyedElement(ctx.keyedElement(0));
         if (ctx.keyedElement().size() > 1) {
             for (int i = 1; i < ctx.keyedElement().size(); i++) {
-                str += ("," + visitKeyedElement(ctx.keyedElement(i)));
+                str += (Configure.COMMA + visitKeyedElement(ctx.keyedElement(i)));
             }
         }
         return str;
@@ -1063,9 +1065,9 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitKeyedElement(GolangParser.KeyedElementContext ctx) {
-        String str = "";
+        String str = Configure.NULL_STRING;
         if (ctx.key() != null) {
-            str += ((visitKey(ctx.key())) + ":");
+            str += ((visitKey(ctx.key())) + Configure.STRING_COLON);
         }
         if (ctx.element() != null) {
             str += visitElement(ctx.element());
@@ -1118,7 +1120,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitFunctionLit(GolangParser.FunctionLitContext ctx) {
-        return "func" + visitFunction(ctx.function());
+        return ConstantString.STRING_FUNC + visitFunction(ctx.function());
     }
 
     /**
@@ -1137,7 +1139,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
             blockStackForAFuncMeth.push(localBlockId);
         }
 
-        String str = "";
+        String str = Configure.NULL_STRING;
         str += visitSignature(ctx.signature());
         str += visitBlock(ctx.block());
 
@@ -1175,7 +1177,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
                 blockStackForAFuncMeth.pop();
             }
         }
-        return "{}";
+        return Configure.LEFT_CURLY_BRACE + Configure.RIGHT_CURLY_BRACE;
     }
 
     /**
@@ -1186,14 +1188,14 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitConversion(GolangParser.ConversionContext ctx) {
-        String str = "";
+        String str = Configure.NULL_STRING;
         str += visitType(ctx.type());
-        str += "(";
+        str += Configure.LEFT_PARENTHESES;
         str += visitExpression(ctx.expression());
-        if (ctx.getChild(3) != null && ctx.getChild(3).getText().equals(",")) {
-            str += ",";
+        if (ctx.getChild(3) != null && ctx.getChild(3).getText().equals(Configure.COMMA)) {
+            str += Configure.COMMA;
         }
-        str += ")";
+        str += Configure.RIGHT_PARENTHESES;
         return str;
     }
 
@@ -1205,7 +1207,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitSelector(GolangParser.SelectorContext ctx) {
-        return ("." + ctx.IDENTIFIER().getText());
+        return (Configure.DOT + ctx.IDENTIFIER().getText());
     }
 
     /**
@@ -1216,7 +1218,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitIndex(GolangParser.IndexContext ctx) {
-        return ("[" + visitExpression(ctx.expression()) + "]");
+        return (Configure.LEFT_SQUARE_BRACKET + visitExpression(ctx.expression()) + Configure.RIGHT_SQUARE_BRACKET);
     }
 
     /**
@@ -1228,24 +1230,24 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
     @Override
     public String visitSlice(GolangParser.SliceContext ctx) {
         if (ctx.expression().size() == 0) {
-            return "[:]";
+            return Configure.LEFT_SQUARE_BRACKET + Configure.STRING_COLON +Configure.RIGHT_SQUARE_BRACKET;
         } else if (ctx.expression().size() == 1) {
-            if (ctx.getChild(0).getText().equals(":")) {
-                return "[:" + visitExpression(ctx.expression(0)) + "]";
+            if (ctx.getChild(0).getText().equals(Configure.STRING_COLON)) {
+                return Configure.LEFT_SQUARE_BRACKET + Configure.STRING_COLON + visitExpression(ctx.expression(0)) + Configure.RIGHT_SQUARE_BRACKET;
             } else {
-                return "[" + visitExpression(ctx.expression(0)) + ":]";
+                return Configure.LEFT_SQUARE_BRACKET + visitExpression(ctx.expression(0)) + Configure.STRING_COLON + Configure.RIGHT_SQUARE_BRACKET;
             }
         } else if (ctx.expression().size() == 2) {
             if (ctx.getChildCount() == 3) {
-                return "[" + visitExpression(ctx.expression(0)) + ":" + visitExpression(ctx.expression(1)) + "]";
+                return Configure.LEFT_SQUARE_BRACKET + visitExpression(ctx.expression(0)) + Configure.STRING_COLON + visitExpression(ctx.expression(1)) + Configure.RIGHT_SQUARE_BRACKET;
             } else {
-                return "[:" + visitExpression(ctx.expression(0)) + ":" + visitExpression(ctx.expression(1)) + "]";
+                return Configure.LEFT_SQUARE_BRACKET + Configure.STRING_COLON + visitExpression(ctx.expression(0)) + Configure.STRING_COLON + visitExpression(ctx.expression(1)) + Configure.RIGHT_SQUARE_BRACKET;
             }
         } else if (ctx.expression().size() == 3) {
-            return "["
-                    + visitExpression(ctx.expression(0)) + ":"
-                    + visitExpression(ctx.expression(1)) + ":"
-                    + visitExpression(ctx.expression(2)) + "]";
+            return Configure.LEFT_SQUARE_BRACKET
+                    + visitExpression(ctx.expression(0)) + Configure.STRING_COLON
+                    + visitExpression(ctx.expression(1)) + Configure.STRING_COLON
+                    + visitExpression(ctx.expression(2)) + Configure.RIGHT_SQUARE_BRACKET;
         } else {
             return null;
         }
@@ -1259,7 +1261,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitTypeAssertion(GolangParser.TypeAssertionContext ctx) {
-        return (".(" + visitType(ctx.type()) + ")");
+        return ( Configure.STAR + Configure.LEFT_PARENTHESES + visitType(ctx.type()) + Configure.RIGHT_PARENTHESES);
     }
 
     /**
@@ -1273,18 +1275,18 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
         if (ctx == null) {
             System.out.println("visitArguments null");
         }
-        String str = "(";
+        String str = Configure.LEFT_PARENTHESES;
 
         if (ctx.type() != null) {
             str += visitType(ctx.type());
             if (ctx.expressionList() != null) {
-                str += ",";
+                str += Configure.COMMA;
                 str += visitExpressionList(ctx.expressionList());
             }
         } else if (ctx.expressionList() != null) {
             str += visitExpressionList(ctx.expressionList());
         }
-        str += ")";
+        str += Configure.RIGHT_PARENTHESES;
         return str;
     }
 
@@ -1302,7 +1304,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
         String str = visitExpression(ctx.expression(0));
         if (ctx.expression().size() > 1) {
             for (int i = 1; i < ctx.expression().size(); i++) {
-                str += ("," + visitExpression(ctx.expression(i)));
+                str += (Configure.COMMA + visitExpression(ctx.expression(i)));
             }
         }
         return str;
@@ -1320,8 +1322,8 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
     @Override
     public String visitFunctionDecl(GolangParser.FunctionDeclContext ctx) {
         String functionName = ctx.IDENTIFIER().getText();
-        String parameters = "";
-        String returns = "";
+        String parameters = Configure.NULL_STRING;
+        String returns = Configure.NULL_STRING;
         if (ctx.function() != null) {
             parameters = visitParameters(ctx.function().signature().parameters());
             if (ctx.function().signature().result() != null) {
@@ -1359,10 +1361,10 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
         if(ctx == null) {
             return null;
         }
-        String functionName = "";
-        String receiverStr = "";
-        String parameters = "";
-        String returns = "";
+        String functionName = Configure.NULL_STRING;
+        String receiverStr = Configure.NULL_STRING;
+        String parameters = Configure.NULL_STRING;
+        String returns = Configure.NULL_STRING;
         if(ctx.IDENTIFIER() != null) {
             functionName = ctx.IDENTIFIER().getText();
         }
@@ -1401,7 +1403,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitReceiver(GolangParser.ReceiverContext ctx) {
-        String str = "";
+        String str = Configure.NULL_STRING;
         if (ctx.parameters() != null) {
             str = visitParameters(ctx.parameters());
         }
@@ -1428,7 +1430,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
             }
             processTask.processShortDeclVarInFunction(leftOperands, rightExps, functionIndex, localBlockId);
         }
-        return (leftOperands + ":=" + rightExps);
+        return (leftOperands + Configure.STRING_COLON + Configure.EQUAL + rightExps);
     }
 
 
@@ -1439,7 +1441,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitLeftShortVarDecl(GolangParser.LeftShortVarDeclContext ctx) {
-        String str = "";
+        String str = Configure.NULL_STRING;
         if(ctx != null) {
             str = visitIdentifierList(ctx.identifierList());
         }
@@ -1453,7 +1455,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
      */
     @Override
     public String visitRightShortVarDecl(GolangParser.RightShortVarDeclContext ctx) {
-        String str = "";
+        String str = Configure.NULL_STRING;
         if(ctx != null) {
             str = visitExpressionList(ctx.expressionList());
         }
@@ -1493,11 +1495,11 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
         }
 
         //visit children
-        String str = "for";
+        String str = ConstantString.STRING_FOR;
         if (ctx == null) {
             return str;
         }
-        str += "(";
+        str += Configure.LEFT_PARENTHESES;
         if(ctx.expression() != null) {
             str += visitExpression(ctx.expression());
         }
@@ -1507,7 +1509,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
         if(ctx.rangeClause() != null) {
             str += visitRangeClause(ctx.rangeClause());
         }
-        str += ")";
+        str += Configure.RIGHT_PARENTHESES;
         if(ctx.block() != null) {
             str += visitBlock(ctx.block());
         }
@@ -1537,11 +1539,11 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
         }
 
         //visit children
-        String str = "if";
+        String str = ConstantString.STRING_IF;
         if (ctx == null) {
             return str;
         }
-        str += "if";
+        str += ConstantString.STRING_IF;
         if (ctx.simpleStmt() != null) {
             str += visitSimpleStmt(ctx.simpleStmt());
         }
@@ -1577,7 +1579,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
         }
 
         //visit children
-        String str = "else";
+        String str = ConstantString.STRING_ELSE;
         if (ctx == null) {
             return str;
         }
@@ -1612,7 +1614,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
         }
 
         //visit children
-        String str = "switch";
+        String str = ConstantString.STRING_SWITCH;
         if (ctx == null) {
             return str;
         }
@@ -1647,14 +1649,14 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
         }
 
         //visit children
-        String str = "";
+        String str = Configure.NULL_STRING;
         if (ctx == null) {
             return str;
         }
         if(ctx.exprSwitchCase() != null) {
             str += visitExprSwitchCase(ctx.exprSwitchCase());
         }
-        str+= ":";
+        str+= Configure.STRING_COLON;
         if(ctx.statementList() != null) {
             str += visitStatementList(ctx.statementList());
         }
@@ -1683,14 +1685,14 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
         }
 
         //visit children
-        String str = "";
+        String str = Configure.NULL_STRING;
         if (ctx == null) {
             return str;
         }
         if(ctx.typeSwitchCase() != null) {
             str += visitTypeSwitchCase(ctx.typeSwitchCase());
         }
-        str += ":";
+        str += Configure.STRING_COLON;
         if(ctx.statementList() != null) {
             str += visitStatementList(ctx.statementList());
         }
@@ -1719,7 +1721,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
         }
 
         //visit children
-        String str = "select";
+        String str = ConstantString.SELECT;
         if (ctx == null) {
             return str;
         }
@@ -1753,7 +1755,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
         }
 
         //visit children
-        String str = "";
+        String str = Configure.NULL_STRING;
         if (ctx == null) {
             return str;
         }
@@ -1761,7 +1763,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
         if(ctx.commCase() != null) {
             str += visitCommCase(ctx.commCase());
         }
-        str += ":";
+        str += Configure.STRING_COLON;
         if(ctx.statementList() != null) {
             str += visitStatementList(ctx.statementList());
         }
