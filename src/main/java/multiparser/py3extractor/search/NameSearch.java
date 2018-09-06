@@ -29,7 +29,7 @@ import java.util.Map;
 public class NameSearch {
     private static NameSearch nameSearchInstance = new NameSearch();
 
-    private NameSearch() {};
+    private NameSearch() {}
 
 
     private SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
@@ -79,14 +79,14 @@ public class NameSearch {
         buildNameScopeForClasses();
         buildNameScopeForMethods();
         buildNameScopeForPackages();
-        buildNameScopeForObjectVar();
+        //buildNameScopeForObjectVar();
     }
 
 
     /**
      * class object scope: class's children
      */
-    private void buildNameScopeForObjectVar() {
+    public void buildNameScopeForVar() {
         for(Entity entity : singleCollect.getEntities()) {
             if (entity instanceof VarEntity) {
                 int scopeId = entity.getId();
@@ -156,7 +156,9 @@ public class NameSearch {
     }
 
     /**
-     * Function: children, parameter, located module's visible name(module children + module import), imported name.
+     * Function: children,
+     *  parameter,
+     *  located module's visible name (module children + module import), imported name.
      */
     private void buildNameScopeForFunctions() {
         for(Entity entity : singleCollect.getEntities()) {

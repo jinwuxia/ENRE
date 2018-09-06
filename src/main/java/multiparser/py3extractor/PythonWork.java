@@ -52,6 +52,9 @@ public class PythonWork extends TemplateWork {
         TypeInfer typeInfer = new TypeInfer();
         typeInfer.inferTypeForVarEntity();
 
+        //the var's type must be known before build its scope
+        nameSearch.buildNameScopeForVar();
+
         depVisitor = new CallVisitor();
         depVisitor.setDep();
 
