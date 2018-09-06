@@ -36,8 +36,8 @@ public class Configure {
 
 
 
-    private String  inputSrcPath = "../../../../go-workspace/beego-master";
-    private String  usageSrcPath = "github.com/astaxie/beego";
+    private String  inputSrcPath;
+    private String  usageSrcPath;
     private String  analyzedProjectName = "beego";
     private String  lang = "golang";
 
