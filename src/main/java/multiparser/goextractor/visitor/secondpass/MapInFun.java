@@ -3,6 +3,7 @@ package multiparser.goextractor.visitor.secondpass;
 import multiparser.entity.*;
 import multiparser.goextractor.ConstantString;
 import multiparser.goextractor.goentity.MethodEntity;
+import multiparser.util.Configure;
 import multiparser.util.Tuple;
 import multiparser.extractor.SingleCollect;
 
@@ -256,7 +257,7 @@ public class MapInFun {
         }
         FileEntity fileEntity = (FileEntity) singleCollect.getEntities().get(fileId);
         for (Tuple<String, Integer> oneImport : fileEntity.getRelations()) {
-            if (oneImport.x.equals(ConstantString.RELATION_IMPORT)) {
+            if (oneImport.x.equals(Configure.RELATION_IMPORT)) {
                 int thisImportedPackageId = oneImport.y;
                 String thisImportedPackageName = singleCollect.getEntities().get(thisImportedPackageId).getName();
                 String thisImportedAliasName = ((FileEntity) singleCollect.getEntities().get(fileId)).getImportsAlias().get(thisImportedPackageId);

@@ -2,6 +2,7 @@ package multiparser.goextractor.search;
 
 import multiparser.goextractor.goentity.AliasTypeEntity;
 import multiparser.goextractor.ConstantString;
+import multiparser.util.Configure;
 import multiparser.util.Tuple;
 import multiparser.extractor.SingleCollect;
 
@@ -24,7 +25,7 @@ public class NameSearchAliasType {
             return -1;
         }
         for(Tuple<String, Integer> relation : singleCollect.getEntities().get(AliasTypeId).getRelations()) {
-            if (relation.x.equals(ConstantString.RELATION_RECEIVED_BY)) {
+            if (relation.x.equals(Configure.RELATION_RECEIVED_BY)) {
                 int methodId = relation.y;
                 if (singleCollect.getEntities().get(methodId).getName().equals(methodName)) {
                     return methodId;

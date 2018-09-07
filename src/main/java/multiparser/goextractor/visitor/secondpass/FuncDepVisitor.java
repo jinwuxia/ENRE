@@ -46,7 +46,7 @@ public class FuncDepVisitor {
                         if (usage.equals(ConstantString.OPERAND_NAME_USAGE_USE)) {
                             if (name2Id.containsKey(varName)) {
                                 int varId = name2Id.get(varName);
-                                saveRelation(functionId, varId, ConstantString.RELATION_USE, ConstantString.RELATION_USED_BY);
+                                saveRelation(functionId, varId, Configure.RELATION_USE, Configure.RELATION_USED_BY);
                             }
                         }
                     }
@@ -71,7 +71,7 @@ public class FuncDepVisitor {
                         if (usage.equals(ConstantString.OPERAND_NAME_USAGE_SET)) {
                             if (name2Id.containsKey(varName)) {
                                 int varId = name2Id.get(varName);
-                                saveRelation(functionId, varId, ConstantString.RELATION_SET, ConstantString.RELATION_SETED_BY);
+                                saveRelation(functionId, varId, Configure.RELATION_SET, Configure.RELATION_SETED_BY);
                             }
                         }
                     }
@@ -91,7 +91,7 @@ public class FuncDepVisitor {
                 for (int parameterId : ((FunctionEntity) entity).getParameters()) {
                     if(((VarEntity) singleCollect.getEntities().get(parameterId)).getTypeId() != -1) {
                         int typeId = ((VarEntity) singleCollect.getEntities().get(parameterId)).getTypeId();
-                        saveRelation(functionId, typeId, ConstantString.RELATION_PARAMETER, ConstantString.RELATION_PARAMETERED_BY);
+                        saveRelation(functionId, typeId, Configure.RELATION_PARAMETER, Configure.RELATION_PARAMETERED_BY);
                     }
                 }
             }
@@ -109,7 +109,7 @@ public class FuncDepVisitor {
                 for (int returnId : ((FunctionEntity) entity).getReturns()) {
                     if(((VarEntity) singleCollect.getEntities().get(returnId)).getTypeId() != -1) {
                         int typeId = ((VarEntity) singleCollect.getEntities().get(returnId)).getTypeId();
-                        saveRelation(functionId, typeId, ConstantString.RELATION_RETURN, ConstantString.RELATION_RETURNED_BY);
+                        saveRelation(functionId, typeId, Configure.RELATION_RETURN, Configure.RELATION_RETURNED_BY);
                     }
                 }
             }
@@ -145,7 +145,7 @@ public class FuncDepVisitor {
                     tmpCalleeEntityIds.add(calleeEntityId);
 
                     if (calleeEntityId != -1) {
-                        saveRelation(callerEntityId, calleeEntityId, ConstantString.RELATION_CALL, ConstantString.RELATION_CALLED_BY);
+                        saveRelation(callerEntityId, calleeEntityId, Configure.RELATION_CALL, Configure.RELATION_CALLED_BY);
                         //for debug
                         String calleeFileName = Configure.NULL_STRING;
                         int calleeFileId = singleCollect.getEntities().get(calleeEntityId).getParentId();

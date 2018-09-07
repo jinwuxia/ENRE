@@ -42,7 +42,7 @@ public class BasicDepVisitor {
                         int importedPackageId = searchPackageIndex(importedPackageName);
                         if (importedPackageId != -1) {
                             saveRelation(fileId, importedPackageId,
-                                    ConstantString.RELATION_IMPORT, ConstantString.RELATION_IMPORTED_BY);
+                                    Configure.RELATION_IMPORT, Configure.RELATION_IMPORTED_BY);
                             ((FileEntity) singleCollect.getEntities().get(fileId)).addImportAlias(importedPackageNameAlias, importedPackageId);
                             //System.out.println("imported package:" + ((PackageEntity) singleCollect.getEntities().get(importedPackageId)).getFullPath());
                         }
@@ -76,7 +76,7 @@ public class BasicDepVisitor {
                             int embededEntityId = searchEmbededStruct(entityId, embededStructName);
                             if (embededEntityId != -1) {
                                 saveRelation(entityId, embededEntityId,
-                                        ConstantString.RELATION_EMBED, ConstantString.RELATION_EMBEDED_BY);
+                                        Configure.RELATION_EMBED, Configure.RELATION_EMBEDED_BY);
                                 //String entityName2 = singleCollect.getEntities().get(embededEntityId).getName();
                                 int entity2ParentId = singleCollect.getEntities().get(embededEntityId).getParentId();
                                 String fileName2 = Configure.NULL_STRING;
@@ -118,7 +118,7 @@ public class BasicDepVisitor {
                                 }
                                 //System.out.println("InterfaceRelation: embeded:"+ embededInterfaceName + ", file:" +  fileName2);
                                 saveRelation(interfaceEntityId, embededEntityId,
-                                        ConstantString.RELATION_EMBED, ConstantString.RELATION_EMBEDED_BY);
+                                        Configure.RELATION_EMBED, Configure.RELATION_EMBEDED_BY);
 
                             }
                             else {
@@ -150,7 +150,7 @@ public class BasicDepVisitor {
                 int receiverTypeId = searchReceiverType(methodEntityId, receiverType);
                 if (receiverTypeId != -1) {
                     ((VarEntity) singleCollect.getEntities().get(receiverVarId)).setTypeId(receiverTypeId);
-                    saveRelation(methodEntityId, receiverTypeId, ConstantString.RELATION_RECEIVE, ConstantString.RELATION_RECEIVED_BY);
+                    saveRelation(methodEntityId, receiverTypeId, Configure.RELATION_RECEIVE, Configure.RELATION_RECEIVED_BY);
                     //System.out.println("method_receive_relation: receiver:" + receiverType + ", file: " + singleCollect.getEntities().get(singleCollect.getEntities().get(receiverId).getParentId()).getName());
                 }
                 else {
@@ -178,7 +178,7 @@ public class BasicDepVisitor {
                     Tuple<Integer, Integer> tmp = new Tuple<Integer, Integer>(typeId, interfaceId);
                     if(signature1.isEqual(signature2) && !isExist(tmp, tmps)) {
                         tmps.add(tmp);
-                        saveRelation(typeId, interfaceId, ConstantString.RELATION_IMPLEMENT, ConstantString.RELATION_IMPLEMENTED_BY);
+                        saveRelation(typeId, interfaceId, Configure.RELATION_IMPLEMENT, Configure.RELATION_IMPLEMENTED_BY);
                     }
                 }
             }
@@ -208,7 +208,7 @@ public class BasicDepVisitor {
                 int typeId = entity.getId();
                 ArrayList<Tuple<String, Integer>> relations = entity.getRelations();
                 for (Tuple<String, Integer> relation : relations) {
-                    if (relation.x.equals(ConstantString.RELATION_RECEIVED_BY)) {
+                    if (relation.x.equals(Configure.RELATION_RECEIVED_BY)) {
                         int methodId = relation.y;
                         String methodName = singleCollect.getEntities().get(methodId).getName();
                         ArrayList<Integer> paraIds = ((MethodEntity) singleCollect.getEntities().get(methodId)).getParameters();
@@ -469,7 +469,7 @@ public class BasicDepVisitor {
     private ArrayList<Integer> findImportPackages(int fileId) {
         ArrayList<Integer> ids = new ArrayList<Integer>();
         for (Tuple<String, Integer> relation : singleCollect.getEntities().get(fileId).getRelations()) {
-            if (relation.x.equals(ConstantString.RELATION_IMPORT)) {
+            if (relation.x.equals(Configure.RELATION_IMPORT)) {
                 ids.add(relation.y);
             }
         }

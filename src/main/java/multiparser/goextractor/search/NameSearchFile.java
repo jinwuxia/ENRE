@@ -6,8 +6,10 @@ import multiparser.goextractor.goentity.AliasTypeEntity;
 import multiparser.goextractor.goentity.InterfaceEntity;
 import multiparser.goextractor.goentity.MethodEntity;
 import multiparser.goextractor.goentity.StructEntity;
+import multiparser.util.Configure;
 import multiparser.util.Tuple;
 import multiparser.extractor.SingleCollect;
+import sun.security.krb5.Config;
 
 import java.util.ArrayList;
 
@@ -156,7 +158,7 @@ public class NameSearchFile {
                 singleCollect.getEntities().get(fileId) instanceof FileEntity) {
             ArrayList<Tuple<String, Integer>> relations = singleCollect.getEntities().get(fileId).getRelations();
             for (Tuple<String, Integer> oneImport : relations) {
-                if (oneImport.x.equals(ConstantString.RELATION_IMPORT)) {
+                if (oneImport.x.equals(Configure.RELATION_IMPORT)) {
                     int thisImportedPackageId = oneImport.y;
                     String thisImportedPackageName = singleCollect.getEntities().get(thisImportedPackageId).getName();
                     String thisImportedAliasName = ((FileEntity) singleCollect.getEntities().get(fileId)).getImportsAlias().get(thisImportedPackageId);

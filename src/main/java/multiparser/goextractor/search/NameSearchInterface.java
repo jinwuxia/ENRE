@@ -4,8 +4,10 @@ package multiparser.goextractor.search;
 import multiparser.goextractor.goentity.InterfaceEntity;
 import multiparser.goextractor.goentity.InterfaceFieldEntity;
 import multiparser.goextractor.ConstantString;
+import multiparser.util.Configure;
 import multiparser.util.Tuple;
 import multiparser.extractor.SingleCollect;
+import sun.security.krb5.Config;
 
 import java.util.ArrayList;
 
@@ -40,7 +42,7 @@ public class NameSearchInterface {
             }
             else{
                 for(Tuple<String, Integer> relation : singleCollect.getEntities().get(thisInterfaceId).getRelations()) {
-                    if (relation.x.equals(ConstantString.RELATION_EMBED)) {
+                    if (relation.x.equals(Configure.RELATION_EMBED)) {
                         int embededInterfaceId = relation.y;
                         interfaceIds.add(embededInterfaceId);
                     }
