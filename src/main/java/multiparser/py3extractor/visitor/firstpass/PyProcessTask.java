@@ -470,7 +470,9 @@ public class PyProcessTask {
             resId = processCallee(moduleOrFunctionId, str);
         }
         else if(isStrAObjectAttribute(str)) { //with dot, but without (). such as x.y
-            //because the name has dot: x.y, so x should be already appear in var in a separate way.
+            //because the name has dot: x.y,
+            // so x should be already appear in var in a separate way.
+            // or, x is a imported name.
             resId = processNameWithDot(moduleOrFunctionId, str, usage);
         }
         return resId;
@@ -499,16 +501,20 @@ public class PyProcessTask {
 
     /**
      * the name with dot.
-     * it must be X.Y.  X should be already added into var, so just add X into localName
+     * it must be X.Y.  X should be already added into var or imported name,
+     * so  add X.y into localName
      * @param parentId  moduleId or functionId
      * @param str
      */
     private int processNameWithDot(int parentId, String str, String usage) {
-        //leave x alone from x.y
-        String[] arr = str.split("\\."); //cannot use ConstantString.DOT
-        str = arr[0];
+        int nameIndex = -1;
 
-        int nameIndex = processNameWithoutDot(parentId, str, usage);
+        if(singleCollect.getEntities().get(parentId) instanceof ModuleEntity) {
+            nameIndex = processNameInModule(parentId, str, usage);
+        }
+        else if (singleCollect.getEntities().get(parentId) instanceof PyFunctionEntity) {
+            nameIndex = processNameInFunction(parentId, str, usage);
+        }
         return nameIndex;
     }
 
@@ -538,7 +544,7 @@ public class PyProcessTask {
     }
 
 
-    /** process name "x" in the module
+    /** process name "x" or "x.y " or "x.y.z" in the module
      *
      * @param moduleId
      * @param name
