@@ -194,7 +194,8 @@ public class FunctionEntity extends Entity {
         str += ("parameters:" + parameters + ",");
         str += ("returns:" + returns + ",");
         str += ("parentId:" + parentId + ",");
-        str += ("childrenIds:" + childrenIds);
+        str += ("childrenIds:" + childrenIds + ",");
+        str += ("relations:" + relations);
         str += ")\n";
 
         return str;

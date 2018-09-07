@@ -100,7 +100,8 @@ public class ModuleEntity extends FileEntity{
         str += ("parentId:" + parentId + ",");
         str += ("childrenIds:" + childrenIds + ",");
         str += ("calledFunctions:" + calledFunctions + ",");
-        str += ("imports:" + importStmts + ")\n");
+        str += ("imports:" + importStmts + ",");
+        str += ("relations:" + relations + ")\n");
         //str += ("calledFunctions with weight" + calledWeightedFunctions + ")\n");
         return str;
     }
