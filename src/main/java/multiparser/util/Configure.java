@@ -28,12 +28,54 @@ public class Configure {
     public static final String EQUAL = "=";
 
 
-
-
     public static final String GO_LANG = "golang";
     public static final String PYTHON_LANG = "python";
     public static final String GO_PRO_SUFFIX = ".go";
     public static final String PY_PRO_SUFFIX = ".py";
+
+
+    // struct->method
+    public static final String RELATION_RECEIVED_BY = "Received by";
+    public static final String RELATION_RECEIVE = "Receive";
+
+    //structType/aliasType->interface
+    public static final String RELATION_IMPLEMENT = "Implement";
+    public static final String RELATION_IMPLEMENTED_BY = "Implemented by";
+
+    //struct1->struct2, interface1->interface2
+    public static final String RELATION_EMBED = "Embed";
+    public static final String RELATION_EMBEDED_BY = "Embeded by";
+
+    //file->package
+    public static final String RELATION_IMPORT = "Import";
+    public static final String RELATION_IMPORTED_BY = "Imported by";
+
+    //function-function; function->method; method->function; method->method
+    public static final String RELATION_CALL = "Call";
+    public static final String RELATION_CALLED_BY = "Called by";
+
+    //function/method->var
+    public static final String RELATION_PARAMETER = "Parameter";
+    public static final String RELATION_PARAMETERED_BY = "Parametered by";
+
+    //function/method->var
+    public static final String RELATION_RETURN = "Return";
+    public static final String RELATION_RETURNED_BY = "Returned by";
+
+    //function/method->OperandVar
+    public static final String RELATION_SET = "Set";
+    public static final String RELATION_SETED_BY = "Seted by";
+
+    //function/method->OperandVar
+    public static final String RELATION_USE = "Use";
+    public static final String RELATION_USED_BY = "Used by";
+
+    //class->class
+    public static final String RELATION_INHERIT = "Inherit";
+    public static final String RELATION_INHERITED = "Inherited by";
+
+    public static final String RELATION_LEVEL_FILE = "File";
+    public static final String RELATION_LEVEL_FUNCTION = "FUNCTION";
 
     private static Configure configure = new Configure();
     public static Configure getConfigureInstance() {
