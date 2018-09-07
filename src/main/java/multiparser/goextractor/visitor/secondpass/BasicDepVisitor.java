@@ -76,7 +76,7 @@ public class BasicDepVisitor {
                             int embededEntityId = searchEmbededStruct(entityId, embededStructName);
                             if (embededEntityId != -1) {
                                 saveRelation(entityId, embededEntityId,
-                                        Configure.RELATION_EMBED, Configure.RELATION_EMBEDED_BY);
+                                        Configure.RELATION_INHERIT, Configure.RELATION_INHERITED_BY);
                                 //String entityName2 = singleCollect.getEntities().get(embededEntityId).getName();
                                 int entity2ParentId = singleCollect.getEntities().get(embededEntityId).getParentId();
                                 String fileName2 = Configure.NULL_STRING;
@@ -118,7 +118,7 @@ public class BasicDepVisitor {
                                 }
                                 //System.out.println("InterfaceRelation: embeded:"+ embededInterfaceName + ", file:" +  fileName2);
                                 saveRelation(interfaceEntityId, embededEntityId,
-                                        Configure.RELATION_EMBED, Configure.RELATION_EMBEDED_BY);
+                                        Configure.RELATION_INHERIT, Configure.RELATION_INHERITED_BY);
 
                             }
                             else {

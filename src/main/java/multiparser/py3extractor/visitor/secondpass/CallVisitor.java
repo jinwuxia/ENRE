@@ -20,7 +20,7 @@ public class CallVisitor extends DepVisitor {
         for (Entity entity : singleCollect.getEntities()) {
             if (entity instanceof PyFunctionEntity
                     || entity instanceof ModuleEntity) {
-                System.out.println("inside: " + entity.getName());
+                //System.out.println("inside: " + entity.getName());
                 setCallDep(entity.getId());
             }
         }
@@ -43,16 +43,16 @@ public class CallVisitor extends DepVisitor {
         ArrayList<Integer> idList = new ArrayList<Integer>();
         for(int index = 0; index < calledFuns.size(); index++) {
             String calleeStr = calledFuns.get(index);
-            System.out.println("oldCallee= " + calleeStr);
+            //System.out.println("oldCallee= " + calleeStr);
             String simpleCalleeStr = simplifyCalleeStr(index, calledFuns, idList);
             int calleeId = searchCallee(simpleCalleeStr, modOrFunId);
             idList.add(calleeId);
             if(calleeId != -1) {
                 saveRelation(modOrFunId, calleeId, Configure.RELATION_CALL, Configure.RELATION_CALLED_BY);
-                System.out.println("find=      " +  singleCollect.getEntities().get(calleeId) + "\n");
+                //System.out.println("find=      " +  singleCollect.getEntities().get(calleeId) + "\n");
             }
             else {
-                System.out.println("find=      " + calleeId + "\n\n");
+                //System.out.println("find=      " + calleeId + "\n\n");
             }
         }
     }
@@ -66,10 +66,10 @@ public class CallVisitor extends DepVisitor {
      */
     private int searchCallee(String simpleCalleeStr, int modOrFunId) {
         String destStr = simpleCalleeStr.split("\\(")[0];
-        System.out.println("newCallee= " + destStr);
+        //System.out.println("newCallee= " + destStr);
 
         if(isBuiltinFunction(destStr)) {
-            System.out.println("1.it is builtin function. scopeId= " + modOrFunId + "; str= " + destStr);
+            //System.out.println("1.it is builtin function. scopeId= " + modOrFunId + "; str= " + destStr);
             return -1;
         }
         if(destStr.equals(ConstantString.SUPER)) {
@@ -111,13 +111,13 @@ public class CallVisitor extends DepVisitor {
                 scopeId = identifyCustomId(destStr);
                 //update str
                 destStr = destStr.substring(ConstantString.CUSTOM_PRE.length() + Integer.toString(scopeId).length(), destStr.length());
-                System.out.println("1.scopeId= " + scopeId + "; str= " + destStr);
+                //System.out.println("1.scopeId= " + scopeId + "; str= " + destStr);
             } else if (scopeId != -1) {
                 Tuple<Integer, String> matchedRes = findMatchInScope(flag, destStr, scopeId);
                 scopeId = matchedRes.x;
                 String matchedSubStr = matchedRes.y;
                 destStr = destStr.substring(matchedSubStr.length(), destStr.length());
-                System.out.println("2.scopeId= " + scopeId + "; str= " + destStr);
+                //System.out.println("2.scopeId= " + scopeId + "; str= " + destStr);
 
             } else {
                 break;
@@ -160,19 +160,19 @@ public class CallVisitor extends DepVisitor {
     private Tuple<Integer, String> findMatchInScope(int flag, String str, int scopeId) {
         if(scopeId != -1) {
             HashMap<String, Integer> submap = nameSearch.getNameMapOfScope(scopeId);
-            System.out.println("submap in scope " + scopeId + ": " + submap );
+            //System.out.println("submap in scope " + scopeId + ": " + submap );
         }
 
         Tuple<Integer, String> tuple;
         if(flag == 0) {
             tuple = findNameWithDotInScope(str, scopeId);
             if(tuple.x != -1) {
-                System.out.println("find with dot: " + tuple.x + "; " + tuple.y);
+                //System.out.println("find with dot: " + tuple.x + "; " + tuple.y);
                 return tuple;
             }
         }
         tuple = findNameWithoutDotInScope(str, scopeId);
-        System.out.println("find without dot: " + tuple.x + "; " + tuple.y);
+        //System.out.println("find without dot: " + tuple.x + "; " + tuple.y);
         return tuple;
     }
 

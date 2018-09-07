@@ -2,7 +2,6 @@ package multiparser.goextractor.search;
 
 import multiparser.goextractor.goentity.StructEntity;
 import multiparser.goextractor.goentity.StructFieldEntity;
-import multiparser.goextractor.ConstantString;
 import multiparser.util.Configure;
 import multiparser.util.Tuple;
 import multiparser.extractor.SingleCollect;
@@ -41,7 +40,7 @@ public class NameSearchStruct {
             }
             else{
                 for(Tuple<String, Integer> relation : singleCollect.getEntities().get(thisStructId).getRelations()) {
-                    if (relation.x.equals(Configure.RELATION_EMBED)) {
+                    if (relation.x.equals(Configure.RELATION_INHERIT)) {
                         int embededStructId = relation.y;
                         structIds.add(embededStructId);
                     }
@@ -102,7 +101,7 @@ public class NameSearchStruct {
             }
             else{
                 for(Tuple<String, Integer> relation : singleCollect.getEntities().get(thisStructId).getRelations()) {
-                    if (relation.x.equals(Configure.RELATION_EMBED)) {
+                    if (relation.x.equals(Configure.RELATION_INHERIT)) {
                         int embededStructId = relation.y;
                         structIds.add(embededStructId);
                     }

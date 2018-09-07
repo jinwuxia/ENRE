@@ -1,7 +1,6 @@
 package multiparser.py3extractor.visitor.secondpass;
 
 import multiparser.entity.Entity;
-import multiparser.py3extractor.ConstantString;
 import multiparser.py3extractor.pyentity.ClassEntity;
 import multiparser.py3extractor.pyentity.ModuleEntity;
 import multiparser.util.Configure;
@@ -20,7 +19,7 @@ public class InheritVisitor extends DepVisitor{
 
                     if(baseId != -1) {
                         //System.out.println("entityclass: " + entity.getName() + "; baseclass: " + baseClassStr + "; basedId: " +  baseId);
-                        saveRelation(entity.getId(), baseId, Configure.RELATION_INHERIT, Configure.RELATION_INHERITED);
+                        saveRelation(entity.getId(), baseId, Configure.RELATION_INHERIT, Configure.RELATION_INHERITED_BY);
                     }
                     else {
                         //System.out.println("entityclass: " + entity.getName() + "; baseclass: " + baseClassStr + " not found");
