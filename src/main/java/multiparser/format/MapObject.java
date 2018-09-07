@@ -1,6 +1,7 @@
 package multiparser.format;
 
 import multiparser.goextractor.ConstantString;
+import multiparser.util.Configure;
 import multiparser.util.Tuple;
 import multiparser.extractor.FinalRelation;
 
@@ -78,7 +79,7 @@ public class MapObject {
         Map<String, Integer> fileName2Id =  buildFileMap(files);
         for (int i =  0; i < depStrs.length; i++) {
             String depType = depStrs[i];
-            ArrayList<Tuple<String, String>> deps = getRelation.getDepByType(ConstantString.RELATION_LEVEL_FILE, depType);
+            ArrayList<Tuple<String, String>> deps = getRelation.getDepByType(Configure.RELATION_LEVEL_FILE, depType);
             addDepsInMap(deps, depType, fileName2Id);
         }
 

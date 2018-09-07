@@ -7,6 +7,7 @@ import multiparser.goextractor.goentity.InterfaceEntity;
 import multiparser.goextractor.goentity.MethodEntity;
 import multiparser.goextractor.goentity.StructEntity;
 import multiparser.py3extractor.pyentity.*;
+import multiparser.util.Configure;
 import multiparser.util.Tuple;
 import multiparser.goextractor.ConstantString;
 
@@ -293,34 +294,34 @@ public class FinalRelation {
 
 
     public ArrayList<Tuple<String, String>> getDepByType(String level, String depType) {
-        if(depType.equals(ConstantString.RELATION_IMPLEMENT)) {
+        if(depType.equals(Configure.RELATION_IMPLEMENT)) {
             return getImplementDeps(level);
         }
-        if(depType.equals(ConstantString.RELATION_EMBED)) {
+        if(depType.equals(Configure.RELATION_EMBED)) {
             ArrayList<Tuple<String, String>> deps;
             deps =  getEmbedInterfaceDep(level);
             deps.addAll(getEmbedStructDep(level));
             return deps;
         }
-        if(depType.equals(ConstantString.RELATION_SET)) {
+        if(depType.equals(Configure.RELATION_SET)) {
             return getFunctionSets(level);
         }
-        if(depType.equals(ConstantString.RELATION_USE)) {
+        if(depType.equals(Configure.RELATION_USE)) {
             return getFunctionUses(level);
         }
-        if(depType.equals(ConstantString.RELATION_PARAMETER)) {
+        if(depType.equals(Configure.RELATION_PARAMETER)) {
             return getFunctionParas(level);
         }
-        if(depType.equals(ConstantString.RELATION_RETURN)) {
+        if(depType.equals(Configure.RELATION_RETURN)) {
             return getFunctionRets(level);
         }
-        if(depType.equals(ConstantString.RELATION_RECEIVE)) {
+        if(depType.equals(Configure.RELATION_RECEIVE)) {
             return getMethodReceiveDep(level);
         }
-        if(depType.equals(ConstantString.RELATION_CALL)) {
+        if(depType.equals(Configure.RELATION_CALL)) {
             return getFunctionCalls(level);
         }
-        if(depType.equals(ConstantString.RELATION_IMPORT)) {
+        if(depType.equals(Configure.RELATION_IMPORT)) {
             return getImportDep(level);
         }
         return null;
@@ -335,9 +336,9 @@ public class FinalRelation {
                 ArrayList<Tuple<String, Integer>> relations = fileEntity.getRelations();
                 if (!relations.isEmpty()) {
                     for (Tuple<String, Integer> oneRelation : relations) {
-                        if (oneRelation.x.equals(ConstantString.RELATION_IMPORT)) {
+                        if (oneRelation.x.equals(Configure.RELATION_IMPORT)) {
                             String importedPackageName = ((PackageEntity) singleCollect.getEntities().get(oneRelation.y)).getFullPath();
-                            if(level.equals(ConstantString.RELATION_LEVEL_FILE)) {
+                            if(level.equals(Configure.RELATION_LEVEL_FILE)) {
                                 ArrayList<Integer> fileIds2 = singleCollect.getEntities().get(oneRelation.y).getChildrenIds();
                                 for (int fileId2 : fileIds2) {
                                     if(singleCollect.getEntities().get(fileId2) instanceof FileEntity) {
@@ -366,11 +367,11 @@ public class FinalRelation {
                 if (!relations.isEmpty()) {
                     String fileName1 = singleCollect.getEntities().get(structEntity.getParentId()).getName();
                     for (Tuple<String, Integer> oneRelation : relations) {
-                        if (oneRelation.x.equals(ConstantString.RELATION_EMBED)) {
+                        if (oneRelation.x.equals(Configure.RELATION_EMBED)) {
                             String embededStructName = singleCollect.getEntities().get(oneRelation.y).getName();
                             int embededFileId = singleCollect.getEntities().get(oneRelation.y).getParentId();
                             String fileName2 = singleCollect.getEntities().get(embededFileId).getName();
-                            if (level.equals(ConstantString.RELATION_LEVEL_FILE)) {
+                            if (level.equals(Configure.RELATION_LEVEL_FILE)) {
                                 embedDeps.add(new Tuple<String, String>(fileName1, fileName2));
                             }
                             else {
@@ -396,14 +397,14 @@ public class FinalRelation {
                 }
                 if (!relations.isEmpty()) {
                     for (Tuple<String, Integer> oneRelation : relations) {
-                        if (oneRelation.x.equals(ConstantString.RELATION_EMBED)) {
+                        if (oneRelation.x.equals(Configure.RELATION_EMBED)) {
                             String embededInterfaceName = singleCollect.getEntities().get(oneRelation.y).getName();
                             int embededFileId = singleCollect.getEntities().get(oneRelation.y).getParentId();
                             String fileName2 = "";
                             if (embededFileId != -1) {
                                 fileName2 = singleCollect.getEntities().get(embededFileId).getName();
                             }
-                            if (level.equals(ConstantString.RELATION_LEVEL_FILE)) {
+                            if (level.equals(Configure.RELATION_LEVEL_FILE)) {
                                 embedDeps.add(new Tuple<String, String>(fileName1, fileName2));
                             }
                             else {
@@ -427,11 +428,11 @@ public class FinalRelation {
                 if (!relations.isEmpty()) {
                     String fileName1 = singleCollect.getEntities().get(methodEntity.getParentId()).getName();
                     for (Tuple<String, Integer> oneRelation : relations) {
-                        if (oneRelation.x.equals(ConstantString.RELATION_RECEIVE)) {
+                        if (oneRelation.x.equals(Configure.RELATION_RECEIVE)) {
                             String structAliasName = singleCollect.getEntities().get(oneRelation.y).getName();
                             int structAliasFileId = singleCollect.getEntities().get(oneRelation.y).getParentId();
                             String fileName2 = singleCollect.getEntities().get(structAliasFileId).getName();
-                            if (level.equals(ConstantString.RELATION_LEVEL_FILE)) {
+                            if (level.equals(Configure.RELATION_LEVEL_FILE)) {
                                 receiveDeps.add(new Tuple<String, String>(fileName1, fileName2));
                             }
                             else {
@@ -456,7 +457,7 @@ public class FinalRelation {
                 if(fileId != -1) {
                     String fileName1 = singleCollect.getEntities().get(fileId).getName();
                     for(Tuple<String, Integer> relation : entity.getRelations()) {
-                        if(relation.x.equals(ConstantString.RELATION_IMPLEMENT)) {
+                        if(relation.x.equals(Configure.RELATION_IMPLEMENT)) {
                             int interfaceId = relation.y;
                             String interfaceName = singleCollect.getEntities().get(interfaceId).getName();
                             int fileId2 = singleCollect.getEntities().get(interfaceId).getParentId();
@@ -464,7 +465,7 @@ public class FinalRelation {
                             if(fileId2 != -1) {
                                 fileName2 = singleCollect.getEntities().get(fileId2).getName();
                             }
-                            if(level.equals(ConstantString.RELATION_LEVEL_FILE)) {
+                            if(level.equals(Configure.RELATION_LEVEL_FILE)) {
                                 deps.add(new Tuple<String, String>(fileName1, fileName2));
                             }
                             else {
@@ -489,12 +490,12 @@ public class FinalRelation {
                 for (Tuple<String, Integer> relation : entity.getRelations()) {
                     String relationType = relation.x;
                     int entityId2 = relation.y;
-                    if(relationType.equals(ConstantString.RELATION_CALL)) {
+                    if(relationType.equals(Configure.RELATION_CALL)) {
                         Entity entity2 = singleCollect.getEntities().get(entityId2);
                         String methodName2 = entity2.getName();
                         String fileName2 = singleCollect.getEntities().get(entity2.getParentId()).getName();
                         Tuple<String, String> oneCall;
-                        if(level.equals(ConstantString.RELATION_LEVEL_FILE)) {
+                        if(level.equals(Configure.RELATION_LEVEL_FILE)) {
                             oneCall = new Tuple<String, String>(fileName1, fileName2);
                         }
                         else {
@@ -524,7 +525,7 @@ public class FinalRelation {
                 for (Tuple<String, Integer> relation : entity.getRelations()) {
                     String relationType = relation.x;
                     int entityId2 = relation.y;
-                    if(relationType.equals(ConstantString.RELATION_SET)) {
+                    if(relationType.equals(Configure.RELATION_SET)) {
                         Entity entity2 = singleCollect.getEntities().get(entityId2);
                         String varName2 = entity2.getName();
                         int fileId2 = getFileOfVar(entityId2);
@@ -533,7 +534,7 @@ public class FinalRelation {
                             fileName2 = singleCollect.getEntities().get(fileId2).getName();
                         }
                         Tuple<String, String> oneSet;
-                        if(level.equals(ConstantString.RELATION_LEVEL_FILE)) {
+                        if(level.equals(Configure.RELATION_LEVEL_FILE)) {
                             oneSet = new Tuple<String, String>(fileName1, fileName2);
                         }
                         else {
@@ -563,7 +564,7 @@ public class FinalRelation {
                 for (Tuple<String, Integer> relation : entity.getRelations()) {
                     String relationType = relation.x;
                     int entityId2 = relation.y;
-                    if(relationType.equals(ConstantString.RELATION_USE)) {
+                    if(relationType.equals(Configure.RELATION_USE)) {
                         Entity entity2 = singleCollect.getEntities().get(entityId2);
                         String varName2 = entity2.getName();
                         int fileId2 = getFileOfVar(entityId2);
@@ -573,7 +574,7 @@ public class FinalRelation {
                         }
 
                         Tuple<String, String> oneSet;
-                        if(level.equals(ConstantString.RELATION_LEVEL_FILE)) {
+                        if(level.equals(Configure.RELATION_LEVEL_FILE)) {
                             oneSet = new Tuple<String, String>(fileName1, fileName2);
                         }
                         else {
@@ -599,7 +600,7 @@ public class FinalRelation {
                 String fileName1 = singleCollect.getEntities().get(fileId1).getName();
 
                 for(Tuple<String, Integer> relation : entity.getRelations()) {
-                    if(relation.x.equals(ConstantString.RELATION_PARAMETER)) {
+                    if(relation.x.equals(Configure.RELATION_PARAMETER)) {
                         int varTypeId2 = relation.y;
                         String varTypeName2 = singleCollect.getEntities().get(varTypeId2).getName();
                         if(varTypeId2 != -1) {
@@ -607,7 +608,7 @@ public class FinalRelation {
                             String fileName2 = singleCollect.getEntities().get(fileId2).getName();
 
                             Tuple<String, String> oneSet;
-                            if(level.equals(ConstantString.RELATION_LEVEL_FILE)) {
+                            if(level.equals(Configure.RELATION_LEVEL_FILE)) {
                                 oneSet = new Tuple<String, String>(fileName1, fileName2);
                             }
                             else {
@@ -633,7 +634,7 @@ public class FinalRelation {
                 String fileName1 = singleCollect.getEntities().get(fileId1).getName();
 
                 for(Tuple<String, Integer> relation : entity.getRelations()) {
-                    if(relation.x.equals(ConstantString.RELATION_RETURN)) {
+                    if(relation.x.equals(Configure.RELATION_RETURN)) {
                         int varTypeId2 = relation.y;
                         String varTypeName2 = singleCollect.getEntities().get(varTypeId2).getName();
                         if(varTypeId2 != -1) {
@@ -641,7 +642,7 @@ public class FinalRelation {
                             String fileName2 = singleCollect.getEntities().get(fileId2).getName();
 
                             Tuple<String, String> oneSet;
-                            if(level.equals(ConstantString.RELATION_LEVEL_FILE)) {
+                            if(level.equals(Configure.RELATION_LEVEL_FILE)) {
                                 oneSet = new Tuple<String, String>(fileName1, fileName2);
                             }
                             else {

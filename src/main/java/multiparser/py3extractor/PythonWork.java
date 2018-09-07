@@ -6,10 +6,7 @@ import multiparser.extractor.TemplateWork;
 import multiparser.py3extractor.infer.TypeInfer;
 import multiparser.py3extractor.search.NameSearch;
 import multiparser.py3extractor.visitor.firstpass.FileParser;
-import multiparser.py3extractor.visitor.secondpass.CallVisitor;
-import multiparser.py3extractor.visitor.secondpass.DepVisitor;
-import multiparser.py3extractor.visitor.secondpass.ImportVisitor;
-import multiparser.py3extractor.visitor.secondpass.InheritVisitor;
+import multiparser.py3extractor.visitor.secondpass.*;
 import multiparser.util.Configure;
 import multiparser.util.FileUtil;
 
@@ -43,11 +40,11 @@ public class PythonWork extends TemplateWork {
         NameSearch nameSearch = NameSearch.getNameSearchInstance();
         nameSearch.buildNameScope();
 
-        for(Entity entity: SingleCollect.getSingleCollectInstance().getEntities()) {
+        /*for(Entity entity: SingleCollect.getSingleCollectInstance().getEntities()) {
             System.out.println("id:  " +  entity.getId());
             System.out.println("name:" + entity.getName());
             System.out.println(nameSearch.getNameMapOfScope(entity.getId()) + "\n");
-        }
+        }*/
 
         TypeInfer typeInfer = new TypeInfer();
         typeInfer.inferTypeForVarEntity();
@@ -56,6 +53,15 @@ public class PythonWork extends TemplateWork {
         nameSearch.buildNameScopeForVar();
 
         depVisitor = new CallVisitor();
+        depVisitor.setDep();
+
+        UsageVisitor usageVisitor = new UsageVisitor();
+        usageVisitor.buildUsage();
+
+        depVisitor = new UseVisitor();
+        depVisitor.setDep();
+
+        depVisitor = new SetVisitor();
         depVisitor.setDep();
 
 
