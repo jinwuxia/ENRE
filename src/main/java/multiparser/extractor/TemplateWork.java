@@ -60,31 +60,31 @@ abstract public class TemplateWork {
         for(int i = 0; i < depMask.toCharArray().length; i++) {
             if(depMask.toCharArray()[i] == '1') {
                 if(i == 0) {
-                    depStrs.add(ConstantString.RELATION_IMPORT);
+                    depStrs.add(Configure.RELATION_IMPORT);
                 }
                 else if (i == 1) {
-                    depStrs.add(ConstantString.RELATION_EMBED);
+                    depStrs.add(Configure.RELATION_EMBED);
                 }
                 else if (i == 2) {
-                    depStrs.add(ConstantString.RELATION_IMPLEMENT);
+                    depStrs.add(Configure.RELATION_IMPLEMENT);
                 }
                 else if (i == 3) {
-                    depStrs.add(ConstantString.RELATION_RECEIVE);
+                    depStrs.add(Configure.RELATION_RECEIVE);
                 }
                 else if (i == 4) {
-                    depStrs.add(ConstantString.RELATION_CALL);
+                    depStrs.add(Configure.RELATION_CALL);
                 }
                 else if (i == 5) {
-                    depStrs.add(ConstantString.RELATION_SET);
+                    depStrs.add(Configure.RELATION_SET);
                 }
                 else if (i == 6) {
-                    depStrs.add(ConstantString.RELATION_USE);
+                    depStrs.add(Configure.RELATION_USE);
                 }
                 else if (i == 7) {
-                    depStrs.add(ConstantString.RELATION_PARAMETER);
+                    depStrs.add(Configure.RELATION_PARAMETER);
                 }
                 else if (i == 8) {
-                    depStrs.add(ConstantString.RELATION_RETURN);
+                    depStrs.add(Configure.RELATION_RETURN);
                 }
             }
         }
@@ -126,7 +126,7 @@ abstract public class TemplateWork {
         //test vars
         //relationOutput.outputClassVarDetail();
         //relationOutput.outputGloVars();
-        //relationOutput.outputAllFunctions();
+        relationOutput.outputAllFunctions();
 
 
 
@@ -146,7 +146,7 @@ abstract public class TemplateWork {
             System.out.println(dep);
         }
         System.out.println("\nimports: file level");
-        for (Tuple<String, String> dep: relationOutput.getImportDep(ConstantString.RELATION_LEVEL_FILE)) {
+        for (Tuple<String, String> dep: relationOutput.getImportDep(Configure.RELATION_LEVEL_FILE)) {
             System.out.println(dep);
         }
 
@@ -156,7 +156,7 @@ abstract public class TemplateWork {
             System.out.println(dep);
         }
         System.out.println("\nembed struct: file level");
-        for (Tuple<String, String> dep: relationOutput.getEmbedStructDep(ConstantString.RELATION_LEVEL_FILE)) {
+        for (Tuple<String, String> dep: relationOutput.getEmbedStructDep(Configure.RELATION_LEVEL_FILE)) {
             System.out.println(dep);
         }
 
@@ -167,7 +167,7 @@ abstract public class TemplateWork {
             System.out.println(dep);
         }
         System.out.println("\nembed interface: file level");
-        for (Tuple<String, String> dep: relationOutput.getEmbedInterfaceDep(ConstantString.RELATION_LEVEL_FILE)) {
+        for (Tuple<String, String> dep: relationOutput.getEmbedInterfaceDep(Configure.RELATION_LEVEL_FILE)) {
             System.out.println(dep);
         }
 
@@ -178,7 +178,7 @@ abstract public class TemplateWork {
             System.out.println(dep);
         }
         System.out.println("\nreceiver: file level");
-        for (Tuple<String, String> dep: relationOutput.getMethodReceiveDep(ConstantString.RELATION_LEVEL_FILE)) {
+        for (Tuple<String, String> dep: relationOutput.getMethodReceiveDep(Configure.RELATION_LEVEL_FILE)) {
             System.out.println(dep);
         }
 
@@ -189,7 +189,7 @@ abstract public class TemplateWork {
             System.out.println(dep);
         }
         System.out.println("\nimplementation: file level");
-        for (Tuple<String, String> dep: relationOutput.getImplementDeps(ConstantString.RELATION_LEVEL_FILE)) {
+        for (Tuple<String, String> dep: relationOutput.getImplementDeps(Configure.RELATION_LEVEL_FILE)) {
             System.out.println(dep);
         }
 
@@ -200,7 +200,7 @@ abstract public class TemplateWork {
             System.out.println(dep);
         }
         System.out.println("\nfunction call: file level");
-        for (Tuple<String, String> dep: relationOutput.getFunctionCalls(ConstantString.RELATION_LEVEL_FILE)) {
+        for (Tuple<String, String> dep: relationOutput.getFunctionCalls(Configure.RELATION_LEVEL_FILE)) {
             System.out.println(dep);
         }
 
@@ -211,7 +211,7 @@ abstract public class TemplateWork {
             System.out.println(dep);
         }
         System.out.println("\nfunction sets: file level");
-        for (Tuple<String, String> dep: relationOutput.getFunctionSets(ConstantString.RELATION_LEVEL_FILE)) {
+        for (Tuple<String, String> dep: relationOutput.getFunctionSets(Configure.RELATION_LEVEL_FILE)) {
             System.out.println(dep);
         }
 
@@ -223,7 +223,7 @@ abstract public class TemplateWork {
             System.out.println(dep);
         }
         System.out.println("\nfunction uses: file level");
-        for (Tuple<String, String> dep: relationOutput.getFunctionUses(ConstantString.RELATION_LEVEL_FILE)) {
+        for (Tuple<String, String> dep: relationOutput.getFunctionUses(Configure.RELATION_LEVEL_FILE)) {
             System.out.println(dep);
         }
 
@@ -235,7 +235,7 @@ abstract public class TemplateWork {
             System.out.println(dep);
         }
         System.out.println("\nfunction parameters: file level");
-        for (Tuple<String, String> dep: relationOutput.getFunctionParas(ConstantString.RELATION_LEVEL_FILE)) {
+        for (Tuple<String, String> dep: relationOutput.getFunctionParas(Configure.RELATION_LEVEL_FILE)) {
             System.out.println(dep);
         }
 
@@ -247,7 +247,7 @@ abstract public class TemplateWork {
             System.out.println(dep);
         }
         System.out.println("\nfunction returns: file level");
-        for (Tuple<String, String> dep: relationOutput.getFunctionRets(ConstantString.RELATION_LEVEL_FILE)) {
+        for (Tuple<String, String> dep: relationOutput.getFunctionRets(Configure.RELATION_LEVEL_FILE)) {
             System.out.println(dep);
         }*/
 

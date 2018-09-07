@@ -79,7 +79,6 @@ public class NameSearch {
         buildNameScopeForClasses();
         buildNameScopeForMethods();
         buildNameScopeForPackages();
-        //buildNameScopeForObjectVar();
     }
 
 
@@ -299,7 +298,7 @@ public class NameSearch {
         }
 
         for (Tuple<String, Integer> relation : singleCollect.getEntities().get(functionOrModuleId).getRelations()) {
-            if(relation.x.equals(ConstantString.RELATION_IMPORT)) {
+            if(relation.x.equals(Configure.RELATION_IMPORT)) {
                 int importedId = relation.y;
                 ImportStmt importStmt = importStmts.get(importedId2Indexes.get(importedId));
                 String importedName = importStmt.getImpor();

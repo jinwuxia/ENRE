@@ -22,7 +22,6 @@ public class FunctionEntity extends Entity {
     protected Map<String, ArrayList<String>> name2Usage = new HashMap<String, ArrayList<String>>();
 
 
-
     //generate in the first visit. it will be used for localName multiparser.goextractor.search.
     protected ArrayList<LocalBlock> localBlocks = new ArrayList<LocalBlock>();
 
@@ -184,8 +183,6 @@ public class FunctionEntity extends Entity {
     public void addLocalBlock(LocalBlock block) {
         localBlocks.add(block);
     }
-
-
 
 
     @Override
