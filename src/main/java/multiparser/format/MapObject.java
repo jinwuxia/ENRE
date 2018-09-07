@@ -1,16 +1,20 @@
 package multiparser.format;
 
-import multiparser.goextractor.ConstantString;
+import multiparser.extractor.RelationInterface;
+import multiparser.goextractor.GoRelationInf;
+import multiparser.py3extractor.PyRelationInf;
 import multiparser.util.Configure;
 import multiparser.util.Tuple;
-import multiparser.extractor.FinalRelation;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.lang.System.exit;
+
 public class MapObject {
-    FinalRelation getRelation = new FinalRelation();
+    private RelationInterface relationInterface;
     private ArrayList<String> files;
     private Map<Integer, Map<Integer, Map<String, Integer>>> finalRes = new HashMap<Integer, Map<Integer, Map<String, Integer>>>();
     private String[] depStrs;
@@ -22,8 +26,18 @@ public class MapObject {
 
 
     private void init() {
-        getRelation = new FinalRelation();
-        files =  getRelation.outputFiles();
+        Configure configure = Configure.getConfigureInstance();
+        if(configure.getLang().equals(Configure.GO_LANG)) {
+            relationInterface = new GoRelationInf();
+        }
+        else if(configure.getLang().equals(Configure.PYTHON_LANG)) {
+            relationInterface = new PyRelationInf();
+        }
+        else {
+            System.out.println("Not support this language!\n");
+            exit(0);
+        }
+        files =  relationInterface.getAllFiles();
         buildDepMap(files, depStrs);
     }
 
@@ -74,12 +88,12 @@ public class MapObject {
      * @param depStrs  strs=[Import,Implement,...]
      */
     private void buildDepMap(ArrayList<String> files, String[] depStrs) {
-        System.out.println(getRelation.basicStatis());
+        System.out.println(relationInterface.basicStatis());
 
         Map<String, Integer> fileName2Id =  buildFileMap(files);
         for (int i =  0; i < depStrs.length; i++) {
             String depType = depStrs[i];
-            ArrayList<Tuple<String, String>> deps = getRelation.getDepByType(Configure.RELATION_LEVEL_FILE, depType);
+            ArrayList<Tuple<String, String>> deps = relationInterface.getDepByType(Configure.RELATION_LEVEL_FILE, depType);
             addDepsInMap(deps, depType, fileName2Id);
         }
 
@@ -99,11 +113,9 @@ public class MapObject {
             int index2 = -1;
             if(fileName2Id.containsKey(name1)) {
                 index1 = fileName2Id.get(name1);
-
             }
             if (fileName2Id.containsKey(name2)) {
                 index2 = fileName2Id.get(name2);
-
             }
 
             if(name1.equals(name2) || index1 == -1 || index2 == -1) {
