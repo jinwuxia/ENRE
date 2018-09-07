@@ -48,7 +48,7 @@ public class CallVisitor extends DepVisitor {
             int calleeId = searchCallee(simpleCalleeStr, modOrFunId);
             idList.add(calleeId);
             if(calleeId != -1) {
-                saveRelation(modOrFunId, calleeId, ConstantString.RELATION_CALL, ConstantString.RELATION_CALLED_BY);
+                saveRelation(modOrFunId, calleeId, Configure.RELATION_CALL, Configure.RELATION_CALLED_BY);
                 System.out.println("find=      " +  singleCollect.getEntities().get(calleeId) + "\n");
             }
             else {

@@ -20,7 +20,7 @@ public class InheritVisitor extends DepVisitor{
 
                     if(baseId != -1) {
                         //System.out.println("entityclass: " + entity.getName() + "; baseclass: " + baseClassStr + "; basedId: " +  baseId);
-                        saveRelation(entity.getId(), baseId, ConstantString.RELATION_INHERIT, ConstantString.RELATION_INHERITED);
+                        saveRelation(entity.getId(), baseId, Configure.RELATION_INHERIT, Configure.RELATION_INHERITED);
                     }
                     else {
                         //System.out.println("entityclass: " + entity.getName() + "; baseclass: " + baseClassStr + " not found");
@@ -96,7 +96,7 @@ public class InheritVisitor extends DepVisitor{
         Tuple<Integer, String> res = new Tuple<Integer, String>(-1, "");
         ModuleEntity moduleEntity = (ModuleEntity) singleCollect.getEntities().get(scopeId);
         for(Tuple<String,Integer> relation : moduleEntity.getRelations()) {
-            if(relation.x.equals(ConstantString.RELATION_IMPORT)) {
+            if(relation.x.equals(Configure.RELATION_IMPORT)) {
                 //int importedId = relation.y;
                 int index = moduleEntity.getImportedId2Indexs().get(relation.y);
                 String importedName = moduleEntity.getImportStmts().get(index).getImpor();

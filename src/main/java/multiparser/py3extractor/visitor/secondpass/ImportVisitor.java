@@ -151,7 +151,7 @@ public class ImportVisitor extends DepVisitor {
                 if(id != -1) {
                     //save (importedID, importsList_index) into entity
                     saveId2Id(entity.getId(), id, index);
-                    saveRelation(entity.getId(), id, ConstantString.RELATION_IMPORT, ConstantString.RELATION_IMPORTED_BY);
+                    saveRelation(entity.getId(), id, Configure.RELATION_IMPORT, Configure.RELATION_IMPORTED_BY);
                 }
                 else  {
                     //System.out.println("setImportDep: cannot find " + impstr);
