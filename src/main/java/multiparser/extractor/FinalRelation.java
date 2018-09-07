@@ -1,6 +1,5 @@
 package multiparser.extractor;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import multiparser.entity.*;
 import multiparser.goextractor.goentity.AliasTypeEntity;
 import multiparser.goextractor.goentity.InterfaceEntity;
@@ -9,7 +8,6 @@ import multiparser.goextractor.goentity.StructEntity;
 import multiparser.py3extractor.pyentity.*;
 import multiparser.util.Configure;
 import multiparser.util.Tuple;
-import multiparser.goextractor.ConstantString;
 
 import java.util.ArrayList;
 
@@ -103,7 +101,7 @@ public class FinalRelation {
     }
 
 
-    public ArrayList<String> outputFiles() {
+    public ArrayList<String> getAllFiles() {
         ArrayList<String> files = new ArrayList<String>();
         for (Entity entity : singleCollect.getEntities()) {
             if(entity instanceof FileEntity) {
@@ -297,7 +295,7 @@ public class FinalRelation {
         if(depType.equals(Configure.RELATION_IMPLEMENT)) {
             return getImplementDeps(level);
         }
-        if(depType.equals(Configure.RELATION_EMBED)) {
+        if(depType.equals(Configure.RELATION_INHERIT)) {
             ArrayList<Tuple<String, String>> deps;
             deps =  getEmbedInterfaceDep(level);
             deps.addAll(getEmbedStructDep(level));
@@ -367,7 +365,7 @@ public class FinalRelation {
                 if (!relations.isEmpty()) {
                     String fileName1 = singleCollect.getEntities().get(structEntity.getParentId()).getName();
                     for (Tuple<String, Integer> oneRelation : relations) {
-                        if (oneRelation.x.equals(Configure.RELATION_EMBED)) {
+                        if (oneRelation.x.equals(Configure.RELATION_INHERIT)) {
                             String embededStructName = singleCollect.getEntities().get(oneRelation.y).getName();
                             int embededFileId = singleCollect.getEntities().get(oneRelation.y).getParentId();
                             String fileName2 = singleCollect.getEntities().get(embededFileId).getName();
@@ -397,7 +395,7 @@ public class FinalRelation {
                 }
                 if (!relations.isEmpty()) {
                     for (Tuple<String, Integer> oneRelation : relations) {
-                        if (oneRelation.x.equals(Configure.RELATION_EMBED)) {
+                        if (oneRelation.x.equals(Configure.RELATION_INHERIT)) {
                             String embededInterfaceName = singleCollect.getEntities().get(oneRelation.y).getName();
                             int embededFileId = singleCollect.getEntities().get(oneRelation.y).getParentId();
                             String fileName2 = "";

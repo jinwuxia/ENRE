@@ -1,6 +1,6 @@
 package multiparser.extractor;
 
-import multiparser.goextractor.visitor.firstpass.FileParser;
+import multiparser.entity.Entity;
 import multiparser.util.Configure;
 import multiparser.format.MapObject;
 import multiparser.format.json.JBuildObject;
@@ -9,9 +9,10 @@ import multiparser.format.json.JsonFormat;
 import multiparser.format.xml.XBuildObject;
 import multiparser.format.xml.XDepObject;
 import multiparser.format.xml.XmlFormat;
-import multiparser.goextractor.ConstantString;
 
 import java.util.ArrayList;
+import java.util.FormatFlagsConversionMismatchException;
+import java.util.Map;
 
 abstract public class TemplateWork {
 
@@ -63,7 +64,7 @@ abstract public class TemplateWork {
                     depStrs.add(Configure.RELATION_IMPORT);
                 }
                 else if (i == 1) {
-                    depStrs.add(Configure.RELATION_EMBED);
+                    depStrs.add(Configure.RELATION_INHERIT);
                 }
                 else if (i == 2) {
                     depStrs.add(Configure.RELATION_IMPLEMENT);
@@ -112,7 +113,11 @@ abstract public class TemplateWork {
 
 
     public final void testRun() {
-        FinalRelation relationOutput = new FinalRelation();
+        SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
+        for (Entity entity : singleCollect.getEntities()) {
+            System.out.println(entity);
+        }
+        //FinalRelation relationOutput = new FinalRelation();
 
         //relationOutput.outputAllpackages();
         //relationOutput.outputAllModules();
@@ -126,7 +131,7 @@ abstract public class TemplateWork {
         //test vars
         //relationOutput.outputClassVarDetail();
         //relationOutput.outputGloVars();
-        relationOutput.outputAllFunctions();
+        //relationOutput.outputAllFunctions();
 
 
 

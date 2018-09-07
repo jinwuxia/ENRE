@@ -42,10 +42,6 @@ public class Configure {
     public static final String RELATION_IMPLEMENT = "Implement";
     public static final String RELATION_IMPLEMENTED_BY = "Implemented by";
 
-    //struct1->struct2, interface1->interface2
-    public static final String RELATION_EMBED = "Embed";
-    public static final String RELATION_EMBEDED_BY = "Embeded by";
-
     //file->package
     public static final String RELATION_IMPORT = "Import";
     public static final String RELATION_IMPORTED_BY = "Imported by";
@@ -70,9 +66,14 @@ public class Configure {
     public static final String RELATION_USE = "Use";
     public static final String RELATION_USED_BY = "Used by";
 
-    //class->class
+    //class->class in python
+    //struct-> struct , interface->interface in golang
     public static final String RELATION_INHERIT = "Inherit";
-    public static final String RELATION_INHERITED = "Inherited by";
+    public static final String RELATION_INHERITED_BY = "Inherited by";
+
+    //struct1->struct2, interface1->interface2
+    //public static final String RELATION_INHERIT = "Embed";
+    //public static final String RELATION_INHERITED_BY = "Embeded by";
 
     public static final String RELATION_LEVEL_FILE = "File";
     public static final String RELATION_LEVEL_FUNCTION = "FUNCTION";
