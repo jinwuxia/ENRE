@@ -38,7 +38,7 @@ public class MapObject {
             exit(0);
         }
         files =  relationInterface.getAllFiles();
-        buildDepMap(files, depStrs);
+        buildDepMap(files);
     }
 
 
@@ -85,16 +85,22 @@ public class MapObject {
     /**
      * build fileDeps into a map.
      * @param files
-     * @param depStrs  strs=[Import,Implement,...]
      */
-    private void buildDepMap(ArrayList<String> files, String[] depStrs) {
+    private void buildDepMap(ArrayList<String> files) {
         System.out.println(relationInterface.basicStatis());
 
         Map<String, Integer> fileName2Id =  buildFileMap(files);
-        for (int i =  0; i < depStrs.length; i++) {
+        for (int i = 0; i < depStrs.length; i++) {
             String depType = depStrs[i];
+            //System.out.println(depType);
             ArrayList<Tuple<String, String>> deps = relationInterface.getDepByType(Configure.RELATION_LEVEL_FILE, depType);
-            addDepsInMap(deps, depType, fileName2Id);
+            if (deps != null){
+                addDepsInMap(deps, depType, fileName2Id);
+                //System.out.println("dep not null: " + depType);
+            }
+            //else {
+            //    System.out.println("dep is null: " + depType);
+            //}
         }
 
     }

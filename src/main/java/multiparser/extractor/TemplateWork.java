@@ -32,12 +32,15 @@ abstract public class TemplateWork {
 
         config(lang, inputDir, usageDir, projectName);
         String[] depTypes = getDepType(depMask);
+        for(String dep: depTypes) {
+            System.out.print(dep);
+        }
 
         identifyEntities();
 
         identifyDeps();
 
-        //outputDeps(depTypes);
+        outputDeps(depTypes);
 
     }
 
@@ -114,9 +117,9 @@ abstract public class TemplateWork {
 
     public final void testRun() {
         SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
-        for (Entity entity : singleCollect.getEntities()) {
-            System.out.println(entity);
-        }
+        //for (Entity entity : singleCollect.getEntities()) {
+        //    System.out.println(entity);
+        //}
         //FinalRelation relationOutput = new FinalRelation();
 
         //relationOutput.outputAllpackages();
