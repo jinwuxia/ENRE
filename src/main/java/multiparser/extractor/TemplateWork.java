@@ -32,9 +32,6 @@ abstract public class TemplateWork {
 
         config(lang, inputDir, usageDir, projectName);
         String[] depTypes = getDepType(depMask);
-        for(String dep: depTypes) {
-            System.out.print(dep);
-        }
 
         identifyEntities();
 

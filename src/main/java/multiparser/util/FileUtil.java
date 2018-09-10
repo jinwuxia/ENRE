@@ -13,6 +13,7 @@ public class FileUtil {
 
     public void RecursiveFindFile(String dirName)
     {
+        //System.out.println(dirName);
         File dir = new File(dirName);
         if(dir.isFile()) {
             this.fileNameList.add(dir.getAbsolutePath());
