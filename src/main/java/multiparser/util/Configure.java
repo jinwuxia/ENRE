@@ -3,7 +3,7 @@ package multiparser.util;
 public class Configure {
     private Configure() {}
 
-    public static final String WINDOWS = "Windows";
+    public static final String WINDOWS = "windows";
     public static final String LINUX = "linux";
     public static final String MAC = "mac";
 

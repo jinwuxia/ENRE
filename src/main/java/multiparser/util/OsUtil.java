@@ -5,7 +5,7 @@ public final class OsUtil {
     private static String osName= null;
     public static String getOsName() {
        if(osName == null) {
-           osName = System.getProperty("os.name");
+           osName = System.getProperty("os.name").toLowerCase();
        }
        return osName;
     }
