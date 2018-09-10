@@ -192,7 +192,7 @@ public class PyRelationInf extends RelationInterface {
                         Tuple<String, String> dep = new Tuple<String, String>(fileName1, fileName2);
                         deps.add(dep);
                     }
-                    System.out.println("inheritRelation:" + fileName1 + Configure.COMMA + fileName2);
+                    //System.out.println("inheritRelation:" + fileName1 + Configure.COMMA + fileName2);
                 } else {
                     Tuple<String, String> dep = new Tuple<String, String>(className1, className2);
                     deps.add(dep);
@@ -230,7 +230,7 @@ public class PyRelationInf extends RelationInterface {
                         Tuple<String, String> dep = new Tuple<String, String>(fileName1, fileName2);
                         deps.add(dep);
                     }
-                    System.out.println("importRelation:" + fileName1 + Configure.COMMA + fileName2);
+                    //System.out.println("importRelation:" + fileName1 + Configure.COMMA + fileName2);
                 }
                 else  {
                     Tuple<String, String >dep = new Tuple<String, String>(name1, name2);
@@ -307,7 +307,7 @@ public class PyRelationInf extends RelationInterface {
                         dep = new Tuple<String, String>(callerFileName, calleeFileName);
                         deps.add(dep);
                     }
-                    System.out.println("FunctionCall: " + callerFileName + Configure.COMMA +  calleeFileName);
+                    //System.out.println("FunctionCall: " + callerFileName + Configure.COMMA +  calleeFileName);
                 }
                 else {
                     dep = new Tuple<String, String>(callerName, calleeName);
@@ -344,7 +344,7 @@ public class PyRelationInf extends RelationInterface {
                         dep = new Tuple<String, String>(callerFileName, varFileName);
                         deps.add(dep);
                     }
-                    System.out.println("setRelation:" + callerFileName + Configure.COMMA + varFileName);
+                    //System.out.println("setRelation:" + callerFileName + Configure.COMMA + varFileName);
                 }
                 else {
                     dep = new Tuple<String, String>(callerName, varName);
@@ -381,7 +381,7 @@ public class PyRelationInf extends RelationInterface {
                         dep = new Tuple<String, String>(callerFileName, varFileName);
                         deps.add(dep);
                     }
-                    System.out.println("useRelation:" + callerFileName + Configure.COMMA + varFileName);
+                    //System.out.println("useRelation:" + callerFileName + Configure.COMMA + varFileName);
                 }
                 else {
                     dep = new Tuple<String, String>(callerName, varName);
