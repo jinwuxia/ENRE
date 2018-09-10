@@ -32,6 +32,7 @@ public class Configure {
     public static final String PYTHON_LANG = "python";
     public static final String GO_PRO_SUFFIX = ".go";
     public static final String PY_PRO_SUFFIX = ".py";
+    public static final String OS_DOT_NAME = "os.name";
 
 
     // struct->method
