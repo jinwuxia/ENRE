@@ -58,7 +58,8 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
             classId = processTask.processClass(moduleId, className, baseStrs);
             classDecoration = "";
         }
-        else {
+        else { //not process inner class
+            return str;
             //classId = processTask.processClass(blockId, className, baseStrs);
             //classDecoration = "";
         }
@@ -68,8 +69,9 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
         }
         if(classId != -1) {
             processTask.supplementInitMethod(classId);
+            classId = -1;
         }
-        classId = -1;
+
 
         str += ("class " + className + "(" + baseStrs + ")");
         return str;

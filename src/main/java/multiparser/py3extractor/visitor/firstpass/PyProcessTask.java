@@ -299,6 +299,7 @@ public class PyProcessTask {
         }
         //only appear in left assign, it may be a new varibaleEntity
         if(isLeftAssign) {
+            //System.out.println(classId + "," + functionId + ","+ str);
             if(classId != -1 && functionId == -1) {
                 //atom_expr is class variable: X
                 resId = processClassVar(classId, str);
