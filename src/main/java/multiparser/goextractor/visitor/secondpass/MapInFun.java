@@ -355,8 +355,8 @@ public class MapInFun {
             return -1;
         }
 
-        System.out.println("function:" + singleCollect.getEntities().get(functionId).getName());
-        System.out.println("find: " + localName);
+        //System.out.println("function:" + singleCollect.getEntities().get(functionId).getName());
+        //System.out.println("find: " + localName);
 
         String currentName = localName.getName();
         int currentBlockId = localName.getLocalBlockId();
@@ -371,7 +371,7 @@ public class MapInFun {
                 int candidateBlockDepth =  ((FunctionEntity) singleCollect.getEntities().get(functionId)).getLocalBlocks().get(candidateBlockId).getDepth();
                 // case 1
                 if(currentName.equals(candidateName) && currentBlockId == candidateBlockId) {
-                    System.out.println("found: " + singleCollect.getEntities().get(varId));
+                    //System.out.println("found: " + singleCollect.getEntities().get(varId));
                     return varId;
                 }
                 //case 2
@@ -384,7 +384,7 @@ public class MapInFun {
             }
         }
         if (resVarId != -1) {
-            System.out.println("found: " + singleCollect.getEntities().get(resVarId));
+            //System.out.println("found: " + singleCollect.getEntities().get(resVarId));
         }
         return resVarId;
     }
