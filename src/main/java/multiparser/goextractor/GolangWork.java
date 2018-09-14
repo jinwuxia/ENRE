@@ -17,7 +17,7 @@ public class GolangWork extends TemplateWork {
     protected void identifyEntities() {
         FileUtil fileUtil = new FileUtil(configure.getInputSrcPath());
         for (String fileFullPath : fileUtil.getFileNameList(Configure.GO_PRO_SUFFIX)) {
-            System.out.println(fileFullPath);
+            //System.out.println(fileFullPath);
             FileParser fileParser = new FileParser(fileFullPath);
             try {
                 fileParser.parserOneFile();

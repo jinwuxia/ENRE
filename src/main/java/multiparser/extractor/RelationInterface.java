@@ -5,14 +5,20 @@ import multiparser.entity.Entity;
 import multiparser.entity.FileEntity;
 import multiparser.util.Configure;
 import multiparser.util.Tuple;
+import sun.security.krb5.Config;
+import sun.security.krb5.Confounder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class RelationInterface {
 
     protected SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
 
-    public abstract String basicStatis();
+    public abstract String EntityStatis();
+
+    public abstract String DependencyStatis();
 
     public ArrayList<Tuple<String, String>> getDepByType(String level, String depType) {
         if(depType.equals(Configure.RELATION_IMPLEMENT)) {

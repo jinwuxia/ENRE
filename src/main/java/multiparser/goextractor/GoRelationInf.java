@@ -1,9 +1,6 @@
 package multiparser.goextractor;
 
-import multiparser.entity.Entity;
-import multiparser.entity.FileEntity;
-import multiparser.entity.FunctionEntity;
-import multiparser.entity.PackageEntity;
+import multiparser.entity.*;
 import multiparser.extractor.RelationInterface;
 import multiparser.goextractor.goentity.AliasTypeEntity;
 import multiparser.goextractor.goentity.InterfaceEntity;
@@ -12,18 +9,23 @@ import multiparser.goextractor.goentity.StructEntity;
 
 import multiparser.util.Configure;
 import multiparser.util.Tuple;
+import sun.security.krb5.Config;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GoRelationInf extends RelationInterface {
     @Override
-    public String basicStatis() {
+    public String EntityStatis() {
         int fileCount = 0;
         int packageCount = 0;
         int functionCount = 0;
         int methodCount = 0;
         int interfaceCount = 0;
         int structCount = 0;
+        int aliasCount = 0;
+        int varCount = 0;
 
         for(Entity entity : singleCollect.getEntities()) {
             if(entity instanceof PackageEntity) {
@@ -42,17 +44,70 @@ public class GoRelationInf extends RelationInterface {
             else if(entity instanceof StructEntity) {
                 structCount ++;
             }
+            else if(entity instanceof AliasTypeEntity) {
+                aliasCount ++;
+            }
             else if(entity instanceof InterfaceEntity) {
                 interfaceCount ++;
             }
+            else if(entity instanceof VarEntity) {
+                int parentId = entity.getParentId();
+                if(parentId != -1) {
+                    if(!(singleCollect.getEntities().get(parentId) instanceof StructEntity)) {
+                        varCount ++;
+                    }
+                }
+
+            }
         }
+
         String str = "";
         str += ("Package:     " + Integer.toString(packageCount) + "\n");
         str += ("File:        " + Integer.toString(fileCount) + "\n");
+        str += ("Struct:      " + Integer.toString(structCount) + "\n");
+        str += ("Alias:       " + Integer.toString(aliasCount) + "\n");
+        str += ("Interface:   " + Integer.toString(interfaceCount) + "\n");
         str += ("Function:    " + Integer.toString(functionCount) + "\n");
         str += ("Method:      " + Integer.toString(methodCount) + "\n");
-        str += ("Struct:      " + Integer.toString(structCount) + "\n");
-        str += ("Interface:   " + Integer.toString(interfaceCount) + "\n");
+        str += ("Variable:    " + Integer.toString(varCount) + "\n");
+        return str;
+    }
+
+    @Override
+    public String DependencyStatis() {
+        Map<String, Integer> depMap = new HashMap<String, Integer>();
+        depMap.put(Configure.RELATION_IMPORT, 0);
+        depMap.put(Configure.RELATION_IMPLEMENT, 0);
+        depMap.put(Configure.RELATION_INHERIT, 0);
+        depMap.put(Configure.RELATION_CALL, 0);
+        depMap.put(Configure.RELATION_SET, 0);
+        depMap.put(Configure.RELATION_USE, 0);
+        depMap.put(Configure.RELATION_PARAMETER, 0);
+        depMap.put(Configure.RELATION_RETURN, 0);
+
+        for (Entity entity :singleCollect.getEntities()) {
+            for (Tuple<String, Integer> re : entity.getRelations()) {
+                if(re.x.equals(Configure.RELATION_IMPORT) ||
+                        re.x.equals(Configure.RELATION_INHERIT) ||
+                        re.x.equals(Configure.RELATION_IMPLEMENT) ||
+                        re.x.equals(Configure.RELATION_SET) ||
+                        re.x.equals(Configure.RELATION_USE) ||
+                        re.x.equals(Configure.RELATION_CALL) ||
+                        re.x.equals(Configure.RELATION_PARAMETER) ||
+                        re.x.equals(Configure.RELATION_RETURN)
+                ) {
+                    int old = depMap.get(re.x);
+                    depMap.put(re.x, old + 1);
+                }
+            }
+        }
+        String str = Configure.NULL_STRING;
+        for(Map.Entry<String, Integer> entry : depMap.entrySet()) {
+            str += entry.getKey();
+            str += ":    ";
+            str += Integer.toString(entry.getValue());
+            str += "\n";
+        }
         return str;
     }
 

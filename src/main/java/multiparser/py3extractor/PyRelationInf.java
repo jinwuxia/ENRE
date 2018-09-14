@@ -2,17 +2,20 @@ package multiparser.py3extractor;
 
 import multiparser.entity.Entity;
 import multiparser.entity.PackageEntity;
+import multiparser.entity.VarEntity;
 import multiparser.extractor.RelationInterface;
 import multiparser.py3extractor.pyentity.*;
 import multiparser.util.Configure;
 import multiparser.util.Tuple;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PyRelationInf extends RelationInterface {
 
     @Override
-    public String basicStatis() {
+    public String EntityStatis() {
         int packageCount = 0;
         int fileCount = 0;
         int classCount = 0;
@@ -20,6 +23,7 @@ public class PyRelationInf extends RelationInterface {
         int classmethodCount = 0;
         int classtaticmethodCount = 0;
         int instmethodCount = 0;
+        int varCount = 0;
 
         for(Entity entity : singleCollect.getEntities()) {
             if(entity instanceof PackageEntity) {
@@ -44,6 +48,14 @@ public class PyRelationInf extends RelationInterface {
             else if(entity instanceof ClassEntity) {
                 classCount ++;
             }
+            else if (entity instanceof VarEntity) {
+                int parentId = entity.getParentId();
+                if(parentId != -1) {
+                    if(!(singleCollect.getEntities().get(parentId) instanceof ClassEntity)) {
+                        varCount ++;
+                    }
+                }
+            }
         }
         String str = Configure.NULL_STRING;
         str += ("Package:      " + Integer.toString(packageCount) + "\n");
@@ -53,6 +65,46 @@ public class PyRelationInf extends RelationInterface {
         str += ("InstMethod:   " + Integer.toString(instmethodCount) + "\n");
         str += ("classMethod:  " + Integer.toString(classmethodCount) + "\n");
         str += ("staticMethod: " + Integer.toString(classtaticmethodCount) + "\n");
+        str += ("variable:     " + Integer.toString(varCount) + "\n");
+        return str;
+    }
+
+
+    @Override
+    public String DependencyStatis() {
+        Map<String, Integer> depMap = new HashMap<String, Integer>();
+        depMap.put(Configure.RELATION_IMPORT, 0);
+        depMap.put(Configure.RELATION_IMPLEMENT, 0);
+        depMap.put(Configure.RELATION_INHERIT, 0);
+        depMap.put(Configure.RELATION_CALL, 0);
+        depMap.put(Configure.RELATION_SET, 0);
+        depMap.put(Configure.RELATION_USE, 0);
+        depMap.put(Configure.RELATION_PARAMETER, 0);
+        depMap.put(Configure.RELATION_RETURN, 0);
+        depMap.put(Configure.RELATION_RECEIVE, 0);
+        for (Entity entity :singleCollect.getEntities()) {
+            for (Tuple<String, Integer> re : entity.getRelations()) {
+                if(re.x.equals(Configure.RELATION_IMPORT) ||
+                        re.x.equals(Configure.RELATION_INHERIT) ||
+                        re.x.equals(Configure.RELATION_IMPLEMENT) ||
+                        re.x.equals(Configure.RELATION_SET) ||
+                        re.x.equals(Configure.RELATION_USE) ||
+                        re.x.equals(Configure.RELATION_CALL) ||
+                        re.x.equals(Configure.RELATION_PARAMETER) ||
+                        re.x.equals(Configure.RELATION_RETURN)
+                ) {
+                    int old = depMap.get(re.x);
+                    depMap.put(re.x, old + 1);
+                }
+            }
+        }
+        String str = Configure.NULL_STRING;
+        for(Map.Entry<String, Integer> entry : depMap.entrySet()) {
+            str += entry.getKey();
+            str += ":    ";
+            str += Integer.toString(entry.getValue());
+            str += "\n";
+        }
         return str;
     }
 

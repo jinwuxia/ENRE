@@ -87,7 +87,8 @@ public class MapObject {
      * @param files
      */
     private void buildDepMap(ArrayList<String> files) {
-        System.out.println(relationInterface.basicStatis());
+        System.out.println(relationInterface.EntityStatis());
+        System.out.println(relationInterface.DependencyStatis());
 
         Map<String, Integer> fileName2Id =  buildFileMap(files);
         for (int i = 0; i < depStrs.length; i++) {
