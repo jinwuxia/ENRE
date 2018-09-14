@@ -1,5 +1,6 @@
 package multiparser.goextractor.visitor.secondpass;
 
+import com.ibm.icu.text.ArabicShaping;
 import multiparser.entity.*;
 import multiparser.goextractor.ConstantString;
 import multiparser.goextractor.goentity.Signature;
@@ -164,7 +165,7 @@ public class BasicDepVisitor {
     /**
      * structType/asliasType-implement interface
      */
-    private void setImplementation() {
+    private void setImplementation1() {
         Map<Signature, Integer> sig2Interface = buildMethod2Interface();
         Map<Integer, ArrayList<Signature>> type2Sig = buildType2Method();
         ArrayList<Tuple<Integer, Integer>> tmps = new ArrayList<Tuple<Integer, Integer>>();
@@ -183,6 +184,44 @@ public class BasicDepVisitor {
                 }
             }
         }
+    }
+
+    /**
+     * structType/asliasType-implement interface
+     */
+    private void setImplementation() {
+        Map<Integer, ArrayList<Signature>> inf2Sig = buildInterface2Methods();
+        Map<Integer, ArrayList<Signature>> type2Sig = buildType2Method();
+        ArrayList<Tuple<Integer, Integer>> tmps = new ArrayList<Tuple<Integer, Integer>>();
+
+        for (Map.Entry<Integer, ArrayList<Signature>> entry1 : type2Sig.entrySet()) {
+            int typeId = entry1.getKey();
+            ArrayList<Signature> sig1 = entry1.getValue();
+            for (Map.Entry<Integer, ArrayList<Signature>> entry2: inf2Sig.entrySet()) {
+                int interfaceId = entry2.getKey();
+                ArrayList<Signature> sig2 = entry2.getValue();
+                if(isExtended(sig1, sig2)) { //sig1 >= sig2
+                    saveRelation(typeId, interfaceId, Configure.RELATION_IMPLEMENT, Configure.RELATION_IMPLEMENTED_BY);
+                }
+            }
+        }
+    }
+
+    /**
+     * if an interface's all api in implemnted by a struct, then it is an extension
+     * @param structM
+     * @param intfM
+     * @return
+     */
+    private boolean isExtended(ArrayList<Signature> structM, ArrayList<Signature> intfM) {
+        for(Signature s1 : intfM) {
+            for(Signature s2: structM) {
+                if(!s1.isEqual(s2)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
 
@@ -263,6 +302,30 @@ public class BasicDepVisitor {
         }
         return signature2Interface;
     }
+
+    private Map<Integer, ArrayList<Signature>> buildInterface2Methods(){
+        Map<Integer, ArrayList<Signature>> interf2Sigs = new HashMap<Integer, ArrayList<Signature>>();
+        for (Entity entity : singleCollect.getEntities()) {
+            if (entity instanceof InterfaceFieldEntity) {
+                InterfaceFieldEntity interfaceFieldEntity = (InterfaceFieldEntity) entity;
+                if(interfaceFieldEntity.getType().equals(ConstantString.INTERFACE_FIELD_IS_METHOD)) {
+                    String methodName = interfaceFieldEntity.getName();
+                    ArrayList<VarEntity> paras = interfaceFieldEntity.getParameters();
+                    ArrayList<VarEntity> returns = interfaceFieldEntity.getReturns();
+                    ArrayList<String> paraTypes = getTypeListFromVars(paras);
+                    ArrayList<String> retTypes = getTypeListFromVars(returns);
+                    Signature signature = new Signature(methodName, paraTypes, retTypes);
+                    int interfaceId = interfaceFieldEntity.getParentId();
+                    if (!interf2Sigs.containsKey(interfaceId)) {
+                        interf2Sigs.put(interfaceId, new ArrayList<Signature>());
+                    }
+                    interf2Sigs.get(interfaceId).add(signature);
+                }
+            }
+        }
+        return interf2Sigs;
+    }
+
 
     private ArrayList<String> getTypeListFromVars(ArrayList<VarEntity> vars) {
         ArrayList<String> types = new ArrayList<String>();
