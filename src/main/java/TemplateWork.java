@@ -1,5 +1,7 @@
 import entitydepanalyzer.AnayzerIntf;
 import entitytreebuilder.BuilderIntf;
+import hidepanalyzer.HiDepData;
+import hidepanalyzer.HiDeper;
 import util.Configure;
 import format.MapObject;
 import format.json.JBuildObject;
@@ -26,13 +28,21 @@ public class TemplateWork {
         config(lang, inputDir, usageDir, projectName);
         String[] depTypes = getDepType(depMask);
 
-        //identifyEntities
+        //identify Entities
         BuilderIntf entityTreeBuilder = new BuilderIntf();
         entityTreeBuilder.run();
 
-        //identifyDeps
+        //extract Deps
         AnayzerIntf entityDepAnalyzer = new AnayzerIntf();
         entityDepAnalyzer.run();
+
+        //build hierarchical dependencies
+        HiDeper hiDeper = new HiDeper();
+        hiDeper.run();
+        hiDeper.tmpOutput();
+        //choose a data model to transform data
+
+        //choose a writer to output
 
         //outputDeps;
 

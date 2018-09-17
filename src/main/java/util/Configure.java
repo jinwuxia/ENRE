@@ -35,6 +35,13 @@ public class Configure {
     public static final String OS_DOT_NAME = "os.name";
 
 
+    public static final String BASIC_ENTITY_FUNCTION = "function";
+    public static final String BASIC_ENTITY_CLASS = "class";
+    public static final String BASIC_ENTITY_FILE = "file";
+    public static final String BASIC_ENTITY_FOLDER = "folder";
+    public static final String IMPLICIT_DEPENDENCY = "Implicit";
+    public static final String EXPLICIT_DEPENDENCY = "Explicit";
+
     // struct->method
     public static final String RELATION_RECEIVED_BY = "Received by";
     public static final String RELATION_RECEIVE = "Receive";
@@ -71,6 +78,8 @@ public class Configure {
     //struct-> struct , interface->interface in golang
     public static final String RELATION_INHERIT = "Inherit";
     public static final String RELATION_INHERITED_BY = "Inherited by";
+
+    public static final String RELATION_EXTEND = "Extend";
 
     //struct1->struct2, interface1->interface2
     //public static final String RELATION_INHERIT = "Embed";
