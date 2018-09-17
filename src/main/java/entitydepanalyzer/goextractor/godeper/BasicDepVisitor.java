@@ -44,7 +44,7 @@ public class BasicDepVisitor {
                             saveRelation(fileId, importedPackageId,
                                     Configure.RELATION_IMPORT, Configure.RELATION_IMPORTED_BY);
                             ((AbsFILEntity) singleCollect.getEntities().get(fileId)).addImportAlias(importedPackageNameAlias, importedPackageId);
-                            //System.out.println("imported package:" + ((AbsPKGEntity) singleCollect.getEntities().get(importedPackageId)).getFullPath());
+                            //System.out.println("imported package:" + ((AbsFLDEntity) singleCollect.getEntities().get(importedPackageId)).getFullPath());
                         }
 
                         //maybe the imported package is not included in the source code.
@@ -543,9 +543,9 @@ public class BasicDepVisitor {
         //System.out.println("searchPackageIndex: searched-" + packagePath);
         ArrayList<AbsEntity> entities = singleCollect.getEntities();
         for (int i = 0; i < entities.size(); i++) {
-            if (entities.get(i) instanceof AbsPKGEntity) {
-                //System.out.println("searchPackageIndex: ing-" + ((AbsPKGEntity) entities.get(i)).getFullPath());
-                if (((AbsPKGEntity) entities.get(i)).getFullPath().equals(packagePath)) {
+            if (entities.get(i) instanceof AbsFLDEntity) {
+                //System.out.println("searchPackageIndex: ing-" + ((AbsFLDEntity) entities.get(i)).getFullPath());
+                if (((AbsFLDEntity) entities.get(i)).getFullPath().equals(packagePath)) {
                     return i;
                 }
             }

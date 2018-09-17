@@ -387,9 +387,9 @@ public class ProcessTask {
         //System.out.println("searchPackageIndex: searched-" + packagePath);
         ArrayList<AbsEntity> entities = singleCollect.getEntities();
         for (int i = 0; i < entities.size(); i++) {
-            if (entities.get(i) instanceof AbsPKGEntity) {
-                //System.out.println("searchPackageIndex: ing-" + ((AbsPKGEntity) entities.get(i)).getFullPath());
-                if (((AbsPKGEntity) entities.get(i)).getFullPath().equals(packagePath)) {
+            if (entities.get(i) instanceof AbsFLDEntity) {
+                //System.out.println("searchPackageIndex: ing-" + ((AbsFLDEntity) entities.get(i)).getFullPath());
+                if (((AbsFLDEntity) entities.get(i)).getFullPath().equals(packagePath)) {
                     return i;
                 }
             }
@@ -550,7 +550,7 @@ public class ProcessTask {
         //System.out.println("packageName:" + packageName);
         //System.out.println("packageIndex:" + Integer.toString(packageIndex));
 
-        AbsPKGEntity currentPackageEntity = new AbsPKGEntity(packageIndex, packagePath, packageName);
+        AbsFLDEntity currentPackageEntity = new AbsFLDEntity(packageIndex, packagePath, packageName);
         currentPackageEntity.setParentId(-1);
         singleCollect.addEntity(currentPackageEntity);
         return packageIndex;

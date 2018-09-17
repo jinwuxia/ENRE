@@ -54,7 +54,7 @@ public class PyProcessTask {
 
         // new packageEntity
         int packageId = singleCollect.getCurrentIndex();
-        AbsPKGEntity packageEntity = new AbsPKGEntity(packageId, dirStr, packageName);
+        AbsFLDEntity packageEntity = new AbsFLDEntity(packageId, dirStr, packageName);
         singleCollect.addEntity(packageEntity);
 
         //set parent and child

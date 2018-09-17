@@ -1,7 +1,7 @@
 package entitydepanalyzer.py3extractor.pydeper;
 
 import udr.AbsEntity;
-import udr.AbsPKGEntity;
+import udr.AbsFLDEntity;
 import entitytreebuilder.pybuilder.pyentity.ImportStmt;
 import entitytreebuilder.pybuilder.pyentity.ModuleEntity;
 import entitytreebuilder.pybuilder.pyentity.PyFunctionEntity;
@@ -35,8 +35,8 @@ public class ImportVisitor extends DepVisitor {
       */
     private void bindPkg2Pkg() {
         for(AbsEntity entity :  singleCollect.getEntities()) {
-            if(entity instanceof AbsPKGEntity) {
-                String dirName = getDir( ((AbsPKGEntity) entity).getFullPath() );
+            if(entity instanceof AbsFLDEntity) {
+                String dirName = getDir( ((AbsFLDEntity) entity).getFullPath() );
                 int parentId = -1;
                 if(pkg2IdMap.containsKey(dirName)) {
                     parentId = pkg2IdMap.get(dirName);
@@ -44,7 +44,7 @@ public class ImportVisitor extends DepVisitor {
 
                 singleCollect.getEntities().get(entity.getId()).setParentId(parentId);
                 if(parentId != -1
-                        && singleCollect.getEntities().get(parentId) instanceof AbsPKGEntity) {
+                        && singleCollect.getEntities().get(parentId) instanceof AbsFLDEntity) {
                     singleCollect.getEntities().get(parentId).addChildId(entity.getId());
                 }
             }
@@ -68,7 +68,7 @@ public class ImportVisitor extends DepVisitor {
                 }
                 singleCollect.getEntities().get(entity.getId()).setParentId(parentId);
                 if(parentId != -1
-                        && singleCollect.getEntities().get(parentId) instanceof AbsPKGEntity) {
+                        && singleCollect.getEntities().get(parentId) instanceof AbsFLDEntity) {
                     singleCollect.getEntities().get(parentId).addChildId(entity.getId());
                 }
             }
@@ -81,8 +81,8 @@ public class ImportVisitor extends DepVisitor {
      */
     private void buildPkgMap() {
         for(AbsEntity entity : singleCollect.getEntities()) {
-            if(entity instanceof AbsPKGEntity) {
-                this.pkg2IdMap.put(((AbsPKGEntity) entity).getFullPath(), entity.getId());
+            if(entity instanceof AbsFLDEntity) {
+                this.pkg2IdMap.put(((AbsFLDEntity) entity).getFullPath(), entity.getId());
             }
         }
     }
@@ -239,7 +239,7 @@ public class ImportVisitor extends DepVisitor {
      */
     private boolean isStrAModOrPkg(AbsEntity entity, String str) {
         String name = "";
-        if(entity instanceof AbsPKGEntity) {
+        if(entity instanceof AbsFLDEntity) {
             name = entity.getName();
         }
         else if (entity instanceof ModuleEntity) {

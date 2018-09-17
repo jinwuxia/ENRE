@@ -1,9 +1,9 @@
 package udr;
 
-public class AbsPKGEntity extends AbsEntity {
+public class AbsFLDEntity extends AbsEntity {
     protected String fullPath;  //key
 
-    public AbsPKGEntity(int id, String fullPath, String name) {
+    public AbsFLDEntity(int id, String fullPath, String name) {
         this.id = id;
         this.fullPath = fullPath;
         this.name = name;

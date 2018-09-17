@@ -1,7 +1,7 @@
 package entitydepanalyzer.py3extractor.searcher;
 
 import udr.AbsEntity;
-import udr.AbsPKGEntity;
+import udr.AbsFLDEntity;
 import udr.AbsVAREntity;
 import udr.SingleCollect;
 import entitytreebuilder.pybuilder.PyConstantString;
@@ -100,12 +100,12 @@ public class NameSearch {
      */
     private void buildNameScopeForPackages() {
         for (AbsEntity entity : singleCollect.getEntities()) {
-            if (entity instanceof AbsPKGEntity) {
+            if (entity instanceof AbsFLDEntity) {
                 int packageId = entity.getId();
                 addInChildren(packageId, packageId);
                 int initId = findInitModule(packageId);
                 if(initId == -1) {  //package should always have init file
-                    //System.out.println("Not found init module for " + ((AbsPKGEntity) udr).getFullPath());
+                    //System.out.println("Not found init module for " + ((AbsFLDEntity) udr).getFullPath());
                     continue;
                 }
                 if(!nameMap.containsKey(initId)) { //package may have init file which is empty.

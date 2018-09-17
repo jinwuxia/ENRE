@@ -1,6 +1,6 @@
 package entitydepanalyzer.goextractor.search;
 
-import udr.AbsPKGEntity;
+import udr.AbsFLDEntity;
 import udr.SingleCollect;
 
 public class NameSearchPackage {
@@ -16,7 +16,7 @@ public class NameSearchPackage {
      */
     public int findVarInPackage(String varName, int packageId){
         if(packageId == -1
-                || !(singleCollect.getEntities().get(packageId) instanceof AbsPKGEntity) ) {
+                || !(singleCollect.getEntities().get(packageId) instanceof AbsFLDEntity) ) {
             return -1;
         }
         for (int fileId : singleCollect.getEntities().get(packageId).getChildrenIds()) {
@@ -36,7 +36,7 @@ public class NameSearchPackage {
      */
     public int findStructTypeInPackage(String typeName, int packageId) {
         if(packageId == -1
-                || !(singleCollect.getEntities().get(packageId) instanceof AbsPKGEntity) ) {
+                || !(singleCollect.getEntities().get(packageId) instanceof AbsFLDEntity) ) {
             return -1;
         }
         for (int fileId : singleCollect.getEntities().get(packageId).getChildrenIds()) {
@@ -57,7 +57,7 @@ public class NameSearchPackage {
      */
     public int findAliasTypeInPackage(String typeName, int packageId) {
         if(packageId == -1
-                || !(singleCollect.getEntities().get(packageId) instanceof AbsPKGEntity) ) {
+                || !(singleCollect.getEntities().get(packageId) instanceof AbsFLDEntity) ) {
             return -1;
         }
         for (int fileId : singleCollect.getEntities().get(packageId).getChildrenIds()) {
@@ -78,7 +78,7 @@ public class NameSearchPackage {
      */
     public int findInterfaceTypeInPackage(String typeName, int packageId) {
         if(packageId == -1
-                || !(singleCollect.getEntities().get(packageId) instanceof AbsPKGEntity) ) {
+                || !(singleCollect.getEntities().get(packageId) instanceof AbsFLDEntity) ) {
             return -1;
         }
         for (int fileId : singleCollect.getEntities().get(packageId).getChildrenIds()) {
@@ -95,7 +95,7 @@ public class NameSearchPackage {
     //find functionId in a package
     public int findFunctionInPackage(String functionName, int packageId) {
         if(packageId == -1
-                || !(singleCollect.getEntities().get(packageId) instanceof AbsPKGEntity) ) {
+                || !(singleCollect.getEntities().get(packageId) instanceof AbsFLDEntity) ) {
             return -1;
         }
         for (int fileId : singleCollect.getEntities().get(packageId).getChildrenIds()) {

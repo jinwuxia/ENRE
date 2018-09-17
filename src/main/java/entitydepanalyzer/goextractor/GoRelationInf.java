@@ -27,7 +27,7 @@ public class GoRelationInf extends RelationInterface {
         int varCount = 0;
 
         for(AbsEntity entity : singleCollect.getEntities()) {
-            if(entity instanceof AbsPKGEntity) {
+            if(entity instanceof AbsFLDEntity) {
                 packageCount ++;
             }
             else if(entity instanceof AbsFILEntity) {
@@ -329,7 +329,7 @@ public class GoRelationInf extends RelationInterface {
                 if (!relations.isEmpty()) {
                     for (Tuple<String, Integer> oneRelation : relations) {
                         if (oneRelation.x.equals(Configure.RELATION_IMPORT)) {
-                            String importedPackageName = ((AbsPKGEntity) singleCollect.getEntities().get(oneRelation.y)).getFullPath();
+                            String importedPackageName = ((AbsFLDEntity) singleCollect.getEntities().get(oneRelation.y)).getFullPath();
                             if(level.equals(Configure.RELATION_LEVEL_FILE)) {
                                 ArrayList<Integer> fileIds2 = singleCollect.getEntities().get(oneRelation.y).getChildrenIds();
                                 for (int fileId2 : fileIds2) {

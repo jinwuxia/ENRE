@@ -2,7 +2,7 @@ package entitydepanalyzer.py3extractor;
 
 import entitytreebuilder.pybuilder.PyConstantString;
 import udr.AbsEntity;
-import udr.AbsPKGEntity;
+import udr.AbsFLDEntity;
 import udr.AbsVAREntity;
 import udr.RelationInterface;
 import entitytreebuilder.pybuilder.pyentity.*;
@@ -27,7 +27,7 @@ public class PyRelationInf extends RelationInterface {
         int varCount = 0;
 
         for(AbsEntity entity : singleCollect.getEntities()) {
-            if(entity instanceof AbsPKGEntity) {
+            if(entity instanceof AbsFLDEntity) {
                 packageCount ++;
             }
             else if(entity instanceof ModuleEntity) {
@@ -306,7 +306,7 @@ public class PyRelationInf extends RelationInterface {
             return fileName;
         }
 
-        if(singleCollect.getEntities().get(entityId) instanceof AbsPKGEntity) {
+        if(singleCollect.getEntities().get(entityId) instanceof AbsFLDEntity) {
             int initFileId = getInitForPackage(entityId);
             if(initFileId != -1) {
                 return singleCollect.getEntities().get(initFileId).getName();

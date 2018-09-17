@@ -157,7 +157,7 @@ public class TypeInfer {
      */
     private int getSearchType(String typeName, int packageId) {
         if(packageId == -1
-                || !(singleCollect.getEntities().get(packageId) instanceof AbsPKGEntity)) {
+                || !(singleCollect.getEntities().get(packageId) instanceof AbsFLDEntity)) {
             return -1;
         }
         int typeId = nameSearchPackage.findStructTypeInPackage(typeName, packageId);
