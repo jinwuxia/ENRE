@@ -1,15 +1,12 @@
 import entitydepanalyzer.AnayzerIntf;
 import entitytreebuilder.BuilderIntf;
-import hidepanalyzer.HiDepData;
+import formator.Formator;
 import hidepanalyzer.HiDeper;
 import util.Configure;
-import format.MapObject;
-import format.json.JBuildObject;
-import format.json.JDepObject;
-import format.json.JsonFormat;
-import format.xml.XBuildObject;
-import format.xml.XDepObject;
-import format.xml.XmlFormat;
+import formator.fjson.JDepObject;
+import hidepwriter.JsonWriter;
+import formator.fxml.XDepObject;
+import hidepwriter.XmlWriter;
 
 import java.util.ArrayList;
 
@@ -40,11 +37,19 @@ public class TemplateWork {
         HiDeper hiDeper = new HiDeper();
         hiDeper.run();
         hiDeper.tmpOutput();
-        //choose a data model to transform data
 
-        //choose a writer to output
+        //transform data two models
+        Formator formator = new Formator(depTypes);
+        JDepObject jDepObject = formator.getfJsonDataModel();
+        XDepObject xDepObject = formator.getfXmlDataModel();
 
-        //outputDeps;
+        //output data by writers
+        JsonWriter jsonWriter = new JsonWriter();
+        jsonWriter.toJson(jDepObject);
+        XmlWriter xmlWriter = new XmlWriter();
+        xmlWriter.toXml(xDepObject);
+        System.out.println("Export " + configure.getOutputJsonFile() + " successfully...");
+        System.out.println("Export " + configure.getOutputXmlFile() + " successfully...");
 
     }
 
@@ -100,23 +105,6 @@ public class TemplateWork {
         return depStrArr;
     }
 
-    //output dep files
-    private void outputDeps(String[] depTypes) {
-        MapObject mapObject = new MapObject(depTypes);
-
-        JBuildObject jBuildObject = new JBuildObject();
-        JDepObject jDepObject = jBuildObject.buildObjectProcess(mapObject);
-        JsonFormat jasonFormat = new JsonFormat();
-        jasonFormat.toJson(jDepObject);
-
-        XBuildObject xBuildObject = new XBuildObject();
-        XDepObject xDepObject = xBuildObject.buildObjectProcess(mapObject);
-        XmlFormat xmlFormat = new XmlFormat();
-        xmlFormat.toXml(xDepObject);
-
-        System.out.println("Export " + configure.getOutputJsonFile() + " successfully...");
-        System.out.println("Export " + configure.getOutputXmlFile() + " successfully...");
-    }
 
 
     public final void testRun() {
