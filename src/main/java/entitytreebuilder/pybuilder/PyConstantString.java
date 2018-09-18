@@ -78,7 +78,7 @@ public class PyConstantString {
             "breakpoint",	"exec",	"isinstance",	"ord",	"sum",
             "bytearray",	"filter",	"issubclass",	"pow",	"super",
             "bytes",	"float",	"iter",	"print",	"tuple",
-            "callable",	"format",	"len",	"property",	"type",
+            "callable", "format",	"len",	"property",	"type",
             "chr",	"frozenset",	"list",	"range",	"vars",
             "classmethod",	"getattr",	"locals",	"repr",	"zip",
             "compile",	"globals",	"map",	"reversed",	"__import__",
