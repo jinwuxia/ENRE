@@ -1,4 +1,4 @@
-package format;
+package formator;
 
 import udr.RelationInterface;
 import entitydepanalyzer.goextractor.GoRelationInf;

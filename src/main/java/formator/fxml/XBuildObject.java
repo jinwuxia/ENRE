@@ -1,6 +1,6 @@
-package format.xml;
+package formator.fxml;
 
-import format.MapObject;
+import formator.MapObject;
 import util.Configure;
 
 import java.util.ArrayList;

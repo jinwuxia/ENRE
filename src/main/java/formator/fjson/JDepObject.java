@@ -1,4 +1,4 @@
-package format.json;
+package formator.fjson;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;

@@ -1,7 +1,7 @@
-package format.json;
+package formator.fjson;
 
 
-import format.MapObject;
+import formator.MapObject;
 import util.Configure;
 
 import java.util.ArrayList;
