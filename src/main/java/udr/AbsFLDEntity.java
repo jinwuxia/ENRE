@@ -7,6 +7,7 @@ public class AbsFLDEntity extends AbsEntity {
         this.id = id;
         this.fullPath = fullPath;
         this.name = name;
+        setSimpleName();
     }
 
     public void setFullPath(String fullPath) {

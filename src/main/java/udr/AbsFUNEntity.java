@@ -28,10 +28,12 @@ public class AbsFUNEntity extends AbsEntity {
 
     public AbsFUNEntity(String name) {
         this.name = name;
+        setSimpleName();
     }
     public AbsFUNEntity(int id, String name) {
         this.id = id;
         this.name = name;
+        setSimpleName();
     }
 
 

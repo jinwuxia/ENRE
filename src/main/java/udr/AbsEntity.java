@@ -6,12 +6,16 @@ import java.util.ArrayList;
 
 public class AbsEntity {
     protected String name;
+    protected String simpleName;
     protected int id;
-    protected int parentId;
+    protected int parentId = -1;
     protected ArrayList<Integer> childrenIds = new ArrayList<Integer>();
     protected ArrayList<Tuple<String,Integer>> relations = new ArrayList<Tuple<String, Integer>>();
 
 
+    public String getSimpleName() {
+        return simpleName;
+    }
 
     public String getName() {
         return name;
@@ -23,6 +27,11 @@ public class AbsEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setSimpleName() {
+        String [] arr = name.split("/|\\\\");
+        simpleName = arr[arr.length - 1];
     }
 
     public void setId(int id) {
