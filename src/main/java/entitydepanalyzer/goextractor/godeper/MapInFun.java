@@ -252,7 +252,7 @@ public class MapInFun {
         }
         AbsFUNEntity functionEntity = (AbsFUNEntity) singleCollect.getEntities().get(functionId);
         int fileId = functionEntity.getParentId();
-        if(fileId == -1) {
+        if(fileId == -1 || !(singleCollect.getEntities().get(fileId) instanceof AbsFILEntity)) {
             return -1;
         }
         AbsFILEntity fileEntity = (AbsFILEntity) singleCollect.getEntities().get(fileId);
@@ -283,7 +283,7 @@ public class MapInFun {
         }
         AbsFUNEntity functionEntity = (AbsFUNEntity) singleCollect.getEntities().get(functionId);
         int fileId = functionEntity.getParentId();
-        if(fileId == -1) {
+        if(fileId == -1 || !(singleCollect.getEntities().get(fileId) instanceof AbsFILEntity)) {
             return -1;
         }
         AbsFILEntity fileEntity = (AbsFILEntity) singleCollect.getEntities().get(fileId);
@@ -321,7 +321,7 @@ public class MapInFun {
         }
         AbsFUNEntity functionEntity = (AbsFUNEntity) singleCollect.getEntities().get(functionId);
         int fileId = functionEntity.getParentId();
-        if(fileId == -1) {
+        if(fileId == -1 || !(singleCollect.getEntities().get(fileId) instanceof AbsFILEntity)) {
             return -1;
         }
         AbsFILEntity fileEntity = (AbsFILEntity) singleCollect.getEntities().get(fileId);

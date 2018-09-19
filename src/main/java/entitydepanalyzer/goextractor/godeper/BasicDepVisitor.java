@@ -132,7 +132,9 @@ public class BasicDepVisitor {
     }
 
 
-
+    /**
+     * it is a receiver relation, also and the receiver relation into parent-child
+     */
     private void setReceiver() {
         for (AbsEntity methodEntity : singleCollect.getEntities()) {
             if (methodEntity instanceof MethodEntity) {
@@ -150,6 +152,10 @@ public class BasicDepVisitor {
                 int receiverTypeId = searchReceiverType(methodEntityId, receiverType);
                 if (receiverTypeId != -1) {
                     ((AbsVAREntity) singleCollect.getEntities().get(receiverVarId)).setTypeId(receiverTypeId);
+
+                    singleCollect.getEntities().get(methodEntityId).setParentId(receiverTypeId);
+                    singleCollect.getEntities().get(receiverTypeId).addChildId(methodEntityId);
+
                     saveRelation(methodEntityId, receiverTypeId, Configure.RELATION_RECEIVE, Configure.RELATION_RECEIVED_BY);
                     //System.out.println("method_receive_relation: receiver:" + receiverType + ", file: " + singleCollect.getEntities().get(singleCollect.getEntities().get(receiverId).getParentId()).getName());
                 }

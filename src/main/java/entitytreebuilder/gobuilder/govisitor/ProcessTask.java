@@ -272,6 +272,7 @@ public class ProcessTask {
         //
         String newPackagePath = configure.getUsageSrcPath()
                 + packagePath.substring(startIndex + configure.getInputSrcPath().length(), packagePath.length());
+        System.out.println("new package path = " + newPackagePath);
         return newPackagePath;
     }
 
@@ -279,6 +280,7 @@ public class ProcessTask {
         int startIndex = fileFullPath.indexOf(configure.getInputSrcPath());
         String newFileFullPath = configure.getUsageSrcPath()
                 + fileFullPath.substring(startIndex + configure.getInputSrcPath().length(), fileFullPath.length());
+        System.out.println("new file path: " + newFileFullPath);
         return newFileFullPath;
     }
 
@@ -562,6 +564,7 @@ public class ProcessTask {
         fileEntity.setParentId(packageIndex);
         fileEntity.setId(singleCollect.getCurrentIndex());
         fileEntity.setName(getNewFileFullPath(fileFullPath));
+        fileEntity.setSimpleName();
         singleCollect.addEntity(fileEntity);
         int fileIndex = fileEntity.getId();
 
