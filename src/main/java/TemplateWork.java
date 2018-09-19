@@ -1,12 +1,13 @@
 import entitydepanalyzer.AnayzerIntf;
 import entitytreebuilder.BuilderIntf;
 import formator.Formator;
-import hidepanalyzer.HiDeper;
-import util.Configure;
 import formator.fjson.JDepObject;
-import hidepwriter.JsonWriter;
 import formator.fxml.XDepObject;
-import hidepwriter.XmlWriter;
+import formator.spreadsheet.Csvgrapher;
+import hidepanalyzer.HiDepData;
+import hidepanalyzer.HiDeper;
+import hidepwriter.WriterIntf;
+import util.Configure;
 
 import java.util.ArrayList;
 
@@ -37,19 +38,16 @@ public class TemplateWork {
         HiDeper hiDeper = new HiDeper();
         hiDeper.run();
         hiDeper.tmpOutput();
+        HiDepData hiDepData = HiDepData.getInstance();
 
-        //transform data two models
-        Formator formator = new Formator(depTypes);
+        Formator formator = new Formator(depTypes, hiDepData.getAllEntities(), hiDepData.getAllDeps());
         JDepObject jDepObject = formator.getfJsonDataModel();
         XDepObject xDepObject = formator.getfXmlDataModel();
+        ArrayList<String[]> nodes = formator.getNodeModel();
+        ArrayList<String[]> edges = formator.getEdgeModel();
 
-        //output data by writers
-        JsonWriter jsonWriter = new JsonWriter();
-        jsonWriter.toJson(jDepObject);
-        XmlWriter xmlWriter = new XmlWriter();
-        xmlWriter.toXml(xDepObject);
-        System.out.println("Export " + configure.getOutputJsonFile() + " successfully...");
-        System.out.println("Export " + configure.getOutputXmlFile() + " successfully...");
+        WriterIntf writer = new WriterIntf();
+        writer.run(jDepObject, xDepObject, nodes, edges);
 
     }
 
