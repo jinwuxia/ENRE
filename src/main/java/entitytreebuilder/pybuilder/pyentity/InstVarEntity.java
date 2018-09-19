@@ -6,6 +6,7 @@ public class InstVarEntity extends AbsVAREntity {
     public InstVarEntity(int id, String name) {
         this.id = id;
         this.name = name;
+        setSimpleName();
     }
 
 

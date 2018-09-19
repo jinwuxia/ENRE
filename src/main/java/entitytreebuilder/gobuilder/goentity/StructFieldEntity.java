@@ -7,6 +7,8 @@ public class StructFieldEntity extends AbsVAREntity {
         this.id = id;
         this.type = type;
         this.name = name;//if name="ANONYMOUS", it is the embed structure.
+        setSimpleName();
+
     }
 
     @Override

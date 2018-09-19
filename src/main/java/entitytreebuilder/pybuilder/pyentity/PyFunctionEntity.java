@@ -18,11 +18,13 @@ public class PyFunctionEntity extends AbsFUNEntity {
 
 
 
-    public PyFunctionEntity() {}
+    public PyFunctionEntity() {
+    }
 
     public PyFunctionEntity(int id, String name) {
         this.id = id;
         this.name = name;
+        setSimpleName();
     }
 
     public ArrayList<ImportStmt> getImportStmts() {

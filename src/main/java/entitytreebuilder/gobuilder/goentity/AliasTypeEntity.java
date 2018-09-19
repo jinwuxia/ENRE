@@ -8,6 +8,7 @@ public class AliasTypeEntity extends TypeEntity {
         this.id = id;
         this.type = type;
         this.name = name;
+        setSimpleName();
     }
 
     public String getType() {

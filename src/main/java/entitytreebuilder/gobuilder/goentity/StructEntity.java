@@ -5,6 +5,8 @@ public class StructEntity extends TypeEntity {
     public StructEntity(int id, String name) {
         this.id = id;
         this.name = name;
+        setSimpleName();
+
     }
 
     @Override

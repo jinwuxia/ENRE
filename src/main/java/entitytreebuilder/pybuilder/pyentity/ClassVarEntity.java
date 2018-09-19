@@ -6,6 +6,7 @@ public class ClassVarEntity extends AbsVAREntity {
     public ClassVarEntity(int id, String name) {
         this.id = id;
         this.name = name;
+        setSimpleName();
     }
 
     @Override

@@ -6,6 +6,7 @@ public class ClassMethodEntity extends PyMethodEntity{
     public ClassMethodEntity(int id, String name) {
         this.id = id;
         this.name = name;
+        setSimpleName();
     }
 
     @Override

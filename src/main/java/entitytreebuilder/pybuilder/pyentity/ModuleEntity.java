@@ -22,6 +22,7 @@ public class ModuleEntity extends AbsFILEntity {
     public ModuleEntity(int moduleId, String name) {
         this.id = moduleId;
         this.name = name;
+        setSimpleName();
     }
 
     public void setModuleSimpleName(String moduleSimpleName) {

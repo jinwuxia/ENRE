@@ -16,6 +16,8 @@ public class InterfaceFieldEntity extends AbsEntity {
     public InterfaceFieldEntity(String type, String name) {
         this.type = type;
         this.name = name;
+        setSimpleName();
+
     }
 
     public InterfaceFieldEntity(String type, String name, ArrayList<AbsVAREntity> parameters, ArrayList<AbsVAREntity> returns) {

@@ -5,6 +5,8 @@ import udr.AbsVAREntity;
 public class ConstEntity extends AbsVAREntity {
     public ConstEntity(int i, String type, String name) {
         super(i,type,name);
+        setSimpleName();
+
     }
 
     @Override

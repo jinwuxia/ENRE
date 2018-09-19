@@ -5,6 +5,7 @@ public class InstMethodEntity extends PyMethodEntity{
     public InstMethodEntity(int id, String name) {
         this.id = id;
         this.name = name;
+        setSimpleName();
     }
 
     @Override

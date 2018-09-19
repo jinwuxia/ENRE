@@ -16,6 +16,7 @@ public class MethodEntity extends AbsFUNEntity {
 
     public MethodEntity(String name) {
         this.name = name;
+        setSimpleName();
     }
 
     public int getReceiverVarId() {

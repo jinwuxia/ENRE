@@ -10,6 +10,7 @@ public class ClassEntity extends AbsCLSEntity {
     public ClassEntity(int id, String name) {
         this.id = id;
         this.name = name;
+        setSimpleName();
     }
 
     private ArrayList<String> baseClassNameList = new ArrayList<String>();

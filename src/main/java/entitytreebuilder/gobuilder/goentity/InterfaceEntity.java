@@ -5,6 +5,8 @@ public class InterfaceEntity extends TypeEntity {
     public InterfaceEntity(int id, String name) {
         this.id = id;
         this.name = name;
+        setSimpleName();
+
     }
 
     @Override
