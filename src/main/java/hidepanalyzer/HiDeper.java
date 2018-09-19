@@ -1,6 +1,6 @@
 package hidepanalyzer;
 
-import org.omg.PortableInterceptor.INACTIVE;
+import sun.security.krb5.Config;
 import udr.*;
 import util.Configure;
 import util.Tuple;
@@ -12,6 +12,39 @@ public class HiDeper {
     private HiDepData hiDepData = HiDepData.getInstance();
     private SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
 
+
+    public void run() {
+        for(AbsEntity entity : singleCollect.getEntities()) {
+            buildEntity(entity.getId(), getEntityType(entity));
+            buildDep(entity);
+        }
+    }
+
+
+    private String getEntityType(AbsEntity entity) {
+        String entityType = "";
+        if(entity instanceof AbsFUNEntity) {
+            entityType = Configure.BASIC_ENTITY_FUNCTION;
+        }
+        else if(entity instanceof AbsFILEntity) {
+            entityType = Configure.BASIC_ENTITY_FILE;
+        }
+        else if(entity instanceof AbsCLSEntity) {
+            entityType = Configure.BASIC_ENTITY_CLASS;
+        }
+        else if(entity instanceof AbsFLDEntity) {
+            entityType = Configure.BASIC_ENTITY_FOLDER;
+        }
+        return entityType;
+    }
+
+
+    private void buildEntity (int entityId, String type) {
+        AbsEntity absEntity = singleCollect.getEntities().get(entityId);
+        String name = absEntity.getName();
+        hiDepData.addEntity(entityId, name, type, absEntity.getParentId());
+    }
+
     /**
      * according to primitive relation to build hierarchical dependencies:
      *
@@ -20,25 +53,23 @@ public class HiDeper {
      * file->file
      * folder->folder
      */
-    public void run() {
-        for (AbsEntity entity : singleCollect.getEntities()) {
-            for (Tuple<String, Integer> relation : entity.getRelations()) {
-                String primitiveType = relation.x;
-                int id2 = relation.y;
+    private void buildDep(AbsEntity entity) {
+        for (Tuple<String, Integer> relation : entity.getRelations()) {
+            String primitiveType = relation.x;
+            int id2 = relation.y;
 
-                if(primitiveType.equals(Configure.RELATION_IMPLEMENT)
-                        || primitiveType.equals(Configure.RELATION_INHERIT)) {
-                    primitiveType = Configure.RELATION_EXTEND;
-                }
+            if (primitiveType.equals(Configure.RELATION_IMPLEMENT)
+                    || primitiveType.equals(Configure.RELATION_INHERIT)) {
+                primitiveType = Configure.RELATION_EXTEND;
+            }
 
-                if(primitiveType.equals(Configure.RELATION_SET)
-                        || primitiveType.equals(Configure.RELATION_USE)
-                        || primitiveType.equals(Configure.RELATION_CALL)
-                        || primitiveType.equals(Configure.RELATION_PARAMETER)
-                        || primitiveType.equals(Configure.RELATION_IMPLEMENT)
-                        || primitiveType.equals(Configure.RELATION_INHERIT)){
-                    buildHierModel(entity.getId(), id2, primitiveType);
-                }
+            if (primitiveType.equals(Configure.RELATION_SET)
+                    || primitiveType.equals(Configure.RELATION_USE)
+                    || primitiveType.equals(Configure.RELATION_CALL)
+                    || primitiveType.equals(Configure.RELATION_PARAMETER)
+                    || primitiveType.equals(Configure.RELATION_IMPLEMENT)
+                    || primitiveType.equals(Configure.RELATION_INHERIT)) {
+                buildHierModel(entity.getId(), id2, primitiveType);
             }
         }
     }
