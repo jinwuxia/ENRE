@@ -95,20 +95,26 @@ public class Configure {
 
 
 
-    private String  inputSrcPath;
-    private String  usageSrcPath;
-    private String  analyzedProjectName = "beego";
-    private String  lang = "golang";
-    private String  curr_pro_suffix = ".go";
+    private String inputSrcPath;
+    private String usageSrcPath;
+    private String analyzedProjectName = "beego";
+    private String lang = "golang";
+    private String curr_pro_suffix = ".go";
 
-    private String  outputJsonFile = analyzedProjectName  + "_dep.json";
-    private String  outputXmlFile = analyzedProjectName + "_dep.xml";
-    private String  attributeName = analyzedProjectName + "-sdsm";
-    private String  schemaVersion = "1.0";
+    private String outputDotFile = analyzedProjectName + ".dot";
+    private String outputCsvNodeFile = analyzedProjectName + "_node.csv";
+    private String outputCsvEdgeFile = analyzedProjectName + "_edge.csv";
+    private String outputJsonFile = analyzedProjectName  + "_dep.json";
+    private String outputXmlFile = analyzedProjectName + "_dep.xml";
+    private String attributeName = analyzedProjectName + "-sdsm";
+    private String schemaVersion = "1.0";
 
     public void setDefault() {
         outputJsonFile = analyzedProjectName  + "_dep.json";
+        outputDotFile = analyzedProjectName + ".dot";
         outputXmlFile = analyzedProjectName + "_dep.xml";
+        outputCsvNodeFile = analyzedProjectName + "_node.csv";
+        outputCsvEdgeFile = analyzedProjectName + "_edge.csv";
         attributeName = analyzedProjectName + "-sdsm";
     }
 
@@ -138,6 +144,14 @@ public class Configure {
 
     public String getOutputJsonFile() {
         return outputJsonFile;
+    }
+
+    public String getOutputCsvEdgeFile() {
+        return outputCsvEdgeFile;
+    }
+
+    public String getOutputCsvNodeFile() {
+        return outputCsvNodeFile;
     }
 
     public void setOutputJsonFile(String outputJsonFile) {
@@ -187,5 +201,8 @@ public class Configure {
         return curr_pro_suffix;
     }
 
+    public String getOutputDotFile() {
+        return outputDotFile;
+    }
 }
 
