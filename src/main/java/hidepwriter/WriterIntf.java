@@ -31,8 +31,14 @@ public class WriterIntf {
         dotWriter.writeDot(DotUtil.FILTER_FILE_FOLDER_DEP);
         dotWriter.writeDot(DotUtil.FILTER_CLASS_DEP);
         dotWriter.writeDot(DotUtil.FILTER_FUNC_CLASS_DEP);
+        dotWriter.writeDot(DotUtil.FILETR_FUNCTION_DEP);
         dotWriter.writeDot(DotUtil.FILTER_DEFAULT_DEP);
 
+    }
+
+    public void undTest() {
+        UndWriter undWriter = new UndWriter();
+        undWriter.writeUnd();
     }
 
 }

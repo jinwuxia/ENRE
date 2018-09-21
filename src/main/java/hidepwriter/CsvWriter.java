@@ -16,7 +16,7 @@ public class CsvWriter {
         writeCsv(edgeList, configure.getOutputCsvEdgeFile());
     }
 
-    private void writeCsv(List<String[]> dataList, String fileName) {
+    public void writeCsv(List<String[]> dataList, String fileName) {
         File file = new File(fileName);
 
         try {

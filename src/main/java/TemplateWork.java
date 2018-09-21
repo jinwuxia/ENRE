@@ -47,7 +47,8 @@ public class TemplateWork {
         ArrayList<String[]> edges = formator.getEdgeModel();
 
         WriterIntf writer = new WriterIntf();
-        writer.run(jDepObject, xDepObject, nodes, edges);
+        //writer.run(jDepObject, xDepObject, nodes, edges);
+        writer.undTest();
 
     }
 
