@@ -16,6 +16,7 @@ public class AbsVAREntity extends AbsEntity {
         this.id = id;
         this.type = type;
         this.name = name;
+        setSimpleName();
     }
 
     public AbsVAREntity() {}
