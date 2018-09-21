@@ -246,6 +246,7 @@ public class PyProcessTask {
         for (String para : paraArr) {
             AbsVAREntity varEntity = new AbsVAREntity();
             varEntity.setName(para);
+            varEntity.setSimpleName();
             varEntities.add(varEntity);
         }
         return varEntities;
