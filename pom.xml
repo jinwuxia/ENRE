@@ -40,6 +40,7 @@
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
             <version>4.1</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>
