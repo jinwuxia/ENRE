@@ -1,10 +1,7 @@
 package entitydepanalyzer.py3extractor;
 
 import entitytreebuilder.pybuilder.PyConstantString;
-import udr.AbsEntity;
-import udr.AbsFLDEntity;
-import udr.AbsVAREntity;
-import udr.RelationInterface;
+import udr.*;
 import entitytreebuilder.pybuilder.pyentity.*;
 import util.Configure;
 import util.Tuple;
@@ -15,16 +12,46 @@ import java.util.Map;
 
 public class PyRelationInf extends RelationInterface {
 
+    private boolean isInnerClass(AbsEntity entity) {
+        int parentId = entity.getParentId();
+        if(parentId != -1 && (
+                singleCollect.getEntities().get(parentId) instanceof AbsCLSEntity
+                        || singleCollect.getEntities().get(parentId) instanceof PyFunctionEntity)) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isInnerFunction(AbsEntity entity) {
+        int parentId = entity.getParentId();
+        if(parentId != -1 && (singleCollect.getEntities().get(parentId) instanceof AbsCLSEntity)) {
+            return true;
+        }
+        if(parentId != -1 && singleCollect.getEntities().get(parentId) instanceof PyFunctionEntity) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isInnerMethod(AbsEntity entity) {
+        int parentId = entity.getParentId();
+        if(parentId != -1 && singleCollect.getEntities().get(parentId) instanceof PyFunctionEntity) {
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public String EntityStatis() {
         int packageCount = 0;
         int fileCount = 0;
         int classCount = 0;
         int functionCount = 0;
-        int classmethodCount = 0;
-        int classtaticmethodCount = 0;
-        int instmethodCount = 0;
-        int varCount = 0;
+        int methodCount = 0;
+        //int classmethodCount = 0;
+        //int classtaticmethodCount = 0;
+        //int instmethodCount = 0;
+        //int varCount = 0;
 
         for(AbsEntity entity : singleCollect.getEntities()) {
             if(entity instanceof AbsFLDEntity) {
@@ -33,40 +60,46 @@ public class PyRelationInf extends RelationInterface {
             else if(entity instanceof ModuleEntity) {
                 fileCount ++;
             }
-            else if(entity instanceof PyFunctionEntity && !(entity instanceof PyMethodEntity)) {
+            else if(entity instanceof PyFunctionEntity && !(entity instanceof PyMethodEntity)
+                && !isInnerFunction(entity)
+            && !entity.getSimpleName().equals("__main__")) {
                 functionCount ++;
             }
-            else if(entity instanceof ClassMethodEntity) {
-                classmethodCount ++;
+            else if(entity instanceof PyMethodEntity && !isInnerMethod(entity)) {
+                methodCount ++;
             }
-            else if(entity instanceof ClassStaticMethodEntity) {
-                classtaticmethodCount ++;
-            }
-            else if(entity instanceof InstMethodEntity) {
-                instmethodCount ++;
-            }
+            //else if(entity instanceof ClassMethodEntity) {
+            //    classmethodCount ++;
+            //}
+            //else if(entity instanceof ClassStaticMethodEntity) {
+            //    classtaticmethodCount ++;
+            //}
+            //else if(entity instanceof InstMethodEntity) {
+            //    instmethodCount ++;
+            //}
 
-            else if(entity instanceof ClassEntity) {
+            else if(entity instanceof ClassEntity && !isInnerClass(entity)) {
                 classCount ++;
             }
-            else if (entity instanceof AbsVAREntity) {
-                int parentId = entity.getParentId();
-                if(parentId != -1) {
-                    if(!(singleCollect.getEntities().get(parentId) instanceof ClassEntity)) {
-                        varCount ++;
-                    }
-                }
-            }
+            //else if (entity instanceof AbsVAREntity) {
+            //    int parentId = entity.getParentId();
+            //    if(parentId != -1) {
+            //        if(!(singleCollect.getEntities().get(parentId) instanceof ClassEntity)) {
+            //            varCount ++;
+            //        }
+            //    }
+            //}
         }
         String str = Configure.NULL_STRING;
         str += ("Package:      " + Integer.toString(packageCount) + "\n");
         str += ("File/module:  " + Integer.toString(fileCount) + "\n");
         str += ("Class:        " + Integer.toString(classCount) + "\n");
         str += ("Function:     " + Integer.toString(functionCount) + "\n");
-        str += ("InstMethod:   " + Integer.toString(instmethodCount) + "\n");
-        str += ("classMethod:  " + Integer.toString(classmethodCount) + "\n");
-        str += ("staticMethod: " + Integer.toString(classtaticmethodCount) + "\n");
-        str += ("variable:     " + Integer.toString(varCount) + "\n");
+        str += ("Method:       " + Integer.toString(methodCount) + "\n");
+        //str += ("InstMethod:   " + Integer.toString(instmethodCount) + "\n");
+        //str += ("classMethod:  " + Integer.toString(classmethodCount) + "\n");
+        //str += ("staticMethod: " + Integer.toString(classtaticmethodCount) + "\n");
+        //str += ("variable:     " + Integer.toString(varCount) + "\n");
         return str;
     }
 
