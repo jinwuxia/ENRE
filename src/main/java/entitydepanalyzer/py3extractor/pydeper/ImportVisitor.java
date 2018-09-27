@@ -147,10 +147,12 @@ public class ImportVisitor extends DepVisitor {
                 //System.out.println("looking for " + impstr);
                 int scope = -1; //should get it based on from.
                 int id = findImportedEntity(impstr, scope);
+
                 if(id != -1) {
                     //save (importedID, importsList_index) into udr
                     saveId2Id(entity.getId(), id, index);
                     saveRelation(entity.getId(), id, Configure.RELATION_IMPORT, Configure.RELATION_IMPORTED_BY);
+                    //System.out.println("setImportDep: find " + singleCollect.getEntities().get(id).getName());
                 }
                 else  {
                     //System.out.println("setImportDep: cannot find " + impstr);
@@ -174,6 +176,7 @@ public class ImportVisitor extends DepVisitor {
             String post = impstr.substring(pre.length() + 1, impstr.length());
             scope = findPkgOrMod(pre, scope);
             impstr = post;
+            //System.out.println("scope=" + scope + "; impstr=" + impstr);
             if(scope == -1) {
                 return -1;
             }
@@ -199,6 +202,7 @@ public class ImportVisitor extends DepVisitor {
             String name = singleCollect.getEntities().get(childId).getName();
             if(singleCollect.getEntities().get(childId) instanceof ModuleEntity) {
                 name = ((ModuleEntity) singleCollect.getEntities().get(childId)).getModuleSimpleName();
+                //System.out.println(name);
             }
             if(name.equals(str)) {
                 return childId;

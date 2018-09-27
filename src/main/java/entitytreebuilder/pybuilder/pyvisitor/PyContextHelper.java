@@ -1,6 +1,7 @@
 package entitytreebuilder.pybuilder.pyvisitor;
 
 import entitytreebuilder.pybuilder.PyConstantString;
+import entitytreebuilder.pybuilder.pyentity.PyMethodEntity;
 import parser.parsepy.Python3Parser;
 import org.antlr.v4.runtime.RuleContext;
 
@@ -18,7 +19,9 @@ public class PyContextHelper {
      * judge funcdef or classDef,... are at top level in a file
      * file_input: (NEWLINE | stmt)* EOF;
      * stmt: simple_stmt | compound_stmt;
-     * compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef | classdef | decorated | async_stmt;
+     * compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | with_stmt
+     *             | funcdef | classdef | decorated | async_stmt;
+     * decorated: decorators (classdef | funcdef | async_funcdef);
      * @param ctx
      * @return
      */
@@ -28,6 +31,14 @@ public class PyContextHelper {
                 && ctx.parent.parent != null
                 && ctx.parent.parent.parent != null
                 && ctx.parent.parent.parent instanceof Python3Parser.File_inputContext) {
+            return true;
+        }
+        if(ctx != null
+                && ctx.parent != null && ctx.parent instanceof Python3Parser.DecoratedContext
+                && ctx.parent.parent != null
+                && ctx.parent.parent.parent != null
+                && ctx.parent.parent.parent.parent != null
+                && ctx.parent.parent.parent.parent instanceof Python3Parser.File_inputContext) {
             return true;
         }
         return false;

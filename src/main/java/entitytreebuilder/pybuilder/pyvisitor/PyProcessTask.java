@@ -93,7 +93,7 @@ public class PyProcessTask {
         singleCollect.addEntity(moduleEntity);
 
         //set parent and child
-
+        //System.out.println("modulename:" + fileName);
         return moduleId;
     }
 

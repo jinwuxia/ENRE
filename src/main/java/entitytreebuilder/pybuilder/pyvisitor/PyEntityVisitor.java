@@ -54,14 +54,21 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
             baseStrs = visitArglist(ctx.arglist());
         }
 
-        if(contextHelper.isOneComStmAtTopLevel(ctx) && moduleId != -1) {
+        if(contextHelper.isOneComStmAtTopLevel(ctx) && moduleId != -1
+                || (moduleId != -1 && functionId == -1 && classId == -1) ) {
             classId = processTask.processClass(moduleId, className, baseStrs);
             classDecoration = "";
         }
-        else { //not process inner class
+        else { //process inner class
+            if(classId !=-1 && functionId == -1) {
+                processTask.processClass(classId, className, baseStrs);
+            }
+            else if(functionId != -1 && classId == -1) {
+                processTask.processClass(functionId, className, baseStrs);
+            }
+
+            classDecoration = "";
             return str;
-            //classId = processTask.processClass(blockId, className, baseStrs);
-            //classDecoration = "";
         }
         //visit class body
         if(ctx.suite() != null) {
@@ -96,17 +103,35 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
         //a top-level function
         if(contextHelper.isOneComStmAtTopLevel(ctx) && moduleId != -1 && classId == -1) {
             functionId = processTask.processFunction(moduleId, functionName, paraStrs);
+            if(ctx.suite() != null) {
+                visitSuite(ctx.suite());
+            }
+            functionId = -1;
         }
+        //function in module, top if, for...
+        else if(moduleId != -1 && classId == -1 && functionId == -1) {
+            functionId = processTask.processFunction(moduleId, functionName, paraStrs);
+            if(ctx.suite() != null) {
+                visitSuite(ctx.suite());
+            }
+            functionId = -1;
+        }
+
+        //nested function, we treated nested function'a parent as function
+        else if(moduleId != -1 && functionId != -1) {
+            processTask.processFunction(functionId, functionName, paraStrs);
+        }
+
         // a class method, class static method, or instance method
-        else if(classId != -1) {
+        else if(classId != -1 && functionId == -1) {
             functionId = processTask.processMethod(methodDecoration, classId, functionName, paraStrs);
+            if(ctx.suite() != null) {
+                visitSuite(ctx.suite());
+            }
+            functionId = -1;
         }
         methodDecoration = "";
 
-        if(ctx.suite() != null) {
-            visitSuite(ctx.suite());
-        }
-        functionId = -1;
 
         String str = "";
         str += ("def" + functionName + paraStrs);
@@ -556,13 +581,13 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
             importStr = visitImport_as_names(ctx.import_as_names());
         }
         if(functionId != -1) {
-            //System.out.println("process in from function: " + importStr);
             processTask.processFromImport(from, importStr, functionId);
         }
         else {
             //System.out.println("process in from module: " + importStr);
             processTask.processFromImport(from, importStr, moduleId);
         }
+        //System.out.println("import " + from + ":" +  importStr);
         return str;
     }
 
@@ -631,6 +656,7 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
                 //System.out.println("process in module: " + str);
                 processTask.processImportName(str, moduleId);
             }
+            //System.out.println("import " +  str);
         }
         return str;
     }
