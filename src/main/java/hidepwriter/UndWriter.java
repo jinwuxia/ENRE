@@ -1,15 +1,17 @@
 package hidepwriter;
 
 import entitytreebuilder.pybuilder.pyentity.ModuleEntity;
+import entitytreebuilder.pybuilder.pyentity.PyFunctionEntity;
 import entitytreebuilder.pybuilder.pyentity.PyMethodEntity;
-import sun.security.krb5.Config;
 import udr.AbsEntity;
 import udr.SingleCollect;
 import util.Configure;
 import util.Tuple;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class UndWriter {
     private SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
@@ -23,6 +25,9 @@ public class UndWriter {
 
         String undDepFileName = configure.getAnalyzedProjectName() + "_jwx_und_dep.csv";
         writer.writeCsv(getDepList(), undDepFileName);
+
+        System.out.println(priDepStatis());
+
     }
 
 
@@ -30,20 +35,69 @@ public class UndWriter {
         List<String[]> deplist = new ArrayList<String[]>();
         for(AbsEntity entity : singleCollect.getEntities()) {
             int id1 = entity.getId();
-            String shortname1 = entity.getSimpleName();
+            String shortname1 = getShortName(id1);
             String longname1 = getLongName(id1);
             for (Tuple<String, Integer> relation : entity.getRelations()) {
                 String depType = getDepType(relation.x);
                 int id2 = relation.y;
                 if(!depType.equals("")) {
-                    String shorname2 = singleCollect.getEntities().get(id2).getSimpleName();
+                    String shorname2 = getShortName(id2);
                     String longname2 = getLongName(id2);
-                    String[] arr = new String[]{longname1, shortname1, longname2, shorname2};
+                    String[] arr = new String[]{depType, longname1, shortname1, longname2, shorname2};
                     deplist.add(arr);
                 }
             }
         }
         return deplist;
+    }
+
+    /**
+     * with no weight
+     * @return
+     */
+    private String priDepStatis() {
+        Map<String, Integer> res = new HashMap<String, Integer>();
+        Map<String, Map<String, Map<String, Integer>>> depSta = new HashMap<String, Map<String, Map<String, Integer>>>();
+        for(AbsEntity entity : singleCollect.getEntities()) {
+            int id1 = entity.getId();
+            String longname1 = getLongName(id1);
+            for (Tuple<String, Integer> relation : entity.getRelations()) {
+                String depType = getDepType(relation.x);
+                int id2 = relation.y;
+                if(!depType.equals("")) {
+                    String longname2 = getLongName(id2);
+                    if(!depSta.containsKey(depType)) {
+                        depSta.put(depType, new HashMap<String, Map<String, Integer>>());
+                    }
+                    if(!depSta.get(depType).containsKey(longname1)) {
+                        depSta.get(depType).put(longname1, new HashMap<String, Integer>());
+                    }
+                    depSta.get(depType).get(longname1).put(longname2, 0);
+                }
+            }
+        }
+
+        for (Map.Entry<String, Map<String, Map<String, Integer>>> entry1 : depSta.entrySet()) {
+            String depStr = entry1.getKey();
+            int count = 0;
+            for (Map.Entry<String, Map<String, Integer>> entry2: entry1.getValue().entrySet()) {
+                count += (entry2.getValue().size());
+                //for (Map.Entry<String, Integer> entry3 : entry2.getValue().entrySet()) {
+                //    count += 1;
+                //}
+            }
+            res.put(depStr, count);
+        }
+        String str = "";
+        for(Map.Entry<String, Integer> entry : res.entrySet()) {
+            if(entry.getValue() != 0) {
+                str += entry.getKey();
+                str += ":           ";
+                str += Integer.toString(entry.getValue());
+                str += "\n";
+            }
+        }
+        return str;
     }
 
     /**
@@ -58,7 +112,7 @@ public class UndWriter {
             String type = getEntityType(id);
             if(!type.equals("")) {
                 String longname = getLongName(id);
-                String shotname = entity.getSimpleName();
+                String shotname = getShortName(id);
                 String[] arr = new String[] {type, longname, shotname};
                 entlist.add(arr);
             }
@@ -66,6 +120,15 @@ public class UndWriter {
         return entlist;
     }
 
+    private String getShortName(int id) {
+        AbsEntity entity = singleCollect.getEntities().get(id);
+        if(entity instanceof PyFunctionEntity && entity.getName().endsWith("__main__")) {
+            int fileId = entity.getParentId();
+            String fileName = singleCollect.getEntities().get(fileId).getSimpleName();
+            return fileName;
+        }
+        return singleCollect.getEntities().get(id).getSimpleName();
+    }
 
     private String getDepType(String depStr) {
         if(depStr.equals(Configure.RELATION_CALL)) {
@@ -77,6 +140,19 @@ public class UndWriter {
         if(depStr.equals(Configure.RELATION_INHERIT)) {
             return Configure.RELATION_EXTEND;
         }
+        if(depStr.equals(Configure.RELATION_SET)) {
+            return Configure.RELATION_SET;
+        }
+        if(depStr.equals(Configure.RELATION_USE)) {
+            return Configure.RELATION_USE;
+        }
+        if(depStr.endsWith(Configure.RELATION_PARAMETER)) {
+            return Configure.RELATION_PARAMETER;
+        }
+        if(depStr.endsWith(Configure.RELATION_RETURN)) {
+            return Configure.RELATION_RETURN;
+        }
+
         return "";
         //if(depStr.equals(Configure.RELATION_SET))
     }
@@ -87,7 +163,7 @@ public class UndWriter {
             return "Package";
         }
         if(singleCollect.isFile(id)) {
-            return "Module";
+            return "File";
         }
         if(singleCollect.isClass(id)) {
             return "Class";
@@ -113,6 +189,9 @@ public class UndWriter {
         if(entity instanceof ModuleEntity) {
             return entity.getName();
         }
+        if(entity instanceof PyFunctionEntity && entity.getName().endsWith("__main__")) {
+            return singleCollect.getEntities().get(entity.getParentId()).getName();
+        }
         String longname = "";
         while(id != -1) {
             //System.out.println("name:" + singleCollect.getEntities().get(id).getName());
@@ -120,6 +199,9 @@ public class UndWriter {
             String name = singleCollect.getEntities().get(id).getSimpleName();
             if(name.endsWith(".py")) {
                 name = name.split("\\.py")[0];
+            }
+            if(name.endsWith(".go")) {
+                name = name.split("\\.go")[0];
             }
             if(!longname.equals("")) {
                 longname = name + "." + longname;

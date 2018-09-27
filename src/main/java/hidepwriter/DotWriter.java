@@ -31,7 +31,7 @@ public class DotWriter {
         if(out != null) {
             writeGraph(out, filter);
             out.close();
-            System.out.println("Export " + fileName + "successfully...");
+            System.out.println("Export " + fileName);
         }
     }
 

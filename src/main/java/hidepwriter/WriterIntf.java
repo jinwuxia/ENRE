@@ -15,16 +15,16 @@ public class WriterIntf {
         //output data by writers
         JsonWriter jsonWriter = new JsonWriter();
         jsonWriter.toJson(jDepObject);
-        System.out.println("Export "+configure.getOutputJsonFile()+" successfully...");
+        System.out.println("Export "+configure.getOutputJsonFile());
 
         XmlWriter xmlWriter = new XmlWriter();
         xmlWriter.toXml(xDepObject);
-        System.out.println("Export "+configure.getOutputXmlFile()+" successfully...");
+        System.out.println("Export "+configure.getOutputXmlFile());
 
         CsvWriter csvWriter = new CsvWriter();
         csvWriter.toCSV(nodes, edges);
-        System.out.println("Export "+configure.getOutputCsvNodeFile()+" successfully...");
-        System.out.println("Export "+configure.getOutputCsvEdgeFile()+" successfully...");
+        System.out.println("Export "+configure.getOutputCsvNodeFile());
+        System.out.println("Export "+configure.getOutputCsvEdgeFile());
 
         DotWriter dotWriter = new DotWriter();
         dotWriter.writeDot(DotUtil.FILTER_NO_DEP);

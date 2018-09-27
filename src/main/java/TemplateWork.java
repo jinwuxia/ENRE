@@ -37,7 +37,7 @@ public class TemplateWork {
         //build hierarchical dependencies
         HiDeper hiDeper = new HiDeper();
         hiDeper.run();
-        hiDeper.tmpOutput();
+        //hiDeper.tmpOutput();
         HiDepData hiDepData = HiDepData.getInstance();
 
         Formator formator = new Formator(depTypes, hiDepData.getAllEntities(), hiDepData.getAllDeps());
@@ -47,8 +47,9 @@ public class TemplateWork {
         ArrayList<String[]> edges = formator.getEdgeModel();
 
         WriterIntf writer = new WriterIntf();
-        //writer.run(jDepObject, xDepObject, nodes, edges);
         writer.undTest();
+        writer.run(jDepObject, xDepObject, nodes, edges);
+
 
     }
 

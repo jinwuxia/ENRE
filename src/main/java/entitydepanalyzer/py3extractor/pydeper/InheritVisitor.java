@@ -6,6 +6,8 @@ import entitytreebuilder.pybuilder.pyentity.ModuleEntity;
 import util.Configure;
 import util.Tuple;
 
+import static java.lang.System.exit;
+
 public class InheritVisitor extends DepVisitor{
 
     @Override
@@ -93,6 +95,13 @@ public class InheritVisitor extends DepVisitor{
      */
     private Tuple<Integer, String> getMatchImportedId(String baseStr, int scopeId) {
         Tuple<Integer, String> res = new Tuple<Integer, String>(-1, "");
+        while(scopeId != -1 && !(singleCollect.getEntities().get(scopeId) instanceof ModuleEntity)) {
+            scopeId = singleCollect.getEntities().get(scopeId).getParentId();
+        }
+        if(scopeId == -1) {
+            exit(1);
+        }
+
         ModuleEntity moduleEntity = (ModuleEntity) singleCollect.getEntities().get(scopeId);
         for(Tuple<String,Integer> relation : moduleEntity.getRelations()) {
             if(relation.x.equals(Configure.RELATION_IMPORT)) {
