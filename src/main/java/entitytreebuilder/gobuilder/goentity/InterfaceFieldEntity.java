@@ -25,6 +25,7 @@ public class InterfaceFieldEntity extends AbsEntity {
         this.name = name;
         this.parameters = parameters;
         this.returns = returns;
+        setSimpleName();
     }
 
     public String getType() {
