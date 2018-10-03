@@ -35,12 +35,12 @@ grammar Golang;
 @fileParser::members {
 
     /**
-     * Returns {@code true} iff on the current index of the entitytreebuilder.gobuilder.govisitor.FileParser's
+     * Returns {@code true} iff on the current index of the entitybuilder.gobuilder.govisitor.FileParser's
      * token stream a token exists on the {@code HIDDEN} channel which
      * either is a line terminator, or is a multi line comment that
      * contains a line terminator.
      *
-     * @return {@code true} iff on the current index of the entitytreebuilder.gobuilder.govisitor.FileParser's
+     * @return {@code true} iff on the current index of the entitybuilder.gobuilder.govisitor.FileParser's
      * token stream a token exists on the {@code HIDDEN} channel which
      * either is a line terminator, or is a multi line comment that
      * contains a line terminator.

@@ -1,5 +1,7 @@
 package util;
 
+import java.io.File;
+
 public class Configure {
     private Configure() {}
 
@@ -57,6 +59,11 @@ public class Configure {
     //function-function; function->method; method->function; method->method
     public static final String RELATION_CALL = "Call";
     public static final String RELATION_CALLED_BY = "Called by";
+
+    public static final String RELATION_IMPLICIT_INTERNAL_CALL = "Implicit Internal Call";
+    public static final String RELATION_IMPLICIT_INTERNAL_CALLED_BY = "Implicit Internal Call by";
+    public static final String RELATION_IMPLICIT_EXTERNAL_CALL = "Implicit External Call";
+    public static final String RELATION_IMPLICIT_EXTERNAL_CALLED_BY = "Implicit External Call by";
 
     //function/method->var
     public static final String RELATION_PARAMETER = "Parameter";
@@ -139,7 +146,13 @@ public class Configure {
     }
 
     public void setAnalyzedProjectName(String analyzedProjectName) {
-        this.analyzedProjectName = analyzedProjectName;
+        new File(analyzedProjectName).mkdir();
+        if(OsUtil.isWindows()) {
+            this.analyzedProjectName = analyzedProjectName + "\\" + analyzedProjectName;
+        }
+        if(OsUtil.isMac() || OsUtil.isLinux()) {
+            this.analyzedProjectName = analyzedProjectName + "/" + analyzedProjectName;
+        }
     }
 
     public String getOutputJsonFile() {

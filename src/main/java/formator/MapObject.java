@@ -1,8 +1,8 @@
 package formator;
 
-import udr.RelationInterface;
-import entitydepanalyzer.goextractor.GoRelationInf;
-import entitydepanalyzer.py3extractor.PyRelationInf;
+import uerr.RelationInterface;
+import priextractor.goextractor.GoRelationInf;
+import priextractor.py3extractor.PyRelationInf;
 import util.Configure;
 import util.Tuple;
 
@@ -22,8 +22,38 @@ public class MapObject {
     public MapObject(String[] depStrs) {
         this.depStrs = depStrs;
         init();
+
+        //summarize the entity and dependency
+        System.out.println(relationInterface.EntityStatis());
+        //System.out.println(relationInterface.DependencyStatis());
+        //System.out.println(depSummaryWithNoWeight());
     }
 
+    /**
+     * based on Map<Integer, Map<Integer, Map<String, Integer>>> finalRes
+     */
+    private String depSummaryWithNoWeight() {
+        Map<String, Integer> res = new HashMap<String, Integer>();
+        for(Map.Entry<Integer, Map<Integer, Map<String, Integer>>> entry1 : finalRes.entrySet()) {
+            for(Map.Entry<Integer, Map<String, Integer>> entry2: entry1.getValue().entrySet()) {
+                for (Map.Entry<String, Integer> entry3: entry2.getValue().entrySet()) {
+                    String dep = entry3.getKey();
+                    if(!res.containsKey(dep)) {
+                        res.put(dep, 1);
+                    }
+                    res.put(dep, 1 + res.get(dep));
+                }
+            }
+        }
+        String str = "";
+        for(Map.Entry<String, Integer> entry : res.entrySet()) {
+            str += entry.getKey();
+            str += ":           ";
+            str += Integer.toString(entry.getValue());
+            str += "\n";
+        }
+        return str;
+    }
 
     private void init() {
         Configure configure = Configure.getConfigureInstance();
@@ -87,8 +117,6 @@ public class MapObject {
      * @param files
      */
     private void buildDepMap(ArrayList<String> files) {
-        System.out.println(relationInterface.EntityStatis());
-        System.out.println(relationInterface.DependencyStatis());
 
         Map<String, Integer> fileName2Id =  buildFileMap(files);
         for (int i = 0; i < depStrs.length; i++) {
