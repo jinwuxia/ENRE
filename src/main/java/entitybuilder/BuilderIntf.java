@@ -22,10 +22,14 @@ public class BuilderIntf {
      */
     private void setVisitor(String fileFullPath) {
         if(configure.getLang().equals(Configure.GO_LANG)) {
-            visitor = new GoEntityVisitor(fileFullPath);
+            if(!fileFullPath.endsWith("_test.go")) {
+                visitor = new GoEntityVisitor(fileFullPath);
+            }
         }
         else if (configure.getLang().equals(Configure.PYTHON_LANG)) {
-            visitor = new PyEntityVisitor(fileFullPath);
+            if(!fileFullPath.endsWith("_test.py")) {
+                visitor = new PyEntityVisitor(fileFullPath);
+            }
         }
     }
 
@@ -49,6 +53,7 @@ public class BuilderIntf {
         FileUtil fileUtil = new FileUtil(configure.getInputSrcPath());
         for (String fileFullPath : fileUtil.getFileNameList(configure.getCurr_pro_suffix())) {
             System.out.println(fileFullPath);
+
 
             setTree(fileFullPath);
             setVisitor(fileFullPath);
