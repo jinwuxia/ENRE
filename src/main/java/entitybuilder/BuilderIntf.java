@@ -52,17 +52,20 @@ public class BuilderIntf {
     public void run(){
         FileUtil fileUtil = new FileUtil(configure.getInputSrcPath());
         for (String fileFullPath : fileUtil.getFileNameList(configure.getCurr_pro_suffix())) {
-            System.out.println(fileFullPath);
-
 
             setTree(fileFullPath);
             setVisitor(fileFullPath);
 
             if(tree != null && visitor != null) {
+                System.out.println(fileFullPath);
                 visitor.visit(tree);
             }
+            tree = null;
+            visitor = null;
         }
         System.out.println("Identify entities successfully...");
+
+
     }
 
 
