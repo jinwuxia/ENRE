@@ -461,4 +461,11 @@ public class GoRelationInf extends RelationInterface {
         }
         return receiveDeps;
     }
+
+
+    @Override
+    public ArrayList<Tuple<String, String>> getImplicitExternalCalls(String level) {
+        ArrayList<Tuple<String, String>> receiveDeps = new ArrayList<Tuple<String, String>>();
+        return receiveDeps;
+    }
 }

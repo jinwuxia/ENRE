@@ -1,5 +1,7 @@
 package uerr;
 
+import sun.security.krb5.Config;
+import sun.security.krb5.Confounder;
 import util.Configure;
 import util.Tuple;
 
@@ -45,6 +47,9 @@ public abstract class RelationInterface {
         if(depType.equals(Configure.RELATION_IMPORT)) {
             return getImportDeps(level);
         }
+        if(depType.equals(Configure.RELATION_IMPLICIT_EXTERNAL_CALL)) {
+            return getImplicitExternalCalls(level);
+        }
         return null;
 
     }
@@ -69,4 +74,5 @@ public abstract class RelationInterface {
     public abstract ArrayList<Tuple<String, String>> getFunctionUses(String level);
     public abstract ArrayList<Tuple<String, String>> getFunctionParas(String level);
     public abstract ArrayList<Tuple<String, String>> getFunctionRets(String level);
+    public abstract ArrayList<Tuple<String, String>> getImplicitExternalCalls(String level);
 }

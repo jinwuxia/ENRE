@@ -160,6 +160,15 @@ public class PyRelationInf extends RelationInterface {
     }
 
 
+    @Override
+    public ArrayList<Tuple<String, String>> getImplicitExternalCalls(String level) {
+        ArrayList<Tuple<String, String>> deps = new ArrayList<Tuple<String, String>>();
+        for(AbsEntity entity : singleCollect.getEntities()) {
+            ArrayList<Tuple<String, String>> dep = getImplicitExternalCallForEntity(entity.getId(), level);
+            deps.addAll(dep);
+        }
+        return deps;
+    }
 
     @Override
     public ArrayList<Tuple<String, String>> getFunctionParas(String level) {
@@ -405,6 +414,36 @@ public class PyRelationInf extends RelationInterface {
         return deps;
     }
 
+
+    ArrayList<Tuple<String, String>>  getImplicitExternalCallForEntity(int id1, String level) {
+        ArrayList<Tuple<String, String>> deps = new ArrayList<Tuple<String, String>>();
+        AbsEntity entity = singleCollect.getEntities().get(id1);
+        String fileName1 = getEntityFileName(id1);
+        String name1 = entity.getName();
+        for (Tuple<String, Integer> relation : entity.getRelations()) {
+            int id2 = relation.y;
+            String deptype = relation.x;
+            if (deptype.equals(Configure.RELATION_IMPLICIT_EXTERNAL_CALL)) {
+                String fileName2 = getEntityFileName(id2);
+                String name2 = singleCollect.getEntities().get(id2).getName();
+                Tuple<String, String> dep;
+
+                if (level.equals(Configure.RELATION_LEVEL_FILE)) {
+                    if (!fileName1.equals(Configure.NULL_STRING)
+                            && !fileName2.equals(Configure.NULL_STRING)) {
+                        dep = new Tuple<String, String>(fileName1, fileName2);
+                        deps.add(dep);
+                    }
+                    //System.out.println("FunctionCall: " + callerFileName + Configure.COMMA +  calleeFileName);
+                } else {
+                    dep = new Tuple<String, String>(name1, name2);
+                    deps.add(dep);
+                }
+            }
+        }
+
+        return deps;
+    }
 
     /**
      * get funciton-set-var relations
