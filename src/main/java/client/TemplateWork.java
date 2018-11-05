@@ -62,7 +62,8 @@ public class TemplateWork {
         ArrayList<String[]> allNodes = csvgrapher.getNodes();
         ArrayList<String[]> allEdges = csvgrapher.getEdges();
         WriterIntf writer = new WriterIntf();
-        writer.undTest();
+        writer.undTest(); //export formats consistent with understand
+        writer.exportImplicitExternalAtFileLevel(); //export implicit calls at file level
         writer.run(jDepObject, xDepObject, allNodes, allEdges);
 
 

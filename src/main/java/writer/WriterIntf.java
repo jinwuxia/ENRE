@@ -63,4 +63,10 @@ public class WriterIntf {
         undWriter.writeUnd();
     }
 
+
+    public void exportImplicitExternalAtFileLevel() {
+        ImplicitCallWriter implicitCallWriter = new ImplicitCallWriter();
+        implicitCallWriter.writeImplicitCalls();
+    }
+
 }

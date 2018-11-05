@@ -16,7 +16,7 @@ public class CsvWriter {
         try {
             FileWriter outputfile = new FileWriter(file);
 
-            // create CSVWriter with '|' as separator
+            // create CSVWriter with ',' as separator
             CSVWriter writer = new CSVWriter(outputfile, ',',
                     CSVWriter.NO_QUOTE_CHARACTER,
                     CSVWriter.DEFAULT_ESCAPE_CHARACTER,
