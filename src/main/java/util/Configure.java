@@ -60,10 +60,10 @@ public class Configure {
     public static final String RELATION_CALL = "Call";
     public static final String RELATION_CALLED_BY = "Called by";
 
-    public static final String RELATION_IMPLICIT_INTERNAL_CALL = "Implicit Internal Call";
-    public static final String RELATION_IMPLICIT_INTERNAL_CALLED_BY = "Implicit Internal Call by";
-    public static final String RELATION_IMPLICIT_EXTERNAL_CALL = "Implicit External Call";
-    public static final String RELATION_IMPLICIT_EXTERNAL_CALLED_BY = "Implicit External Call by";
+    public static final String RELATION_IMPLICIT_INTERNAL_CALL = "Nternal Implicit Call";
+    public static final String RELATION_IMPLICIT_INTERNAL_CALLED_BY = "Nternal Implicit Call by";
+    public static final String RELATION_IMPLICIT_EXTERNAL_CALL = "External Implicit Call";
+    public static final String RELATION_IMPLICIT_EXTERNAL_CALLED_BY = "External Implicit Call by";
 
     //function/method->var
     public static final String RELATION_PARAMETER = "Parameter";
