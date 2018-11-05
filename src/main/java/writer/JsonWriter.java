@@ -10,11 +10,10 @@ import java.io.IOException;
 
 public class JsonWriter {
 
-    public void toJson(Object depObject) {
+    public void toJson(Object depObject, String fileName) {
         ObjectMapper mapper = new ObjectMapper();
-        Configure configure = Configure.getConfigureInstance();
         try {
-            mapper.writerWithDefaultPrettyPrinter().writeValue(new File(configure.getOutputJsonFile()), depObject);
+            mapper.writerWithDefaultPrettyPrinter().writeValue(new File(fileName), depObject);
 
             //String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(depObject);
             //System.out.println(jsonString);

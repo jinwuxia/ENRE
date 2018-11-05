@@ -13,13 +13,14 @@ public class WriterIntf {
     public void run(JDepObject jDepObject, XDepObject xDepObject, ArrayList<String[]> nodes, ArrayList<String[]> edges) {
 
         //output data by writers
+
         JsonWriter jsonWriter = new JsonWriter();
-        jsonWriter.toJson(jDepObject);
-        System.out.println("Export "+configure.getOutputJsonFile());
+        jsonWriter.toJson(jDepObject, configure.getOutputJsonFile());
+        System.out.println("Export "+ configure.getOutputJsonFile());
 
         XmlWriter xmlWriter = new XmlWriter();
-        xmlWriter.toXml(xDepObject);
-        System.out.println("Export "+configure.getOutputXmlFile());
+        xmlWriter.toXml(xDepObject, configure.getOutputXmlFile() );
+        System.out.println("Export "+ configure.getOutputXmlFile());
 
         CsvWriter csvWriter = new CsvWriter();
         csvWriter.writeCsv(nodes, configure.getOutputCsvNodeFile());
