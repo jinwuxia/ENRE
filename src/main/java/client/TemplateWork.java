@@ -8,6 +8,7 @@ import formator.fjson.JDepObject;
 import formator.fxml.XDepObject;
 import hianalyzer.HiDepData;
 import hianalyzer.HiDeper;
+import writer.JsonWriter;
 import writer.WriterIntf;
 import util.Configure;
 
@@ -61,10 +62,29 @@ public class TemplateWork {
         csvgrapher.buildProcess();
         ArrayList<String[]> allNodes = csvgrapher.getNodes();
         ArrayList<String[]> allEdges = csvgrapher.getEdges();
+
         WriterIntf writer = new WriterIntf();
-        writer.undTest(); //export formats consistent with understand
-        writer.exportImplicitExternalAtFileLevel(); //export implicit calls at file level
         writer.run(jDepObject, xDepObject, allNodes, allEdges);
+
+
+        //the followings are for experiments
+
+        //export formats consistent with understand
+        writer.undTest();
+
+        //export external  implicit calls at file level as csv file
+        writer.exportImplicitExternalAtFileLevel();
+
+        //export external implicit calls at file level
+        String [] partialDepType = new String[]{"Implicit External Call"};
+        Formator partialFormator = new Formator(partialDepType);
+        JDepObject partialJDepObject = partialFormator.getfJsonDataModel();
+        JsonWriter jsonWriter = new JsonWriter();
+        String partialJsonfile = configure.getAnalyzedProjectName() + "_implicit_dep.json";
+        jsonWriter.toJson(partialJDepObject, partialJsonfile);
+        System.out.println("Export "+ partialJsonfile);
+
+
 
 
     }

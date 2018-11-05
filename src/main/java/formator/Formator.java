@@ -9,7 +9,6 @@ import formator.spreadsheet.Csvgrapher;
 
 public class Formator {
     private MapObject mapObject;
-    private Csvgrapher csvgrapher;
 
     public Formator(String[] depTypes) {
 
