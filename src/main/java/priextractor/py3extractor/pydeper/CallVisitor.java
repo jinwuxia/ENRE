@@ -86,6 +86,8 @@ public class CallVisitor extends DepVisitor {
 
             //case 3: other all
             idList.add(-1);
+            String[] tmp = simpleCalleeStr.split("\\(")[0].split("\\.");
+            simpleCalleeStr = tmp[tmp.length - 1];
             ArrayList<Integer> possibleCallees = searchCalleeByName(simpleCalleeStr);
             for (int possibleCalleeId : possibleCallees) {
                 saveRelation(modOrFunId, possibleCalleeId, Configure.RELATION_IMPLICIT_EXTERNAL_CALL, Configure.RELATION_IMPLICIT_EXTERNAL_CALLED_BY);
@@ -113,13 +115,17 @@ public class CallVisitor extends DepVisitor {
     /**
      * judge it is form of var.callee() or not.  which can be resolve by var known type.
      * in this case, var is a  variable initialized inside the var's visible scope.
+     * var.x.y() : if have more than one dot, we cannot resolve it, it is not localinitvar callee.
      * @param simpleCalleeStr
      * @param modOrFunId
      * @return
      */
     private boolean isLocalInitVarCallee(String simpleCalleeStr, int modOrFunId) {
         boolean res = false;
-        if(simpleCalleeStr.startsWith("self.")) {
+        if(simpleCalleeStr.split("\\(")[0].split("\\.").length >=2) {
+            return false;
+        }
+        if(simpleCalleeStr.split("\\(")[0].startsWith("self.")) {
             //System.out.println("isLocalInit: "  + simpleCalleeStr  + " " + true);
             return true;
         }
@@ -166,7 +172,7 @@ public class CallVisitor extends DepVisitor {
      */
     private int searchCalleeRegularCase(String simpleCalleeStr, int modOrFunId) {
         String destStr = simpleCalleeStr.split("\\(")[0];
-        //System.out.println("newCallee= " + destStr);
+        //System.out.println("del paras, newCallee= " + destStr);
         int scopeId = modOrFunId;
         int flag = 0;
         while(!destStr.equals(Configure.NULL_STRING)) {
@@ -354,7 +360,7 @@ public class CallVisitor extends DepVisitor {
             //System.out.println("Simplifying old: " + oldStr + "; new: " + newStr);
         }
         else {
-            //System.out.println("Wow Simplifying old: " + oldStr + "; new: " + newStr);
+            //System.out.println("Now Simplifying old: " + oldStr + "; new: " + newStr);
         }
 
         return newStr;
