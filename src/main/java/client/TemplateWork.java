@@ -76,7 +76,7 @@ public class TemplateWork {
         writer.exportImplicitExternalAtFileLevel();
 
         //export external implicit calls at file level
-        String [] partialDepType = new String[]{"Implicit External Call"};
+        String [] partialDepType = new String[]{Configure.RELATION_IMPLICIT_EXTERNAL_CALL};
         Formator partialFormator = new Formator(partialDepType);
         JDepObject partialJDepObject = partialFormator.getfJsonDataModel();
         JsonWriter jsonWriter = new JsonWriter();
