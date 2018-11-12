@@ -129,6 +129,14 @@ public class Configure {
         return inputSrcPath;
     }
 
+    /**
+     * used by golang
+     * @return
+     */
+    public String getUnifiedInputSrcpath() {
+        return StringUtil.unifyPath(inputSrcPath);
+    }
+
     public void setInputSrcPath(String inputSrcPath) {
         this.inputSrcPath = inputSrcPath;
     }
@@ -145,6 +153,10 @@ public class Configure {
         return analyzedProjectName;
     }
 
+    /**
+     * os-relevant
+     * @param analyzedProjectName
+     */
     public void setAnalyzedProjectName(String analyzedProjectName) {
         new File(analyzedProjectName).mkdir();
         if(OsUtil.isWindows()) {

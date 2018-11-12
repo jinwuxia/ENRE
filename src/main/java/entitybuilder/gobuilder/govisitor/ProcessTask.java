@@ -246,22 +246,24 @@ public class ProcessTask {
     public String getPackagePath(String fileFullPath) {
         String packagePath = StringUtil.deleteLastStrByPathDelimiter(fileFullPath);
         System.out.println("test: " + packagePath);
-        int startIndex = packagePath.indexOf(configure.getInputSrcPath());
+        String unifiedInputSrcPath = configure.getUnifiedInputSrcpath();
+        int startIndex = packagePath.indexOf(unifiedInputSrcPath);
 
         /*
         substitute the input package dir by the imported form.
         this way can help to priextractor.goextractor.searcher the package which is imported in code.
         */
         String newPackagePath = configure.getUsageSrcPath()
-                + packagePath.substring(startIndex + configure.getInputSrcPath().length(), packagePath.length());
+                + packagePath.substring(startIndex + configure.getUnifiedInputSrcpath().length(), packagePath.length());
         //System.out.println("new package path = " + newPackagePath);
         return newPackagePath;
     }
 
     public String getNewFileFullPath(String fileFullPath) {
-        int startIndex = fileFullPath.indexOf(configure.getInputSrcPath());
+        String unifiedInputSrcPath = configure.getUnifiedInputSrcpath();
+        int startIndex = fileFullPath.indexOf(unifiedInputSrcPath);
         String newFileFullPath = configure.getUsageSrcPath()
-                + fileFullPath.substring(startIndex + configure.getInputSrcPath().length(), fileFullPath.length());
+                + fileFullPath.substring(startIndex + unifiedInputSrcPath.length(), fileFullPath.length());
         //System.out.println("new file path: " + newFileFullPath);
         return newFileFullPath;
     }
