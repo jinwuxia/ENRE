@@ -6,6 +6,7 @@ import entitybuilder.pybuilder.PyConstantString;
 import entitybuilder.pybuilder.pyentity.*;
 import util.Configure;
 import util.OsUtil;
+import util.StringUtil;
 
 import java.util.ArrayList;
 
@@ -25,32 +26,8 @@ public class PyProcessTask {
      * @return packageId
      */
     public int processPackage(String fileName) {
-        String [] tmp = null;
-        String packageName = "";
-        String dirStr = "";
-        if(OsUtil.isWindows()) {
-            tmp = fileName.split("\\\\");
-            dirStr = tmp[0];
-            for (int i = 1; i < tmp.length -1; i++) {
-                dirStr += "\\";
-                dirStr += tmp[i];
-            }
-            packageName = tmp[tmp.length - 2];
-        }
-        else if(OsUtil.isLinux() || OsUtil.isMac()) {
-            tmp = fileName.split("/");
-            dirStr = tmp[0];
-            for (int i = 1; i < tmp.length -1; i++) {
-                dirStr += "/";
-                dirStr += tmp[i];
-            }
-            packageName = tmp[tmp.length - 2];
-        }
-        else {
-            System.out.println("cannot process files on this OS: " + OsUtil.getOsName());
-            exit(1);
-        }
-
+        String dirStr = StringUtil.deleteLastStrByPathDelimiter(fileName);
+        String packageName = StringUtil.getLastStrByPathDelimiter(dirStr);
 
         // new packageEntity
         int packageId = singleCollect.getCurrentIndex();
@@ -58,7 +35,6 @@ public class PyProcessTask {
         singleCollect.addEntity(packageEntity);
 
         //set parent and child
-
         return packageId;
     }
 
@@ -72,20 +48,8 @@ public class PyProcessTask {
      * @return moduleId
      */
     public int processModule(String fileName) {
-        String[] tmpArr = null;
-        if(OsUtil.isMac() || OsUtil.isLinux()) {
-            tmpArr = fileName.split("/");
-        }
-        else if(OsUtil.isWindows()) {
-            tmpArr = fileName.split("\\\\");
-        }
-        else {
-            System.out.println("cannot process files on this OS: " + OsUtil.getOsName());
-            exit(1);
-        }
-        String tmp = tmpArr[tmpArr.length - 1];
-        String moduleSimpleName = tmp.split(PyConstantString.DOT_PY)[0];
-
+        String onlyFileName = StringUtil.getLastStrByPathDelimiter(fileName);
+        String moduleSimpleName = onlyFileName.split(PyConstantString.DOT_PY)[0];
 
         int moduleId = singleCollect.getCurrentIndex();
         ModuleEntity moduleEntity = new ModuleEntity(moduleId, fileName);

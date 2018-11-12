@@ -1,5 +1,6 @@
 package uerr;
 
+import util.StringUtil;
 import util.Tuple;
 
 import java.util.ArrayList;
@@ -30,8 +31,7 @@ public class AbsEntity {
     }
 
     public void setSimpleName() {
-        String [] arr = name.split("/|\\\\");
-        simpleName = arr[arr.length - 1];
+        simpleName = StringUtil.getLastStrByPathDelimiter(name);
     }
 
     public void setId(int id) {

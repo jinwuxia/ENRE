@@ -4,7 +4,7 @@ import parser.parsego.GolangParser;
 import entitybuilder.gobuilder.GoConstantString;
 import uerr.*;
 import entitybuilder.gobuilder.goentity.*;
-import util.OsUtil;
+import util.StringUtil;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import util.Configure;
 import util.Tuple;
@@ -244,32 +244,14 @@ public class ProcessTask {
 
 
     public String getPackagePath(String fileFullPath) {
-        String[] arr;
-        if(OsUtil.isLinux() || OsUtil.isMac()) {
-            arr = fileFullPath.split("/");
-        }
-        else {
-            arr = fileFullPath.split("\\\\");
-        }
-
-        String[] newArr = new String[arr.length - 1];
-        for (int index = 0; index < newArr.length; index++) {
-            newArr[index] = arr[index];
-        }
-
-        String packagePath;
-        if(OsUtil.isLinux() || OsUtil.isMac()) {
-            packagePath = String.join("/", newArr);
-        }
-        else {
-            packagePath = String.join("\\\\", newArr);
-        }
-
+        String packagePath = StringUtil.deleteLastStrByPathDelimiter(fileFullPath);
+        System.out.println("test: " + packagePath);
         int startIndex = packagePath.indexOf(configure.getInputSrcPath());
 
-        //substitute the input package dir by the imported form.
-        //this way can help to priextractor.goextractor.searcher the package which is imported in code.
-        //
+        /*
+        substitute the input package dir by the imported form.
+        this way can help to priextractor.goextractor.searcher the package which is imported in code.
+        */
         String newPackagePath = configure.getUsageSrcPath()
                 + packagePath.substring(startIndex + configure.getInputSrcPath().length(), packagePath.length());
         //System.out.println("new package path = " + newPackagePath);

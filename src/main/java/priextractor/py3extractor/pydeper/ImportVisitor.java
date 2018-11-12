@@ -6,7 +6,7 @@ import entitybuilder.pybuilder.pyentity.ImportStmt;
 import entitybuilder.pybuilder.pyentity.ModuleEntity;
 import entitybuilder.pybuilder.pyentity.PyFunctionEntity;
 import util.Configure;
-import util.OsUtil;
+import util.StringUtil;
 
 
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public class ImportVisitor extends DepVisitor {
     private void bindPkg2Pkg() {
         for(AbsEntity entity :  singleCollect.getEntities()) {
             if(entity instanceof AbsFLDEntity) {
-                String dirName = getDir( ((AbsFLDEntity) entity).getFullPath() );
+                String dirName = StringUtil.deleteLastStrByPathDelimiter(((AbsFLDEntity) entity).getFullPath());
                 int parentId = -1;
                 if(pkg2IdMap.containsKey(dirName)) {
                     parentId = pkg2IdMap.get(dirName);
@@ -61,7 +61,7 @@ public class ImportVisitor extends DepVisitor {
     private void bindMod2Pkg() {
         for (AbsEntity entity : singleCollect.getEntities()) {
             if(entity instanceof ModuleEntity) {
-                String dirName = getDir(entity.getName());
+                String dirName = StringUtil.deleteLastStrByPathDelimiter(entity.getName());
                 int parentId = -1;
                 if(pkg2IdMap.containsKey(dirName)) {
                     parentId = pkg2IdMap.get(dirName);
@@ -95,32 +95,6 @@ public class ImportVisitor extends DepVisitor {
         }
     }
 
-
-    private String getDir(String name) {
-        //System.out.println("osna= " + OsUtil.getOsName());
-        //System.out.println("orig= " + name);
-        String arr[];
-        String dirName;
-        if(OsUtil.isLinux() || OsUtil.isMac()) {
-            arr = name.split("/");
-            dirName = arr[0];
-            for(int i = 1; i < arr.length - 1; i++ ) {
-                dirName += "/";
-                dirName += arr[i];
-            }
-        }
-        else {
-            arr = name.split("\\\\");
-            dirName = arr[0];
-            for(int i = 1; i < arr.length - 1; i++ ) {
-                dirName += "\\";
-                dirName += arr[i];
-            }
-        }
-
-        //System.out.println("test= " +dirName);
-        return dirName;
-    }
 
     /**
      * if find the import uerr, then save to uerr relation
