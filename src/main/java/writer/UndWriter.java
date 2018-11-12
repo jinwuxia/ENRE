@@ -22,11 +22,11 @@ public class UndWriter {
 
         String undEntFileName = configure.getAnalyzedProjectName() + "_jwx_und_ent.csv";
         writer.writeCsv(getEntitiesList(), undEntFileName);
+        System.out.println("Export " + undEntFileName);
 
         String undDepFileName = configure.getAnalyzedProjectName() + "_jwx_und_dep.csv";
         writer.writeCsv(getDepList(), undDepFileName);
-
-        System.out.println(priDepStatis());
+        System.out.println("Export " + undDepFileName);
 
     }
 
@@ -55,7 +55,7 @@ public class UndWriter {
      * with no weight
      * @return
      */
-    private String priDepStatis() {
+    public String priDepStatis() {
         Map<String, Integer> res = new HashMap<String, Integer>();
         Map<String, Map<String, Map<String, Integer>>> depSta = new HashMap<String, Map<String, Map<String, Integer>>>();
         for(AbsEntity entity : singleCollect.getEntities()) {
