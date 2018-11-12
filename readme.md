@@ -36,7 +36,8 @@ java -jar <executable> <lang> <dir> <include-dir> <project-name>
 - <include-dir>. The usage github url in source code. It only works when analyzing golang.
 - <project-name>. A short alias name of the anayzed source code project.  
 
-**Example I**: use ENRE to analyze a demo project "**fire**" written in *Python*: 
+#### Example I:
+Use ENRE to analyze a demo project "**fire**" written in *Python*: 
 ```sh
 #in linux platform 
 $java -jar ENRE-v1.0.jar  python  demo-projects/fire   null  fire   
@@ -48,7 +49,8 @@ $java -jar ENRE-v1.0.jar  python  demo-projects\fire   null  fire
 
 After analysis, ENRE finally outputs the resovled entities and dependencies in **JSON**, **XML**, **DOT** files in new-generated **fire-out/** directory.
 
-**Example II**: use ENRE to analyze a demo project "**beego**" written in  *Go*:
+#### Example II:
+Use ENRE to analyze a demo project "**beego**" written in  *Go*:
 ```sh
 #in linux platform 
 $java -jar ENRE-v1.0.jar  golang  demo-projects/beego   github.com/astaxie/beego  beego  
@@ -63,4 +65,3 @@ License
 ----
 
 **Free Software, Hell Yeah!**
-
