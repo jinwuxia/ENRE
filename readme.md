@@ -61,6 +61,9 @@ $java -jar ENRE-v1.0.jar  golang  demo-projects\beego   github.com/astaxie/beego
 ```
 After analysis, ENRE finally outputs the resovled entities and dependencies in **JSON**, **XML**, **DOT** files in new-generated **beego-out/** directory.
 
+
+[**ENRE video introduction**] (https://www.youtube.com/watch?v=BfXp5bb1yqc&t=43s)
+
 License
 ----
 
