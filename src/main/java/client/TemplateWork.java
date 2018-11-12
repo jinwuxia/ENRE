@@ -74,7 +74,7 @@ public class TemplateWork {
         summary();
 
         //the followings are for experiments
-        generateDataForExperiments(writer);
+        //generateDataForExperiments(writer);
 
     }
 
