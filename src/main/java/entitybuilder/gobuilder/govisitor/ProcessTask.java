@@ -245,7 +245,7 @@ public class ProcessTask {
 
     public String getPackagePath(String fileFullPath) {
         String packagePath = StringUtil.deleteLastStrByPathDelimiter(fileFullPath);
-        System.out.println("test: " + packagePath);
+        //System.out.println("test: " + packagePath);
         String unifiedInputSrcPath = configure.getUnifiedInputSrcpath();
         int startIndex = packagePath.indexOf(unifiedInputSrcPath);
 
