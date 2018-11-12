@@ -158,12 +158,12 @@ public class Configure {
      * @param analyzedProjectName
      */
     public void setAnalyzedProjectName(String analyzedProjectName) {
-        new File(analyzedProjectName).mkdir();
+        new File(analyzedProjectName + "-out").mkdir();
         if(OsUtil.isWindows()) {
-            this.analyzedProjectName = analyzedProjectName + "\\" + analyzedProjectName;
+            this.analyzedProjectName = analyzedProjectName + "-out\\" + analyzedProjectName;
         }
         if(OsUtil.isMac() || OsUtil.isLinux()) {
-            this.analyzedProjectName = analyzedProjectName + "/" + analyzedProjectName;
+            this.analyzedProjectName = analyzedProjectName + "-out/" + analyzedProjectName;
         }
     }
 
