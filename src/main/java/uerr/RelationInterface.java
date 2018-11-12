@@ -11,9 +11,9 @@ public abstract class RelationInterface {
 
     protected SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
 
-    public abstract String EntityStatis();
+    public abstract String entityStatis();
 
-    public abstract String DependencyStatis();
+    public abstract String dependencyStatis();
 
     public ArrayList<Tuple<String, String>> getDepByType(String level, String depType) {
         if(depType.equals(Configure.RELATION_IMPLEMENT)) {

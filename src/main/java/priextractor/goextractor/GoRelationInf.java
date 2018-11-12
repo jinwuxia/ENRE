@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class GoRelationInf extends RelationInterface {
     @Override
-    public String EntityStatis() {
+    public String entityStatis() {
         int fileCount = 0;
         int packageCount = 0;
         int functionCount = 0;
@@ -73,7 +73,7 @@ public class GoRelationInf extends RelationInterface {
     }
 
     @Override
-    public String DependencyStatis() {
+    public String dependencyStatis() {
         Map<String, Integer> depMap = new HashMap<String, Integer>();
         depMap.put(Configure.RELATION_IMPORT, 0);
         depMap.put(Configure.RELATION_IMPLEMENT, 0);

@@ -24,8 +24,8 @@ public class MapObject {
         init();
 
         //summarize the entity and dependency
-        System.out.println(relationInterface.EntityStatis());
-        //System.out.println(relationInterface.DependencyStatis());
+        //System.out.println(relationInterface.entityStatis());
+        //System.out.println(relationInterface.dependencyStatis());
         //System.out.println(depSummaryWithNoWeight());
     }
 
