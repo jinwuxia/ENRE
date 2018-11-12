@@ -35,14 +35,14 @@ public class FileUtil {
 
     public ArrayList<String> getFileNameList(String suffix)
     {
-        ArrayList<String> goFileNameList = new ArrayList<String>();
+        ArrayList<String> filePathList = new ArrayList<String>();
         for(String fileName : this.fileNameList)
         {
             if(fileName.endsWith(suffix))
             {
-                goFileNameList.add(fileName);
+                filePathList.add(fileName);
             }
         }
-        return goFileNameList;
+        return filePathList;
     }
 }

@@ -27,4 +27,18 @@ public final class StringUtil {
         String [] arr = str.split("/");
         return arr[arr.length - 1];
     }
+
+    /**
+     * unify filepath into a unified represenation "/"
+     * all path in the code are unified "/"
+     * @param path   "a/b/c" or "a\b\c"
+     * @return   "a/b/c"
+     */
+    public static String unifyPath(String path) {
+        if (path.contains("\\")) {
+            String [] tmp = path.split("\\\\");
+            return String.join("/", tmp);
+        }
+        return path;
+    }
 }

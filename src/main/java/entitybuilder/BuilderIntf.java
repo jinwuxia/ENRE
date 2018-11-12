@@ -7,6 +7,7 @@ import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 import org.antlr.v4.runtime.tree.ParseTree;
 import util.Configure;
 import util.FileUtil;
+import util.StringUtil;
 
 import java.io.IOException;
 
@@ -53,8 +54,8 @@ public class BuilderIntf {
         FileUtil fileUtil = new FileUtil(configure.getInputSrcPath());
         for (String fileFullPath : fileUtil.getFileNameList(configure.getCurr_pro_suffix())) {
 
-            setTree(fileFullPath);
-            setVisitor(fileFullPath);
+            setTree(fileFullPath); //use the original filepath, Antlr Parser will read the content of the file.
+            setVisitor(StringUtil.unifyPath(fileFullPath)); //our customizer visitor, use the unified path
 
             if(tree != null && visitor != null) {
                 System.out.println(fileFullPath);
