@@ -32,6 +32,9 @@ public class Configure {
 
     public static final String GO_LANG = "golang";
     public static final String PYTHON_LANG = "python";
+
+    public static final String EXTERNAL_DATA_SOURCE = "datasource";
+
     public static final String GO_PRO_SUFFIX = ".go";
     public static final String PY_PRO_SUFFIX = ".py";
     public static final String OS_DOT_NAME = "os.name";
@@ -64,6 +67,8 @@ public class Configure {
     public static final String RELATION_IMPLICIT_INTERNAL_CALLED_BY = "Nternal Implicit Call by";
     public static final String RELATION_IMPLICIT_EXTERNAL_CALL = "External Implicit Call";
     public static final String RELATION_IMPLICIT_EXTERNAL_CALLED_BY = "External Implicit Call by";
+
+    public static final String RELATION_DYNAMIC_TRACE_CLASS_CALL = "Dynamic Trace Call";
 
     //function/method->var
     public static final String RELATION_PARAMETER = "Parameter";

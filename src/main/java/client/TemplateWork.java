@@ -10,7 +10,7 @@ import hianalyzer.HiDepData;
 import hianalyzer.HiDeper;
 import priextractor.goextractor.GoRelationInf;
 import priextractor.py3extractor.PyRelationInf;
-import uerr.RelationInterface;
+import util.RelationInterface;
 import writer.JsonWriter;
 import writer.UndWriter;
 import writer.WriterIntf;
@@ -37,6 +37,18 @@ public class TemplateWork {
         }
 
         config(lang, inputDir, usageDir, projectName);
+
+        if(lang.equals(Configure.EXTERNAL_DATA_SOURCE)) {
+            generateTraceClassCallsForExperiments();
+        }
+        else {
+            deperWorkflow(depMask);
+        }
+    }
+
+
+
+    private void deperWorkflow(String depMask) {
         String[] depTypes = getDepType(depMask);
 
         long startTime = System.currentTimeMillis();
@@ -74,9 +86,10 @@ public class TemplateWork {
         summary();
 
         //the followings are for experiments
-        generateDataForExperiments(writer);
-
+        generateUnderstandFormatsForExperiments(writer);
+        generateImplicitExternalCallsForExperiments(writer);
     }
+
 
     /**
      * parse the input parameter, save into configure
@@ -142,10 +155,14 @@ public class TemplateWork {
     }
 
 
-    private void generateDataForExperiments(WriterIntf writer) {
-        //export formats consistent with understand, to compare with understand tool
+    //export formats consistent with understand, to compare with understand tool
+    private void generateUnderstandFormatsForExperiments(WriterIntf writer) {
         writer.undTest();
+    }
 
+    //export external  implicit calls at file level as csv file
+    //export external implicit calls at file level
+    private void generateImplicitExternalCallsForExperiments(WriterIntf writer) {
         //export external  implicit calls at file level as csv file
         writer.exportImplicitExternalAtFileLevel();
 
@@ -157,6 +174,17 @@ public class TemplateWork {
         String partialJsonfile = configure.getAnalyzedProjectName() + "_implicit_dep.json";
         jsonWriter.toJson(partialJDepObject, partialJsonfile);
         System.out.println("Export " + partialJsonfile);
+    }
+
+    private void generateTraceClassCallsForExperiments() {
+        String[] partialDepType = new String[]{Configure.RELATION_DYNAMIC_TRACE_CLASS_CALL};
+        Formator partialFormator = new Formator(partialDepType);
+        JDepObject partialJDepObject = partialFormator.getfJsonDataModel();
+        JsonWriter jsonWriter = new JsonWriter();
+        String partialJsonfile = configure.getAnalyzedProjectName() + "_tracecall_dep.json";
+        jsonWriter.toJson(partialJDepObject, partialJsonfile);
+        System.out.println("Export " + partialJsonfile);
+
     }
 
 }

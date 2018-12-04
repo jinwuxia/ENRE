@@ -9,6 +9,7 @@ import util.Configure;
 import util.Tuple;
 
 import java.util.ArrayList;
+import java.util.concurrent.locks.Condition;
 
 public abstract class RelationInterface {
 
@@ -53,6 +54,7 @@ public abstract class RelationInterface {
         if(depType.equals(Configure.RELATION_IMPLICIT_EXTERNAL_CALL)) {
             return getImplicitExternalCalls(level);
         }
+
         return null;
 
     }
@@ -78,4 +80,5 @@ public abstract class RelationInterface {
     public abstract ArrayList<Tuple<String, String>> getFunctionParas(String level);
     public abstract ArrayList<Tuple<String, String>> getFunctionRets(String level);
     public abstract ArrayList<Tuple<String, String>> getImplicitExternalCalls(String level);
+
 }

@@ -1,6 +1,7 @@
 package formator;
 
-import uerr.RelationInterface;
+import ExternalDataSource.TraceCallRelationInterface;
+import util.RelationInterface;
 import priextractor.goextractor.GoRelationInf;
 import priextractor.py3extractor.PyRelationInf;
 import util.Configure;
@@ -20,8 +21,9 @@ public class MapObject {
     private String[] depStrs;
 
     public MapObject(String[] depStrs) {
-        this.depStrs = depStrs;
-        init();
+        this.depStrs = depStrs; //init "depStrs"
+        init();  //init "files" and "relationInterface"
+        buildDepMap();  // read data from relationInterface and stores into "fileRes".
 
         //summarize the entity and dependency
         //System.out.println(relationInterface.entityStatis());
@@ -63,12 +65,14 @@ public class MapObject {
         else if(configure.getLang().equals(Configure.PYTHON_LANG)) {
             relationInterface = new PyRelationInf();
         }
+        else if(configure.getLang().equals(Configure.EXTERNAL_DATA_SOURCE)) {
+            relationInterface = new TraceCallRelationInterface();
+        }
         else {
             System.out.println("Not support this language!\n");
             exit(0);
         }
         files =  relationInterface.getAllFiles();
-        buildDepMap(files);
     }
 
 
@@ -100,9 +104,9 @@ public class MapObject {
     /**
      * build map from fileName to new id
      * store into fileName2Id.
-     * @param files
+     * @param
      */
-    private Map<String, Integer> buildFileMap(ArrayList<String> files) {
+    private Map<String, Integer> buildFileMap() {
         Map<String, Integer> fileName2Id = new HashMap<String, Integer>();
         int index = 0;
         for (String fileName : files) {
@@ -114,11 +118,12 @@ public class MapObject {
 
     /**
      * build fileDeps into a map.
-     * @param files
+     * @param
      */
-    private void buildDepMap(ArrayList<String> files) {
+    private void buildDepMap() {
 
-        Map<String, Integer> fileName2Id =  buildFileMap(files);
+        Map<String, Integer> fileName2Id =  buildFileMap();
+
         for (int i = 0; i < depStrs.length; i++) {
             String depType = depStrs[i];
             //System.out.println(depType);
