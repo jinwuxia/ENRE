@@ -1,6 +1,6 @@
 package formator;
 
-import ExternalDataSource.TraceCallRelationInterface;
+import externalDataSource.TraceCallRelationInterface;
 import util.RelationInterface;
 import priextractor.goextractor.GoRelationInf;
 import priextractor.py3extractor.PyRelationInf;
