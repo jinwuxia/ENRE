@@ -1,7 +1,7 @@
 package priextractor.goextractor;
 
 import uerr.*;
-import uerr.RelationInterface;
+import util.RelationInterface;
 import entitybuilder.gobuilder.goentity.AliasTypeEntity;
 import entitybuilder.gobuilder.goentity.InterfaceEntity;
 import entitybuilder.gobuilder.goentity.MethodEntity;

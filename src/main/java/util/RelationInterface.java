@@ -1,7 +1,10 @@
-package uerr;
+package util;
 
 import sun.security.krb5.Config;
 import sun.security.krb5.Confounder;
+import uerr.AbsEntity;
+import uerr.AbsFILEntity;
+import uerr.SingleCollect;
 import util.Configure;
 import util.Tuple;
 

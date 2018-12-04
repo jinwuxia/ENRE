@@ -4,6 +4,7 @@ import entitybuilder.pybuilder.PyConstantString;
 import uerr.*;
 import entitybuilder.pybuilder.pyentity.*;
 import util.Configure;
+import util.RelationInterface;
 import util.Tuple;
 
 import java.util.ArrayList;
