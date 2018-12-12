@@ -67,4 +67,4 @@ After analysis, ENRE finally outputs the resovled entities and dependencies in *
 License
 ----
 
-**Free Software, Hell Yeah!**
+**MIT**
