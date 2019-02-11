@@ -18,6 +18,9 @@ import util.Configure;
 
 import java.util.ArrayList;
 
+/**
+ * it should be template method pattern, so that the steps and oder of processing are fixed.
+ */
 public class TemplateWork {
 
     protected static Configure configure = Configure.getConfigureInstance();
