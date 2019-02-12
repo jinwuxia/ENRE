@@ -223,7 +223,7 @@ public class PyConstantString {
     /**
      * built-in Exception types
      */
-    public static String[] BUILT_IN_EXCEPTIONs = {
+    public static String[] BUILT_IN_EXCEPTIONS = {
             "BaseException",
             "SystemExit",
             "KeyboardInterrupt",

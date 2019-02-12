@@ -16,7 +16,7 @@ public class CallVisitor extends DepVisitor {
     private NameSearch nameSearch = NameSearch.getNameSearchInstance();
 
     public CallVisitor() {
-        //call this for search possible function calls.
+        //call this for search possible (implicit) function calls.
         singleCollect.identifySameMethodName();
     }
 
@@ -27,8 +27,13 @@ public class CallVisitor extends DepVisitor {
             if (entity instanceof PyFunctionEntity
                     || entity instanceof ModuleEntity) {
                 System.out.println("inside: " + entity.getName());
-                setCallDep(entity.getId());
 
+                //modify calleeStr list: split the form of x().y() into x() and x().y().
+                int modOrFunId = entity.getId();
+                modifyCalledFuncs(modOrFunId);
+
+                //call dep inference
+                setCallDep(modOrFunId);
             }
         }
     }
@@ -40,8 +45,6 @@ public class CallVisitor extends DepVisitor {
      * @param modOrFunId
      */
     private void setCallDep(int modOrFunId) {
-        //modify calleeStr list
-        modifyCalledFuncs(modOrFunId);
         ArrayList<String> calledFuns = getCalledFunctions(modOrFunId);
         if(calledFuns == null) {
             return;
@@ -50,102 +53,138 @@ public class CallVisitor extends DepVisitor {
         for(int index = 0; index < calledFuns.size(); index ++) {
             String calleeStr = calledFuns.get(index);
             //System.out.println("oldCallee= " + calleeStr);
+            //simplify calleeStr, making it have only one "()
             String simpleCalleeStr = simplifyCalleeStr(index, calledFuns, idList);
 
-            //case 1: callee is built-in function or super.m()
-            if (isBuiltinFunction(simpleCalleeStr) || isSuperCallee(simpleCalleeStr)) {
-                idList.add(-1);
+            //case 1: callee is built-in function/Exception or super.m()
+            boolean isResolved = isResoveCase1(calleeStr, simpleCalleeStr);
+            int calleeId = -1;
+            if(isResolved) {
+                idList.add(calleeId);
+            }
+
+            //case 2: regular cases (same to static-typing language), it includes implicit_internal_call and regular explciit call.
+            calleeId = resolveCase2(modOrFunId, calleeStr, simpleCalleeStr);
+            idList.add(calleeId);
+            if(calleeId != -1) {
                 continue;
             }
 
-            //case 2: regular cases (same to static language), or, x.m() where x is var initialized inside the invisible variable;
-            int calleeId = searchCalleeRegularCase(simpleCalleeStr, modOrFunId);
-            idList.add(calleeId);
-            if(isLocalInitVarCallee(simpleCalleeStr, modOrFunId)) {
-                if(calleeId != -1) {
-                    saveRelation(modOrFunId, calleeId, Configure.RELATION_IMPLICIT_INTERNAL_CALL, Configure.RELATION_IMPLICIT_INTERNAL_CALLED_BY);
-                    //System.out.println("internal Call found " + simpleCalleeStr);
-                    continue;
-                }
-                else {
-                    //System.out.println("internal Call not found " + simpleCalleeStr);
-                }
-            }
-            else{
-                if(calleeId != -1) {
-                    saveRelation(modOrFunId, calleeId, Configure.RELATION_CALL, Configure.RELATION_CALLED_BY);
-                    //System.out.println("find=      " +  singleCollect.getEntityById(calleeId) + "\n");
-                    //System.out.println("regular Call found " + simpleCalleeStr);
-                    continue;
-                }
-                else {
-                    //System.out.println("regular Call not found " + simpleCalleeStr);
-                }
+            //case 3: others, try to resolve use implict-resolution strategy
+            isResolved = isResolveCase3(modOrFunId, calleeStr, simpleCalleeStr);
 
+            //case 4: the ones which are not resolved.
+            if (!isResolved) {
+                System.out.println("call resolve,unknown," + calleeStr + "," + simpleCalleeStr);
             }
-
-            //case 3: other all
-            idList.add(-1);
-            String[] tmp = simpleCalleeStr.split("\\(")[0].split("\\.");
-            simpleCalleeStr = tmp[tmp.length - 1];
-            ArrayList<Integer> possibleCallees = searchCalleeByName(simpleCalleeStr);
-            for (int possibleCalleeId : possibleCallees) {
-                saveRelation(modOrFunId, possibleCalleeId, Configure.RELATION_IMPLICIT_EXTERNAL_CALL, Configure.RELATION_IMPLICIT_EXTERNAL_CALLED_BY);
-            }
-            if(possibleCallees.size() != 0) {
-                System.out.println("external call found: " + simpleCalleeStr + "; callee: " + calleeStr);
-                for (int tmp_index : possibleCallees) {
-                    System.out.println(singleCollect.getEntityById(tmp_index).getName());
-                }
-            }
-            else {
-                System.out.println("external call not found: " + simpleCalleeStr + "; callee: " + calleeStr);
-            }
-            //System.out.println("find =      " + calleeId + "\n\n");
         }
     }
 
 
-    private ArrayList<Integer> searchCalleeByName(String simpleCalleeStr) {
-        String arr[] = simpleCalleeStr.split("\\.");
-        String str = arr[arr.length - 1];
-        String pureCalleeName = str.split("\\(")[0];
-
-        ArrayList<Integer> ids = singleCollect.searchFunctionByName(pureCalleeName);
-
-        return ids;
-    }
     /**
-     * judge it is form of var.callee() or not.  which can be resolve by var known type.
-     * in this case, var is a  variable initialized inside the var's visible scope.
-     * var.x.y() : if have more than one dot, we cannot resolve it, it is not localinitvar callee.
+     * case 1: callee is built-in function/Exception or super.m()
+     * @param calleeStr
+     * @param simpleCalleeStr
+     * @return
+     */
+    private  boolean isResoveCase1(String calleeStr, String simpleCalleeStr) {
+        if (isBuiltinFunction(simpleCalleeStr) || isBuiltinException(simpleCalleeStr)) {
+            System.out.println("call resolve,built-in," + calleeStr + "," + simpleCalleeStr);
+            return true;
+        }
+        if(isSuperCallee(simpleCalleeStr)) {
+            System.out.println("call resolve,super," + calleeStr + "," + simpleCalleeStr);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * case 2: regular cases (same to static-typing language):
+     *        importedX.y();  x.y() x with explicit type;  y()
+     *        it includes implicit_internal_call and regular explciit call.
+     * @param modOrFunId
+     * @param calleeStr
+     * @param simpleCalleeStr
+     * @return
+     */
+    private int resolveCase2(int modOrFunId, String calleeStr, String simpleCalleeStr) {
+        int calleeId = searchCalleeRegularCase(simpleCalleeStr, modOrFunId);
+        //save
+        if(calleeId != -1) {
+            if (isLocalInitVarCallee(simpleCalleeStr, modOrFunId)) {
+                saveRelation(modOrFunId, calleeId, Configure.RELATION_IMPLICIT_INTERNAL_CALL, Configure.RELATION_IMPLICIT_INTERNAL_CALLED_BY);
+                System.out.println("call resolve,internal," + calleeStr + "," + simpleCalleeStr);
+
+            } else {
+                saveRelation(modOrFunId, calleeId, Configure.RELATION_CALL, Configure.RELATION_CALLED_BY);
+                System.out.println("call resolve,explicit," + calleeStr + "," + simpleCalleeStr);
+            }
+        }
+        return calleeId;
+    }
+
+
+    /**
+     * case 3: others, try to resolve use implict-resolution strategy
+     */
+    private boolean isResolveCase3(int modOrFunId, String calleeStr, String simpleCalleeStr) {
+        ImplicitCallResolver implicitCallResolver = new ImplicitCallResolver();
+        ArrayList<Integer> possibleCallees = implicitCallResolver.resolveCallee(modOrFunId, calleeStr, simpleCalleeStr);
+        if(possibleCallees.size() != 0) {
+            //save
+            System.out.println("call resolve,implicit," + calleeStr + "," + simpleCalleeStr);
+            for (int possibleCalleeId : possibleCallees) {
+                saveRelation(modOrFunId, possibleCalleeId, Configure.RELATION_IMPLICIT_EXTERNAL_CALL, Configure.RELATION_IMPLICIT_EXTERNAL_CALLED_BY);
+            }
+            return true;
+        }
+        return false;
+    }
+
+
+
+
+    /**
+     * in the following two cases, it return true
+     * 1) the callee is in the form of var.func() && var is initilazed inside explicit type.
+     * 2) the callee is in the form of self.func()
+     *
+     *
+     * judge it is form of var.callee() or not. the form can be resolve by var known type.
+     * in this case, var is a  variable initialized inside the var's visible scope, or, self.
+     *
+     * note: in var.x.y() form, it has more than one dot,
+     *       we cannot resolve it, it is not localinitvar callee.
      * @param simpleCalleeStr
      * @param modOrFunId
      * @return
      */
     private boolean isLocalInitVarCallee(String simpleCalleeStr, int modOrFunId) {
-        boolean res = false;
-        if(simpleCalleeStr.split("\\(")[0].split("\\.").length >=2) {
-            return false;
-        }
+        //case 1
         if(simpleCalleeStr.split("\\(")[0].startsWith("self.")) {
             //System.out.println("isLocalInit: "  + simpleCalleeStr  + " " + true);
             return true;
         }
-        //System.out.println("isLocalInit: " + simpleCalleeStr);
+
+        //case 2
+        String prefixName = simpleCalleeStr.split("\\.")[0];
+        int nameId = nameSearch.getIdByNameInScope(prefixName, modOrFunId);
+        //System.out.println("search prefix name: " + simpleCalleeStr + " " + Integer.toString(nameId));
+        if(singleCollect.isVariable(nameId) && singleCollect.isVarTypeResolved(nameId)) {
+            //System.out.println("isLocalInit: "  + simpleCalleeStr  + " " + res);
+            return true;
+        }
+
+
+        if(simpleCalleeStr.split("\\(")[0].split("\\.").length >=2) {
+            return false;
+        }
         if(!simpleCalleeStr.split("\\(")[0].contains(".")) {
             //System.out.println("isLocalInit: "  + simpleCalleeStr  + " " + false);
             return false;
         }
-        String prefixName = simpleCalleeStr.split("\\.")[0];
-        int nameId = nameSearch.getIdByNameInScope(prefixName, modOrFunId);
-        //System.out.println("search prefix name: " + simpleCalleeStr + " " + Integer.toString(nameId));
-
-        if(singleCollect.isVariable(nameId) && singleCollect.isVarTypeResolved(nameId)) {
-            res = true;
-        }
-        //System.out.println("isLocalInit: "  + simpleCalleeStr  + " " + res);
-        return res;
+        return false;
     }
 
 
@@ -169,6 +208,8 @@ public class CallVisitor extends DepVisitor {
 
     /**
      * searcher callee which are not "super", not builtin functions.
+     * x.y() static typing can resolve. x is var initialized in the visible scope.
+     * or y()  or importedOne.y()
      * @param simpleCalleeStr
      * @param modOrFunId
      * @return
@@ -225,6 +266,18 @@ public class CallVisitor extends DepVisitor {
         return false;
     }
 
+    private boolean isBuiltinException(String simpleCalleeStr) {
+        String str = simpleCalleeStr.split("\\(")[0];
+        if(str.contains(Configure.DOT)) {
+            return false;
+        }
+        for(int i = 0; i < PyConstantString.BUILT_IN_EXCEPTIONS.length; i++) {
+            if(str.equals(PyConstantString.BUILT_IN_EXCEPTIONS[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * in scope with id, find the matched Str.
@@ -332,7 +385,7 @@ public class CallVisitor extends DepVisitor {
 
 
     /**
-     * simplify calleeStr as having only one "()".
+     * simplify calleeStr, making it have only one "()".
      * simplify x().y() as a.y().
      * simplify x(y()) as x(a).
      *
