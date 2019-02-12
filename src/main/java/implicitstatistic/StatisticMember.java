@@ -1,13 +1,15 @@
 package implicitstatistic;
 
 import uerr.*;
+import util.Configure;
+import util.Tuple;
 
 import java.util.*;
 
 /**
- * StatisticForInfer: do the basic implicitstatistic for further infer the type of object in the forms of object.v or object.m()
+ * StatisticMember: do the basic implicitstatistic for further infer the type of object in the forms of object.v or object.m()
  */
-public class StatisticForInfer {
+public class StatisticMember {
 
     private SingleCollect singleCollectInstance = SingleCollect.getSingleCollectInstance();
 
@@ -21,15 +23,20 @@ public class StatisticForInfer {
      */
     private Map<String, ArrayList<Integer>> fieldName2ClassMap = new HashMap<>();
 
-
+    /**
+     * map{baseID, childID_list}
+     */
+    private Map<Integer, ArrayList<Integer>> inheritMap = new HashMap<>();
 
     /**
      * when initialize, do statistics.
      */
-    public StatisticForInfer() {
+    public StatisticMember() {
         groupMemberWithSameName();
+        groupClassByParent();
 
     }
+
 
 
     public Map<String, ArrayList<Integer>> getFieldName2ClassMap() {
@@ -40,11 +47,57 @@ public class StatisticForInfer {
         return methodName2ClassMap;
     }
 
+    public Map<Integer, ArrayList<Integer>> getInheritMap() {
+        return inheritMap;
+    }
+
+    /**
+     * group class based on its parent class.
+     * map[parentId] = childIdList
+     *
+     * set inheritMap
+     */
+    private void groupClassByParent() {
+        Configure configure = Configure.getConfigureInstance();
+        for(AbsEntity entity :  singleCollectInstance.getEntities()) {
+            int entityId = entity.getId();
+
+            if( !(entity instanceof AbsCLSEntity)) {
+                continue;
+            }
+
+            for(Tuple<String, Integer> relation :  entity.getRelations()) {
+                if(!(relation.x.equals(configure.RELATION_INHERIT))) {
+                    continue;
+                }
+                int baseId = relation.y;
+                if (!inheritMap.containsKey(baseId)) {
+                    inheritMap.put(baseId, new ArrayList<>());
+                }
+                inheritMap.get(baseId).add(entityId);
+            }
+        }
+        /**
+        for (Map.Entry<Integer, ArrayList<Integer>> entry: inheritMap.entrySet()) {
+            int baseId = entry.getKey();
+            String baseName = singleCollectInstance.getEntityById(baseId).getName();
+            System.out.println("baseName: "+ baseName);
+            for (int childId: entry.getValue()) {
+                String childName = singleCollectInstance.getEntityById(childId).getName();
+                System.out.println("childName: " + childName);
+            }
+        }
+         */
+    }
+
+
     /**
      * for the name of public variable member and method member,
      * it may belong to different class.
      *
      * traverse all public variable member and method member, find all possible classIDs.
+     *
+     * set  methodName2ClassMap and fieldName2ClassMap
      */
     private void groupMemberWithSameName() {
         for (AbsEntity entity : singleCollectInstance.getEntities()) {
@@ -114,5 +167,9 @@ public class StatisticForInfer {
             fieldName2ClassMap.get(fieldName).add(parentId);
         }
     }
+
+
+
+
 
 }
