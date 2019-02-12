@@ -121,13 +121,13 @@ public class UndWriter {
     }
 
     private String getShortName(int id) {
-        AbsEntity entity = singleCollect.getEntities().get(id);
+        AbsEntity entity = singleCollect.getEntityById(id);
         if(entity instanceof PyFunctionEntity && entity.getName().endsWith("__main__")) {
             int fileId = entity.getParentId();
-            String fileName = singleCollect.getEntities().get(fileId).getSimpleName();
+            String fileName = singleCollect.getEntityById(fileId).getSimpleName();
             return fileName;
         }
-        return singleCollect.getEntities().get(id).getSimpleName();
+        return singleCollect.getEntityById(id).getSimpleName();
     }
 
     private String getDepType(String depStr) {
@@ -175,10 +175,10 @@ public class UndWriter {
             return "Class";
         }
         if (singleCollect.isFunction(id) &&
-                !(singleCollect.getEntities().get(id) instanceof PyMethodEntity)){
+                !(singleCollect.getEntityById(id) instanceof PyMethodEntity)){
             return "Function";
         }
-        if(singleCollect.getEntities().get(id) instanceof PyMethodEntity) {
+        if(singleCollect.getEntityById(id) instanceof PyMethodEntity) {
             return "Method";
         }
         return "";
@@ -191,18 +191,18 @@ public class UndWriter {
      * @return
      */
     private String getLongName(int id) {
-        AbsEntity entity = singleCollect.getEntities().get(id);
+        AbsEntity entity = singleCollect.getEntityById(id);
         if(entity instanceof ModuleEntity) {
             return entity.getName();
         }
         if(entity instanceof PyFunctionEntity && entity.getName().endsWith("__main__")) {
-            return singleCollect.getEntities().get(entity.getParentId()).getName();
+            return singleCollect.getEntityById(entity.getParentId()).getName();
         }
         String longname = "";
         while(id != -1) {
-            //System.out.println("name:" + singleCollect.getEntities().get(id).getName());
-            //System.out.println("simplename:" + singleCollect.getEntities().get(id).getSimpleName());
-            String name = singleCollect.getEntities().get(id).getSimpleName();
+            //System.out.println("name:" + singleCollect.getEntityById(id).getName());
+            //System.out.println("simplename:" + singleCollect.getEntityById(id).getSimpleName());
+            String name = singleCollect.getEntityById(id).getSimpleName();
             if(name.endsWith(".py")) {
                 name = name.split("\\.py")[0];
             }
@@ -215,7 +215,7 @@ public class UndWriter {
             else {
                 longname = name;
             }
-            id = singleCollect.getEntities().get(id).getParentId();
+            id = singleCollect.getEntityById(id).getParentId();
         }
         return longname;
     }

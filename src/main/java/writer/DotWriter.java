@@ -88,7 +88,7 @@ public class DotWriter {
     private void writeSubGraph(PrintWriter out, ArrayList<Integer> childIds, String filter) {
         for (int id : childIds) {
             String style = getStyle(id);
-            String label = singleCollect.getEntities().get(id).getSimpleName();
+            String label = singleCollect.getEntityById(id).getSimpleName();
             String idStr = Integer.toString(id);
             String labelAttr = DotUtil.LABLE + DotUtil.EQUAL + "\"" + label + "\"";
             String styleAttr = DotUtil.STYLE + DotUtil.EQUAL + style;
@@ -101,7 +101,7 @@ public class DotWriter {
                     genSubGraph(out, idStr, labelAttr, styleAttr);
                 }
 
-                ArrayList<Integer> newChildIds = singleCollect.getEntities().get(id).getChildrenIds();
+                ArrayList<Integer> newChildIds = singleCollect.getEntityById(id).getChildrenIds();
                 writeSubGraph(out, newChildIds, filter);
                 if (isCaredEntity(id, filter)) {
                     out.println(DotUtil.R_LACE_BRACKET);
@@ -136,7 +136,7 @@ public class DotWriter {
 
 
     private boolean isLeaf (int id) {
-        if(singleCollect.getEntities().get(id).getChildrenIds().isEmpty()) {
+        if(singleCollect.getEntityById(id).getChildrenIds().isEmpty()) {
             return true;
         }
         return false;

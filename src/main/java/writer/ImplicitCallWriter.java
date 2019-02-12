@@ -77,10 +77,10 @@ public class ImplicitCallWriter {
     private String getContainFile(int id) {
         while (id != -1) {
             if (singleCollect.isFile(id)) {
-                return singleCollect.getEntities().get(id).getName();
+                return singleCollect.getEntityById(id).getName();
             }
             else {
-                id = singleCollect.getEntities().get(id).getParentId();
+                id = singleCollect.getEntityById(id).getParentId();
             }
         }
         return "";
