@@ -26,7 +26,7 @@ public class NameSearchInterface {
      */
     public int findMethodInInfAndEmbededInfs(String methodName, int interfaceId) {
         if(interfaceId == -1
-                || !(singleCollect.getEntities().get(interfaceId) instanceof InterfaceEntity)
+                || !(singleCollect.getEntityById(interfaceId) instanceof InterfaceEntity)
                 ) {
             return -1;
         }
@@ -40,7 +40,7 @@ public class NameSearchInterface {
                 return thisInterfaceId;
             }
             else{
-                for(Tuple<String, Integer> relation : singleCollect.getEntities().get(thisInterfaceId).getRelations()) {
+                for(Tuple<String, Integer> relation : singleCollect.getEntityById(thisInterfaceId).getRelations()) {
                     if (relation.x.equals(Configure.RELATION_INHERIT)) {
                         int embededInterfaceId = relation.y;
                         interfaceIds.add(embededInterfaceId);
@@ -61,13 +61,13 @@ public class NameSearchInterface {
      */
     public int findMethodInInf(String methodName, int interfaceId) {
         if(interfaceId == -1
-                || !(singleCollect.getEntities().get(interfaceId) instanceof InterfaceEntity)
+                || !(singleCollect.getEntityById(interfaceId) instanceof InterfaceEntity)
                 ) {
             return -1;
         }
-        for(int childId : singleCollect.getEntities().get(interfaceId).getChildrenIds()) {
-            if(singleCollect.getEntities().get(childId) instanceof InterfaceFieldEntity) {
-                InterfaceFieldEntity interfaceFieldEntity = (InterfaceFieldEntity) singleCollect.getEntities().get(childId);
+        for(int childId : singleCollect.getEntityById(interfaceId).getChildrenIds()) {
+            if(singleCollect.getEntityById(childId) instanceof InterfaceFieldEntity) {
+                InterfaceFieldEntity interfaceFieldEntity = (InterfaceFieldEntity) singleCollect.getEntityById(childId);
                 if(interfaceFieldEntity.getType().equals(GoConstantString.INTERFACE_FIELD_IS_METHOD)
                         && interfaceFieldEntity.getName().equals(methodName)) {
                     return interfaceFieldEntity.getId();

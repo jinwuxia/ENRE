@@ -43,8 +43,8 @@ public class BasicDepVisitor {
                         if (importedPackageId != -1) {
                             saveRelation(fileId, importedPackageId,
                                     Configure.RELATION_IMPORT, Configure.RELATION_IMPORTED_BY);
-                            ((AbsFILEntity) singleCollect.getEntities().get(fileId)).addImportAlias(importedPackageNameAlias, importedPackageId);
-                            //System.out.println("imported package:" + ((AbsFLDEntity) singleCollect.getEntities().get(importedPackageId)).getFullPath());
+                            ((AbsFILEntity) singleCollect.getEntityById(fileId)).addImportAlias(importedPackageNameAlias, importedPackageId);
+                            //System.out.println("imported package:" + ((AbsFLDEntity) singleCollect.getEntityById(importedPackageId)).getFullPath());
                         }
 
                         //maybe the imported package is not included in the source code.
@@ -64,12 +64,12 @@ public class BasicDepVisitor {
             if (entity instanceof StructEntity) {
                 int entityId = entity.getId();
                 for (int fieldId : entity.getChildrenIds()) {
-                    AbsEntity fieldEntity = singleCollect.getEntities().get(fieldId);
+                    AbsEntity fieldEntity = singleCollect.getEntityById(fieldId);
                     if (fieldEntity instanceof StructFieldEntity) {
                         if (fieldEntity.getName().equals(GoConstantString.STRUCT_FIELD_IS_ANONYMOUS)) {
                             String fileName1 = Configure.NULL_STRING;
                             if (entity.getParentId() != -1) {
-                                fileName1 = singleCollect.getEntities().get(entity.getParentId()).getName();
+                                fileName1 = singleCollect.getEntityById(entity.getParentId()).getName();
                             }
                             //System.out.println("StructRelation: struct:"+ uerr.getName() + ", file:" +  fileName1);
                             String embededStructName = ((StructFieldEntity) fieldEntity).getType();
@@ -77,11 +77,11 @@ public class BasicDepVisitor {
                             if (embededEntityId != -1) {
                                 saveRelation(entityId, embededEntityId,
                                         Configure.RELATION_INHERIT, Configure.RELATION_INHERITED_BY);
-                                //String entityName2 = singleCollect.getEntities().get(embededEntityId).getName();
-                                int entity2ParentId = singleCollect.getEntities().get(embededEntityId).getParentId();
+                                //String entityName2 = singleCollect.getEntityById(embededEntityId).getName();
+                                int entity2ParentId = singleCollect.getEntityById(embededEntityId).getParentId();
                                 String fileName2 = Configure.NULL_STRING;
                                 if (entity2ParentId != -1) {
-                                    fileName2 = singleCollect.getEntities().get(entity2ParentId).getName();
+                                    fileName2 = singleCollect.getEntityById(entity2ParentId).getName();
                                 }
                                 //System.out.println("StructRelation: embeded:"+ embededStructName + ", file:" +  fileName2);
                             }
@@ -101,20 +101,20 @@ public class BasicDepVisitor {
             if (interfaceEntity instanceof InterfaceEntity) {
                 int interfaceEntityId = interfaceEntity.getId();
                 for (int fieldId : interfaceEntity.getChildrenIds()) {
-                    AbsEntity fieldEntity = singleCollect.getEntities().get(fieldId);
+                    AbsEntity fieldEntity = singleCollect.getEntityById(fieldId);
                     if (fieldEntity instanceof InterfaceFieldEntity) {
                         if (((InterfaceFieldEntity) fieldEntity).getType().equals(GoConstantString.INTERFACE_FIELD_IS_TYPE)) {
                             String fileName1 = Configure.NULL_STRING;
-                            if (singleCollect.getEntities().get(interfaceEntityId).getParentId() != -1) {
-                                fileName1 = singleCollect.getEntities().get(singleCollect.getEntities().get(interfaceEntityId).getParentId()).getName();
+                            if (singleCollect.getEntityById(interfaceEntityId).getParentId() != -1) {
+                                fileName1 = singleCollect.getEntityById(singleCollect.getEntityById(interfaceEntityId).getParentId()).getName();
                             }
                             //System.out.println("InterfaceRelation: interface:"+ interfaceEntity.getName() + ", file:" +  fileName1);
                             String embededInterfaceName = fieldEntity.getName();
                             int embededEntityId = searchEmbededInterface(interfaceEntityId, embededInterfaceName);
                             if (embededEntityId != -1) {
                                 String fileName2 = Configure.NULL_STRING;
-                                if(singleCollect.getEntities().get(embededEntityId).getParentId() != -1) {
-                                    fileName2 = singleCollect.getEntities().get(singleCollect.getEntities().get(embededEntityId).getParentId()).getName();
+                                if(singleCollect.getEntityById(embededEntityId).getParentId() != -1) {
+                                    fileName2 = singleCollect.getEntityById(singleCollect.getEntityById(embededEntityId).getParentId()).getName();
                                 }
                                 //System.out.println("InterfaceRelation: embeded:"+ embededInterfaceName + ", file:" +  fileName2);
                                 saveRelation(interfaceEntityId, embededEntityId,
@@ -140,10 +140,10 @@ public class BasicDepVisitor {
             if (methodEntity instanceof MethodEntity) {
                 int methodEntityId = methodEntity.getId();
                 String methodEntityName = methodEntity.getName();
-                String fileName1 = singleCollect.getEntities().get(singleCollect.getEntities().get(methodEntityId).getParentId()).getName();
+                String fileName1 = singleCollect.getEntityById(singleCollect.getEntityById(methodEntityId).getParentId()).getName();
                 //System.out.println("method_receive_relation: methodName:" + methodEntityName + ", file: " + fileName1);
                 int receiverVarId =((MethodEntity) methodEntity).getReceiverVarId();
-                String receiverType = ((AbsVAREntity) singleCollect.getEntities().get(receiverVarId)).getType();
+                String receiverType = ((AbsVAREntity) singleCollect.getEntityById(receiverVarId)).getType();
                 //System.out.print("receiver pre: " + receiverType);
                 if (receiverType.startsWith(Configure.POINTER)) {
                     receiverType = receiverType.substring(1, receiverType.length());
@@ -151,13 +151,13 @@ public class BasicDepVisitor {
                 //System.out.print(";  post: " + receiverType);
                 int receiverTypeId = searchReceiverType(methodEntityId, receiverType);
                 if (receiverTypeId != -1) {
-                    ((AbsVAREntity) singleCollect.getEntities().get(receiverVarId)).setTypeId(receiverTypeId);
+                    ((AbsVAREntity) singleCollect.getEntityById(receiverVarId)).setTypeId(receiverTypeId);
 
-                    singleCollect.getEntities().get(methodEntityId).setParentId(receiverTypeId);
-                    singleCollect.getEntities().get(receiverTypeId).addChildId(methodEntityId);
+                    singleCollect.getEntityById(methodEntityId).setParentId(receiverTypeId);
+                    singleCollect.getEntityById(receiverTypeId).addChildId(methodEntityId);
 
                     saveRelation(methodEntityId, receiverTypeId, Configure.RELATION_RECEIVE, Configure.RELATION_RECEIVED_BY);
-                    //System.out.println("method_receive_relation: receiver:" + receiverType + ", file: " + singleCollect.getEntities().get(singleCollect.getEntities().get(receiverId).getParentId()).getName());
+                    //System.out.println("method_receive_relation: receiver:" + receiverType + ", file: " + singleCollect.getEntityById(singleCollect.getEntityById(receiverId).getParentId()).getName());
                 }
                 else {
                     //System.out.println("method_receive_relation: receiver:" + receiverType + ", file:-1");
@@ -254,9 +254,9 @@ public class BasicDepVisitor {
                 for (Tuple<String, Integer> relation : relations) {
                     if (relation.x.equals(Configure.RELATION_RECEIVED_BY)) {
                         int methodId = relation.y;
-                        String methodName = singleCollect.getEntities().get(methodId).getName();
-                        ArrayList<Integer> paraIds = ((MethodEntity) singleCollect.getEntities().get(methodId)).getParameters();
-                        ArrayList<Integer> returns = ((MethodEntity) singleCollect.getEntities().get(methodId)).getReturns();
+                        String methodName = singleCollect.getEntityById(methodId).getName();
+                        ArrayList<Integer> paraIds = ((MethodEntity) singleCollect.getEntityById(methodId)).getParameters();
+                        ArrayList<Integer> returns = ((MethodEntity) singleCollect.getEntityById(methodId)).getReturns();
                         ArrayList<String> inputs = getTypeListFromIDs(paraIds);
                         ArrayList<String> outputs = getTypeListFromIDs(returns);
                         Signature signature = new Signature(methodName, inputs, outputs);
@@ -275,7 +275,7 @@ public class BasicDepVisitor {
     private ArrayList<String> getTypeListFromIDs(ArrayList<Integer> ids) {
         ArrayList<String> types = new ArrayList<String>();
         for(int id : ids) {
-            AbsVAREntity varEntity = (AbsVAREntity) singleCollect.getEntities().get(id);
+            AbsVAREntity varEntity = (AbsVAREntity) singleCollect.getEntityById(id);
             String type = varEntity.getType();
             types.add(type);
         }
@@ -350,9 +350,9 @@ public class BasicDepVisitor {
      */
     private int searchReceiverType(int methodEntityId, String receiverType) {
         int receiverId = -1;
-        int fileId = singleCollect.getEntities().get(methodEntityId).getParentId();
+        int fileId = singleCollect.getEntityById(methodEntityId).getParentId();
         if (fileId != -1) {
-            int packageId = singleCollect.getEntities().get(fileId).getParentId();
+            int packageId = singleCollect.getEntityById(fileId).getParentId();
             receiverId = findNameLocal(packageId, receiverType, GoConstantString.ENTITY_STRUCT_ALIAS);
         }
 
@@ -370,11 +370,11 @@ public class BasicDepVisitor {
     private void saveRelation(int entityId1, int entityId2, String relationType1, String relationType2) {
         Tuple<String, Integer> relation1 =
                 new Tuple<String, Integer>(relationType1, entityId2);
-        singleCollect.getEntities().get(entityId1).addRelation(relation1);
+        singleCollect.getEntityById(entityId1).addRelation(relation1);
 
         Tuple<String, Integer> relation2 =
                 new Tuple<String, Integer>(relationType2, entityId1);
-        singleCollect.getEntities().get(entityId2).addRelation(relation2);
+        singleCollect.getEntityById(entityId2).addRelation(relation2);
     }
 
 
@@ -389,12 +389,12 @@ public class BasicDepVisitor {
         int packageId = -1;
         ArrayList<Integer> importedPackageIds = new ArrayList<Integer>();
         Map<Integer,String> importedPackageAliasMap = new HashMap<Integer, String>();
-        int fileId = singleCollect.getEntities().get(structId).getParentId();
+        int fileId = singleCollect.getEntityById(structId).getParentId();
         //System.out.println("XXXXXXXXXfileID:" + fileId);
-        if (fileId != -1 && singleCollect.getEntities().get(fileId) instanceof AbsFILEntity) {
-            packageId = singleCollect.getEntities().get(fileId).getParentId();
+        if (fileId != -1 && singleCollect.getEntityById(fileId) instanceof AbsFILEntity) {
+            packageId = singleCollect.getEntityById(fileId).getParentId();
             importedPackageIds = findImportPackages(fileId);
-            importedPackageAliasMap = ((AbsFILEntity) singleCollect.getEntities().get(fileId)).getImportsAlias();
+            importedPackageAliasMap = ((AbsFILEntity) singleCollect.getEntityById(fileId)).getImportsAlias();
         }
 
         if(packageId != -1) {
@@ -427,14 +427,14 @@ public class BasicDepVisitor {
         int packageId = -1;
         ArrayList<Integer> importedPackageIds = new ArrayList<Integer>();
         Map<Integer,String> importedPackageAliasMap = new HashMap<Integer, String>();
-        int fileId = singleCollect.getEntities().get(interfaceId).getParentId();
+        int fileId = singleCollect.getEntityById(interfaceId).getParentId();
         if(fileId == -1) {
             return -1;
         }
-        if (singleCollect.getEntities().get(fileId) instanceof AbsFILEntity) {
-            packageId = singleCollect.getEntities().get(fileId).getParentId();
+        if (singleCollect.getEntityById(fileId) instanceof AbsFILEntity) {
+            packageId = singleCollect.getEntityById(fileId).getParentId();
             importedPackageIds = findImportPackages(fileId);
-            importedPackageAliasMap = ((AbsFILEntity) singleCollect.getEntities().get(fileId)).getImportsAlias();
+            importedPackageAliasMap = ((AbsFILEntity) singleCollect.getEntityById(fileId)).getImportsAlias();
         }
 
         if(packageId != -1) {
@@ -465,7 +465,7 @@ public class BasicDepVisitor {
     private String transformRemote2LocalName(String alias, int packageId, String remoteName) {
         String localName = Configure.NULL_STRING;
         if (alias.equals(Configure.NULL_STRING)) {   // the reference way is packageName.X, so return X
-            String packageName = singleCollect.getEntities().get(packageId).getName();
+            String packageName = singleCollect.getEntityById(packageId).getName();
             if(remoteName.startsWith(packageName)) {
                 localName = remoteName.substring(packageName.length(), remoteName.length());
             }
@@ -492,35 +492,35 @@ public class BasicDepVisitor {
      */
     private int findNameLocal(int packageId, String unknownName, String entityType) {
         //find the files in this package
-        ArrayList<Integer> fileIds = singleCollect.getEntities().get(packageId).getChildrenIds();
+        ArrayList<Integer> fileIds = singleCollect.getEntityById(packageId).getChildrenIds();
 
         //find the unknownName, without naming transformation
         for (int fileId : fileIds) {
-            for (int entityId : singleCollect.getEntities().get(fileId).getChildrenIds()) {
+            for (int entityId : singleCollect.getEntityById(fileId).getChildrenIds()) {
                 if (entityType.equals(GoConstantString.ENTITY_STRUCT)
-                        && singleCollect.getEntities().get(entityId) instanceof StructEntity
-                        && singleCollect.getEntities().get(entityId).getName().equals(unknownName)) {
+                        && singleCollect.getEntityById(entityId) instanceof StructEntity
+                        && singleCollect.getEntityById(entityId).getName().equals(unknownName)) {
                     return entityId;
                 } else if (entityType.equals(GoConstantString.ENTITY_INTERFACE)
-                        && singleCollect.getEntities().get(entityId) instanceof InterfaceEntity
-                        && singleCollect.getEntities().get(entityId).getName().equals(unknownName)) {
+                        && singleCollect.getEntityById(entityId) instanceof InterfaceEntity
+                        && singleCollect.getEntityById(entityId).getName().equals(unknownName)) {
                     return entityId;
                 }
                 else if (entityType.equals(GoConstantString.ENTITY_STRUCT_ALIAS)
-                        && (singleCollect.getEntities().get(entityId) instanceof StructEntity
-                        || singleCollect.getEntities().get(entityId) instanceof AliasTypeEntity)
-                        && singleCollect.getEntities().get(entityId).getName().equals(unknownName)) {
+                        && (singleCollect.getEntityById(entityId) instanceof StructEntity
+                        || singleCollect.getEntityById(entityId) instanceof AliasTypeEntity)
+                        && singleCollect.getEntityById(entityId).getName().equals(unknownName)) {
                     return entityId;
                 }
                 else if (entityType.equals(GoConstantString.ENTITY_FUNCTION)
-                        && singleCollect.getEntities().get(entityId) instanceof AbsFUNEntity
-                        && ! (singleCollect.getEntities().get(entityId) instanceof MethodEntity)
-                        && singleCollect.getEntities().get(entityId).getName().equals(unknownName)) {
+                        && singleCollect.getEntityById(entityId) instanceof AbsFUNEntity
+                        && ! (singleCollect.getEntityById(entityId) instanceof MethodEntity)
+                        && singleCollect.getEntityById(entityId).getName().equals(unknownName)) {
                     return entityId;
                 }
                 else if (entityType.equals(GoConstantString.ENTITY_METHOD)
-                        && ! (singleCollect.getEntities().get(entityId) instanceof MethodEntity)
-                        && singleCollect.getEntities().get(entityId).getName().equals(unknownName)) {
+                        && ! (singleCollect.getEntityById(entityId) instanceof MethodEntity)
+                        && singleCollect.getEntityById(entityId).getName().equals(unknownName)) {
                     return entityId;
                 }
             }
@@ -536,7 +536,7 @@ public class BasicDepVisitor {
      */
     private ArrayList<Integer> findImportPackages(int fileId) {
         ArrayList<Integer> ids = new ArrayList<Integer>();
-        for (Tuple<String, Integer> relation : singleCollect.getEntities().get(fileId).getRelations()) {
+        for (Tuple<String, Integer> relation : singleCollect.getEntityById(fileId).getRelations()) {
             if (relation.x.equals(Configure.RELATION_IMPORT)) {
                 ids.add(relation.y);
             }

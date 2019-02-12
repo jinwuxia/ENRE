@@ -24,7 +24,7 @@ public class NameSearchStruct {
      */
     public int findFieldInStructAndEmbededStructs(String fieldName, int structId) {
         if(structId == -1
-                || !(singleCollect.getEntities().get(structId) instanceof StructEntity)
+                || !(singleCollect.getEntityById(structId) instanceof StructEntity)
                 ) {
             return -1;
         }
@@ -39,7 +39,7 @@ public class NameSearchStruct {
                 return fieldId;
             }
             else{
-                for(Tuple<String, Integer> relation : singleCollect.getEntities().get(thisStructId).getRelations()) {
+                for(Tuple<String, Integer> relation : singleCollect.getEntityById(thisStructId).getRelations()) {
                     if (relation.x.equals(Configure.RELATION_INHERIT)) {
                         int embededStructId = relation.y;
                         structIds.add(embededStructId);
@@ -58,13 +58,13 @@ public class NameSearchStruct {
      */
     public int findFieldInStruct(String fieldName, int structId) {
         if(structId == -1
-                || !(singleCollect.getEntities().get(structId) instanceof StructEntity)
+                || !(singleCollect.getEntityById(structId) instanceof StructEntity)
                 ) {
             return -1;
         }
-        for(int entityId : singleCollect.getEntities().get(structId).getChildrenIds()) {
-            if (singleCollect.getEntities().get(entityId) instanceof StructFieldEntity) {
-                String thisFieldName = singleCollect.getEntities().get(entityId).getName();
+        for(int entityId : singleCollect.getEntityById(structId).getChildrenIds()) {
+            if (singleCollect.getEntityById(entityId) instanceof StructFieldEntity) {
+                String thisFieldName = singleCollect.getEntityById(entityId).getName();
                 if (thisFieldName.equals(fieldName)) {
                     return entityId;
                 }
@@ -86,7 +86,7 @@ public class NameSearchStruct {
      */
     public int findMethodInStructAndEmbededStructs(String methodName, int structId){
         if(structId == -1
-                || !(singleCollect.getEntities().get(structId) instanceof StructEntity)
+                || !(singleCollect.getEntityById(structId) instanceof StructEntity)
                 ) {
             return -1;
         }
@@ -100,7 +100,7 @@ public class NameSearchStruct {
                 return thisStructId;
             }
             else{
-                for(Tuple<String, Integer> relation : singleCollect.getEntities().get(thisStructId).getRelations()) {
+                for(Tuple<String, Integer> relation : singleCollect.getEntityById(thisStructId).getRelations()) {
                     if (relation.x.equals(Configure.RELATION_INHERIT)) {
                         int embededStructId = relation.y;
                         structIds.add(embededStructId);
@@ -119,14 +119,14 @@ public class NameSearchStruct {
      */
     public int findMethodInStruct(String methodName, int structId) {
         if(structId == -1
-                || !(singleCollect.getEntities().get(structId) instanceof StructEntity)
+                || !(singleCollect.getEntityById(structId) instanceof StructEntity)
                 ) {
             return -1;
         }
-        for(Tuple<String, Integer> relation : singleCollect.getEntities().get(structId).getRelations()) {
+        for(Tuple<String, Integer> relation : singleCollect.getEntityById(structId).getRelations()) {
             if (relation.x.equals(Configure.RELATION_RECEIVED_BY)) {
                 int methodId = relation.y;
-                if (singleCollect.getEntities().get(methodId).getName().equals(methodName)) {
+                if (singleCollect.getEntityById(methodId).getName().equals(methodName)) {
                     return methodId;
                 }
             }
