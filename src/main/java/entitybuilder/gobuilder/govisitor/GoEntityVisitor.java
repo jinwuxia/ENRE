@@ -1340,7 +1340,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
         if (ctx.function() != null) {
             visitFunction(ctx.function()); //add operandVar into function
         }
-        singleCollect.getEntities().get(fileIndex).addChildId(functionIndex);
+        singleCollect.getEntityById(fileIndex).addChildId(functionIndex);
         functionIndex = -1;
         blockStackForAFuncMeth.clear();
         return null;
@@ -1388,7 +1388,7 @@ public class GoEntityVisitor extends GolangBaseVisitor<String> {
         if (ctx.function() != null) {
             visitFunction(ctx.function()); //add operandVar into function
         }
-        singleCollect.getEntities().get(fileIndex).addChildId(functionIndex);
+        singleCollect.getEntityById(fileIndex).addChildId(functionIndex);
         functionIndex = -1;
         blockStackForAFuncMeth.clear();
         return null;

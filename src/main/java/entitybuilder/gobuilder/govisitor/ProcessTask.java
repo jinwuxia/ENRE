@@ -54,7 +54,7 @@ public class ProcessTask {
         receiverVar.setLocalBlockId(methodIndex);
         singleCollect.addEntity(receiverVar);
 
-        ((MethodEntity) singleCollect.getEntities().get(methodIndex)).setReceiverVarId(id);
+        ((MethodEntity) singleCollect.getEntityById(methodIndex)).setReceiverVarId(id);
 
     }
 
@@ -78,9 +78,9 @@ public class ProcessTask {
             varEntity.setLocalBlockId(functionIndex);
             singleCollect.addEntity(varEntity);
             if (isParaOrRet.equals(GoConstantString.SAVE_TYPE_PARAMETER)) {
-                ((AbsFUNEntity) singleCollect.getEntities().get(functionIndex)).addParameter(varEntityIndex);
+                ((AbsFUNEntity) singleCollect.getEntityById(functionIndex)).addParameter(varEntityIndex);
             } else {
-                ((AbsFUNEntity) singleCollect.getEntities().get(functionIndex)).addReturn(varEntityIndex);
+                ((AbsFUNEntity) singleCollect.getEntityById(functionIndex)).addReturn(varEntityIndex);
             }
         }
     }
@@ -176,19 +176,19 @@ public class ProcessTask {
         if (entity != null) {
             //add its Fields
             if (!tmpEntitiesIds.isEmpty()) {
-                singleCollect.getEntities().get(entity.getId()).addChildrenIds(tmpEntitiesIds);
+                entity.addChildrenIds(tmpEntitiesIds);
                 //for each field, set its belonging struct/interface id
                 for (int fieldIndex : tmpEntitiesIds) {
-                    singleCollect.getEntities().get(fieldIndex).setParentId(entity.getId());
+                    singleCollect.getEntityById(fieldIndex).setParentId(entity.getId());
                 }
                 //tmpEntitiesIds.clear();
             }
             //if this type is in the file scope
             if (ctx.parent != null && helperVisitor.isTopLevelDecl(ctx.getParent())) {
-                singleCollect.getEntities().get(entity.getId()).setParentId(fileIndex);
-                singleCollect.getEntities().get(fileIndex).addChildId(entity.getId());
+                entity.setParentId(fileIndex);
+                singleCollect.getEntityById(fileIndex).addChildId(entity.getId());
             } else {
-                singleCollect.getEntities().get(entity.getId()).setParentId(-1);
+                entity.setParentId(-1);
             }
 
         }
@@ -206,7 +206,7 @@ public class ProcessTask {
         AliasTypeEntity aliasTypeEntity = new AliasTypeEntity(entityIndex, type, name);
         aliasTypeEntity.setParentId(fileIndex);
         singleCollect.addEntity(aliasTypeEntity);
-        singleCollect.getEntities().get(fileIndex).addChildId(entityIndex);
+        singleCollect.getEntityById(fileIndex).addChildId(entityIndex);
     }
 
 
@@ -222,7 +222,7 @@ public class ProcessTask {
             varEntity.setParentId(fileIndex);
             varEntity.setLocalBlockId(fileIndex);
             singleCollect.addEntity(varEntity);
-            singleCollect.getEntities().get(fileIndex).addChildId(varEntity.getId());
+            singleCollect.getEntityById(fileIndex).addChildId(varEntity.getId());
         }
     }
 
@@ -238,7 +238,7 @@ public class ProcessTask {
             constEntity.setParentId(fileIndex);
             constEntity.setLocalBlockId(fileIndex);
             singleCollect.addEntity(constEntity);
-            singleCollect.getEntities().get(fileIndex).addChildId(constEntity.getId());
+            singleCollect.getEntityById(fileIndex).addChildId(constEntity.getId());
         }
     }
 
@@ -363,7 +363,7 @@ public class ProcessTask {
         String importName = tmp[0];
         String importPath = tmp[1];
         importPath = importPath.substring(1, importPath.length() - 1); //delete " and "
-        ((AbsFILEntity) singleCollect.getEntities().get(fileIndex)).addImport(
+        ((AbsFILEntity) singleCollect.getEntityById(fileIndex)).addImport(
                 new Tuple<String, String>(importName, importPath));
     }
 
@@ -406,7 +406,7 @@ public class ProcessTask {
         varEntity.setParentId(functionIndex);
         varEntity.setLocalBlockId(localBlockId);
         singleCollect.addEntity(varEntity);
-        singleCollect.getEntities().get(functionIndex).addChildId(varEntity.getId());
+        singleCollect.getEntityById(functionIndex).addChildId(varEntity.getId());
 
     }
 
@@ -443,7 +443,7 @@ public class ProcessTask {
             varEntity.setParentId(functionIndex);
             varEntity.setLocalBlockId(localBlockId);
             singleCollect.addEntity(varEntity);
-            singleCollect.getEntities().get(functionIndex).addChildId(varEntity.getId());
+            singleCollect.getEntityById(functionIndex).addChildId(varEntity.getId());
         }
     }
 
@@ -460,7 +460,7 @@ public class ProcessTask {
             constEntity.setParentId(functionIndex);
             constEntity.setLocalBlockId(localBlockId);
             singleCollect.addEntity(constEntity);
-            singleCollect.getEntities().get(functionIndex).addChildId(constEntity.getId());
+            singleCollect.getEntityById(functionIndex).addChildId(constEntity.getId());
 
             //it 's not in localName, add this new uerr
             String name = terminalNode.getText();
@@ -475,7 +475,7 @@ public class ProcessTask {
     private void saveLocalName(int functionIndex, String name, int localBlockId, String type, String value, String usage) {
         LocalName localNameEntity = new LocalName(name, localBlockId, type, value);
         localNameEntity.updateUsage(usage);//add to function's localNames
-        ((AbsFUNEntity) singleCollect.getEntities().get(functionIndex)).addLocalName(localNameEntity);
+        ((AbsFUNEntity) singleCollect.getEntityById(functionIndex)).addLocalName(localNameEntity);
     }
 
     /** we don't know the role of the operand.
@@ -496,7 +496,7 @@ public class ProcessTask {
         if(name.equals(Configure.BLANK_IDENTIFIER) || name.equals(GoConstantString.NIL) ) {
             return;
         }
-        AbsFUNEntity functionEntity = (AbsFUNEntity) singleCollect.getEntities().get(functionIndex);
+        AbsFUNEntity functionEntity = (AbsFUNEntity) singleCollect.getEntityById(functionIndex);
         //if 1
         if (helperVisitor.isOperandNameInLeftAssignment(ctx)) {
             String usage = GoConstantString.OPERAND_NAME_USAGE_SET;
@@ -504,11 +504,11 @@ public class ProcessTask {
             if(id == -1) {
                 LocalName localName = new LocalName(name, localBlockId, Configure.NULL_STRING, Configure.NULL_STRING);
                 localName.updateUsage(usage);
-                ((AbsFUNEntity) singleCollect.getEntities().get(functionIndex)).addLocalName(localName);
+                ((AbsFUNEntity) singleCollect.getEntityById(functionIndex)).addLocalName(localName);
             }
             else
             {
-                ((AbsFUNEntity) singleCollect.getEntities().get(functionIndex)).getLocalNames().get(id).updateUsage(usage);
+                ((AbsFUNEntity) singleCollect.getEntityById(functionIndex)).getLocalNames().get(id).updateUsage(usage);
             }
         }
         else if (helperVisitor.isOperandNameInRightAssignment(ctx) ||
@@ -523,7 +523,7 @@ public class ProcessTask {
             }
             else
             {
-                ((AbsFUNEntity) singleCollect.getEntities().get(functionIndex)).getLocalNames().get(id).updateUsage(usage);
+                ((AbsFUNEntity) singleCollect.getEntityById(functionIndex)).getLocalNames().get(id).updateUsage(usage);
             }
         }
     }
@@ -552,7 +552,7 @@ public class ProcessTask {
         singleCollect.addEntity(fileEntity);
         int fileIndex = fileEntity.getId();
 
-        singleCollect.getEntities().get(packageIndex).addChildId(fileIndex);
+        singleCollect.getEntityById(packageIndex).addChildId(fileIndex);
         return fileIndex;
     }
 
@@ -619,10 +619,10 @@ public class ProcessTask {
      */
     public void processMethodCallPrimaryExpr(int functionIndex, String str) {
         if (functionIndex != -1) {
-            if (singleCollect.getEntities().get(functionIndex) instanceof AbsFUNEntity) {
-                ((AbsFUNEntity) singleCollect.getEntities().get(functionIndex)).addCalledFunction(str);
-            } else if (singleCollect.getEntities().get(functionIndex) instanceof MethodEntity) {
-                ((MethodEntity) singleCollect.getEntities().get(functionIndex)).addCalledFunction(str);
+            if (singleCollect.getEntityById(functionIndex) instanceof AbsFUNEntity) {
+                ((AbsFUNEntity) singleCollect.getEntityById(functionIndex)).addCalledFunction(str);
+            } else if (singleCollect.getEntityById(functionIndex) instanceof MethodEntity) {
+                ((MethodEntity) singleCollect.getEntityById(functionIndex)).addCalledFunction(str);
             }
         }
     }
@@ -638,10 +638,10 @@ public class ProcessTask {
      */
     public int processLocalBlock(int functionIndex, int parentBlockId, int depth, String blockName)
     {
-        AbsFUNEntity functionEntity = (AbsFUNEntity) singleCollect.getEntities().get(functionIndex);
+        AbsFUNEntity functionEntity = (AbsFUNEntity) singleCollect.getEntityById(functionIndex);
         int blockId = functionEntity.getLocalBlocks().size();
         LocalBlock localBlock = new LocalBlock(blockId, blockName, parentBlockId, depth);
-        ((AbsFUNEntity) singleCollect.getEntities().get(functionIndex)).addLocalBlock(localBlock);
+        ((AbsFUNEntity) singleCollect.getEntityById(functionIndex)).addLocalBlock(localBlock);
         return blockId;
     }
 
