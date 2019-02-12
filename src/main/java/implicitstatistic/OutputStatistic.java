@@ -10,11 +10,11 @@ import java.util.Map;
 
 public class OutputStatistic {
     private SingleCollect singleCollectInstance = SingleCollect.getSingleCollectInstance();
-    private StatisticForInfer statisticForInfer;
+    private StatisticMember statisticMember;
 
 
-    public OutputStatistic (StatisticForInfer statisticForInfer) {
-        this.statisticForInfer = statisticForInfer;
+    public OutputStatistic (StatisticMember statisticMember) {
+        this.statisticMember = statisticMember;
     }
 
     /**
@@ -50,7 +50,7 @@ public class OutputStatistic {
      */
     private ArrayList<String[]> doSummaryForMethod() {
         ArrayList<String[]> summaryDetail = new ArrayList<>();
-        for (Map.Entry<String, Map<Integer, ArrayList<Integer>>> entry : statisticForInfer.getMethodName2ClassMap().entrySet()) {
+        for (Map.Entry<String, Map<Integer, ArrayList<Integer>>> entry : statisticMember.getMethodName2ClassMap().entrySet()) {
             String methodName = entry.getKey();
             for (Map.Entry<Integer, ArrayList<Integer>> entry1 : entry.getValue().entrySet()) {
                 ArrayList<Integer> classIdList = entry1.getValue();
@@ -72,7 +72,7 @@ public class OutputStatistic {
      */
     private ArrayList<String[]> doSummaryForField() {
         ArrayList<String[]> summaryDetail = new ArrayList<>();
-        for (Map.Entry<String, ArrayList<Integer>> entry : statisticForInfer.getFieldName2ClassMap().entrySet()) {
+        for (Map.Entry<String, ArrayList<Integer>> entry : statisticMember.getFieldName2ClassMap().entrySet()) {
             String fieldName = entry.getKey();
             ArrayList<Integer> classIdList = entry.getValue();
             String classNameListStr = transformList(classIdList);

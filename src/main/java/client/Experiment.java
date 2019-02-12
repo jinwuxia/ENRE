@@ -3,11 +3,10 @@ package client;
 import implicitstatistic.OutputStatistic;
 import formator.Formator;
 import formator.fjson.JDepObject;
-import implicitstatistic.StatisticForInfer;
+import implicitstatistic.StatisticMember;
 import writer.ImplicitCallWriter;
 import writer.JsonWriter;
 import writer.UndWriter;
-import writer.WriterIntf;
 import util.Configure;
 
 
@@ -19,8 +18,8 @@ public class Experiment {
     protected static Configure configure = Configure.getConfigureInstance();
 
     public void experimentWorkflow() {
-        StatisticForInfer statisticForInfer = new StatisticForInfer();
-        OutputStatistic outputStatistic = new OutputStatistic(statisticForInfer);
+        StatisticMember statisticMember = new StatisticMember();
+        OutputStatistic outputStatistic = new OutputStatistic(statisticMember);
         outputStatistic.doSummary();
 
         generateImplicitExternalCallsForExperiments();
