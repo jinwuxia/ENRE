@@ -11,7 +11,6 @@ import hianalyzer.HiDeper;
 import priextractor.goextractor.GoRelationInf;
 import priextractor.py3extractor.PyRelationInf;
 import util.RelationInterface;
-import writer.JsonWriter;
 import writer.UndWriter;
 import writer.WriterIntf;
 import util.Configure;
@@ -21,37 +20,10 @@ import java.util.ArrayList;
 /**
  * it should be template method pattern, so that the steps and oder of processing are fixed.
  */
-public class TemplateWork {
-
+public class DepWork {
     protected static Configure configure = Configure.getConfigureInstance();
 
-
-    public final void workflow(String[] args) {
-        String lang = args[0];
-        String inputDir = args[1];
-        String usageDir = args[2];
-        String projectName = usageDir;
-        String depMask = "111111111";
-        if (args.length > 3) {
-            projectName = args[3];
-        }
-        if (args.length > 4) {
-            depMask = args[4];
-        }
-
-        config(lang, inputDir, usageDir, projectName);
-
-        if(lang.equals(Configure.EXTERNAL_DATA_SOURCE)) {
-            generateTraceClassCallsForExperiments();
-        }
-        else {
-            deperWorkflow(depMask);
-        }
-    }
-
-
-
-    private void deperWorkflow(String depMask) {
+    public void deperWorkflow(String depMask) {
         String[] depTypes = getDepType(depMask);
 
         long startTime = System.currentTimeMillis();
@@ -88,25 +60,6 @@ public class TemplateWork {
         //output the summary of the acquired results.
         summary();
 
-        //the followings are for experiments
-        generateUnderstandFormatsForExperiments(writer);
-        generateImplicitExternalCallsForExperiments(writer);
-    }
-
-
-    /**
-     * parse the input parameter, save into configure
-     *
-     * @param inputDir
-     * @param usageDir
-     * @param projectName
-     */
-    private void config(String lang, String inputDir, String usageDir, String projectName) {
-        configure.setLang(lang);
-        configure.setInputSrcPath(inputDir);
-        configure.setUsageSrcPath(usageDir);
-        configure.setAnalyzedProjectName(projectName);
-        configure.setDefault();
     }
 
 
@@ -155,39 +108,6 @@ public class TemplateWork {
             UndWriter undWriter = new UndWriter();
             System.out.println(undWriter.priDepStatis()+ "\n");
         }
-    }
-
-
-    //export formats consistent with understand, to compare with understand tool
-    private void generateUnderstandFormatsForExperiments(WriterIntf writer) {
-        writer.undTest();
-    }
-
-    //export external  implicit calls at file level as csv file
-    //export external implicit calls at file level
-    private void generateImplicitExternalCallsForExperiments(WriterIntf writer) {
-        //export external  implicit calls at file level as csv file
-        writer.exportImplicitExternalAtFileLevel();
-
-        //export external implicit calls at file level
-        String[] partialDepType = new String[]{Configure.RELATION_IMPLICIT_EXTERNAL_CALL};
-        Formator partialFormator = new Formator(partialDepType);
-        JDepObject partialJDepObject = partialFormator.getfJsonDataModel();
-        JsonWriter jsonWriter = new JsonWriter();
-        String partialJsonfile = configure.getAnalyzedProjectName() + "_implicit_dep.json";
-        jsonWriter.toJson(partialJDepObject, partialJsonfile);
-        System.out.println("Export " + partialJsonfile);
-    }
-
-    private void generateTraceClassCallsForExperiments() {
-        String[] partialDepType = new String[]{Configure.RELATION_DYNAMIC_TRACE_CLASS_CALL};
-        Formator partialFormator = new Formator(partialDepType);
-        JDepObject partialJDepObject = partialFormator.getfJsonDataModel();
-        JsonWriter jsonWriter = new JsonWriter();
-        String partialJsonfile = configure.getAnalyzedProjectName() + "_tracecall_dep.json";
-        jsonWriter.toJson(partialJDepObject, partialJsonfile);
-        System.out.println("Export " + partialJsonfile);
-
     }
 
 }
