@@ -38,12 +38,12 @@ public class TypeInfer {
      * @param varId
      */
     private void inferTypeForClassObjectVar(int varId) {
-        String value = ((AbsVAREntity) singleCollect.getEntities().get(varId)).getValue();
-        String name = singleCollect.getEntities().get(varId).getName();
+        String value = ((AbsVAREntity) singleCollect.getEntityById(varId)).getValue();
+        String name = singleCollect.getEntityById(varId).getName();
         String []  arr = value.split("\\(");
         String likelyClassName = arr[0];
 
-        int parentId = singleCollect.getEntities().get(varId).getParentId();
+        int parentId = singleCollect.getEntityById(varId).getParentId();
         if(parentId == -1) {
             return;
         }
@@ -52,12 +52,12 @@ public class TypeInfer {
             return;
         }
         String typeName = "";
-        if(singleCollect.getEntities().get(typeId) instanceof ClassEntity) {
-            ((AbsVAREntity) singleCollect.getEntities().get(varId)).setTypeId(typeId);
-            typeName = singleCollect.getEntities().get(typeId).getName();
+        if(singleCollect.getEntityById(typeId) instanceof ClassEntity) {
+            ((AbsVAREntity) singleCollect.getEntityById(varId)).setTypeId(typeId);
+            typeName = singleCollect.getEntityById(typeId).getName();
         }
         else {
-            ((AbsVAREntity) singleCollect.getEntities().get(varId)).setTypeId(-1);
+            ((AbsVAREntity) singleCollect.getEntityById(varId)).setTypeId(-1);
         }
         //System.out.println("var name: " + name + "; value:" + value + "; likelyClassName: " + likelyClassName + "; typeName: "  + typeName);
     }
@@ -74,14 +74,14 @@ public class TypeInfer {
          }
          int paraId = paras.get(0);
 
-         if(singleCollect.getEntities().get(paraId).getName().equals(PyConstantString.CLASS_METHOD_CLS_PARAMETER)) {
-             int classId = singleCollect.getEntities().get(entityId).getParentId();
+         if(singleCollect.getEntityById(paraId).getName().equals(PyConstantString.CLASS_METHOD_CLS_PARAMETER)) {
+             int classId = singleCollect.getEntityById(entityId).getParentId();
              if(classId != -1
-                     && singleCollect.getEntities().get(classId) instanceof ClassEntity) {
-                 ( (AbsVAREntity) singleCollect.getEntities().get(paraId)).setTypeId(classId);
-                 String methodname = singleCollect.getEntities().get(entityId).getName();
-                 String paramname = singleCollect.getEntities().get(paraId).getName();
-                 String typeName = singleCollect.getEntities().get(classId).getName();
+                     && singleCollect.getEntityById(classId) instanceof ClassEntity) {
+                 ( (AbsVAREntity) singleCollect.getEntityById(paraId)).setTypeId(classId);
+                 String methodname = singleCollect.getEntityById(entityId).getName();
+                 String paramname = singleCollect.getEntityById(paraId).getName();
+                 String typeName = singleCollect.getEntityById(classId).getName();
                  //System.out.println("method: " + methodname + "; para: " + paramname + "; typeName: "  + typeName);
 
              }

@@ -128,9 +128,9 @@ public class NameSearch {
      * @return
      */
     private int findInitModule(int packageId) {
-        for(int childId : singleCollect.getEntities().get(packageId).getChildrenIds()) {
-            if (singleCollect.getEntities().get(childId) instanceof ModuleEntity) {
-                String childName = ((ModuleEntity) singleCollect.getEntities().get(childId)).getModuleSimpleName();
+        for(int childId : singleCollect.getEntityById(packageId).getChildrenIds()) {
+            if (singleCollect.getEntityById(childId) instanceof ModuleEntity) {
+                String childName = ((ModuleEntity) singleCollect.getEntityById(childId)).getModuleSimpleName();
                 if (childName.equals(PyConstantString.INIT_MODULE_NAME)) {
                     return childId;
                 }
@@ -168,7 +168,7 @@ public class NameSearch {
                 addInParas(functionId, functionId);
 
                 int parentId = entity.getParentId();
-                if(parentId != -1 && singleCollect.getEntities().get(parentId) instanceof ModuleEntity) {
+                if(parentId != -1 && singleCollect.getEntityById(parentId) instanceof ModuleEntity) {
                     addInChildren(functionId, parentId);
                     addInImports(functionId, parentId);
                 }
@@ -199,8 +199,8 @@ public class NameSearch {
                 addInBaseClassName(classId, classId);
                 addInBaseClassChildren(classId, classId);
 
-                int parentId = singleCollect.getEntities().get(classId).getParentId();
-                if(parentId != -1 && singleCollect.getEntities().get(parentId) instanceof ModuleEntity) {
+                int parentId = singleCollect.getEntityById(classId).getParentId();
+                if(parentId != -1 && singleCollect.getEntityById(parentId) instanceof ModuleEntity) {
                     addInChildren(classId, parentId);
                     addInImports(classId, parentId);
                 }
@@ -217,7 +217,7 @@ public class NameSearch {
         for(AbsEntity entity :singleCollect.getEntities()) {
             if(entity instanceof PyMethodEntity) {
                 int methodId = entity.getId();
-                int parentId = singleCollect.getEntities().get(methodId).getParentId();
+                int parentId = singleCollect.getEntityById(methodId).getParentId();
                 addInChildren(methodId, methodId);
                 //self is conflicted with the parameter "self".
                 //parameter self is a new variable with different id with class.
@@ -226,8 +226,8 @@ public class NameSearch {
                 addInParas(methodId, methodId);
                 addInBaseClassName(methodId, parentId);
 
-                int grandPaId = singleCollect.getEntities().get(parentId).getParentId();
-                if(grandPaId != -1 && singleCollect.getEntities().get(grandPaId) instanceof ModuleEntity) {
+                int grandPaId = singleCollect.getEntityById(parentId).getParentId();
+                if(grandPaId != -1 && singleCollect.getEntityById(grandPaId) instanceof ModuleEntity) {
                     addInChildren(methodId, grandPaId);
                     addInImports(methodId, grandPaId);
                 }
@@ -264,10 +264,10 @@ public class NameSearch {
         if(entityId == -1) {
             return;
         }
-        for(int childId : singleCollect.getEntities().get(entityId).getChildrenIds()) {
-            String childName = singleCollect.getEntities().get(childId).getName();
-            if(singleCollect.getEntities().get(childId) instanceof ModuleEntity) {
-                childName = ((ModuleEntity) singleCollect.getEntities().get(childId)).getModuleSimpleName();
+        for(int childId : singleCollect.getEntityById(entityId).getChildrenIds()) {
+            String childName = singleCollect.getEntityById(childId).getName();
+            if(singleCollect.getEntityById(childId) instanceof ModuleEntity) {
+                childName = ((ModuleEntity) singleCollect.getEntityById(childId)).getModuleSimpleName();
             }
             addNameMap(scopeId, childName, childId);
         }
@@ -285,19 +285,19 @@ public class NameSearch {
         ArrayList<ImportStmt> importStmts = null;
         HashMap<Integer, Integer> importedId2Indexes = null;
 
-        if (singleCollect.getEntities().get(functionOrModuleId) instanceof ModuleEntity) {
-            importStmts =  ((ModuleEntity) singleCollect.getEntities().get(functionOrModuleId)).getImportStmts();
-            importedId2Indexes = ((ModuleEntity) singleCollect.getEntities().get(functionOrModuleId)).getImportedId2Indexs();
+        if (singleCollect.getEntityById(functionOrModuleId) instanceof ModuleEntity) {
+            importStmts =  ((ModuleEntity) singleCollect.getEntityById(functionOrModuleId)).getImportStmts();
+            importedId2Indexes = ((ModuleEntity) singleCollect.getEntityById(functionOrModuleId)).getImportedId2Indexs();
         }
-        else if(singleCollect.getEntities().get(functionOrModuleId) instanceof PyFunctionEntity) {
-            importStmts =  ((PyFunctionEntity) singleCollect.getEntities().get(functionOrModuleId)).getImportStmts();
-            importedId2Indexes = ((PyFunctionEntity) singleCollect.getEntities().get(functionOrModuleId)).getImportedId2Indexs();
+        else if(singleCollect.getEntityById(functionOrModuleId) instanceof PyFunctionEntity) {
+            importStmts =  ((PyFunctionEntity) singleCollect.getEntityById(functionOrModuleId)).getImportStmts();
+            importedId2Indexes = ((PyFunctionEntity) singleCollect.getEntityById(functionOrModuleId)).getImportedId2Indexs();
         }
         if(importedId2Indexes == null || importStmts == null) {
             return;
         }
 
-        for (Tuple<String, Integer> relation : singleCollect.getEntities().get(functionOrModuleId).getRelations()) {
+        for (Tuple<String, Integer> relation : singleCollect.getEntityById(functionOrModuleId).getRelations()) {
             if(relation.x.equals(Configure.RELATION_IMPORT)) {
                 int importedId = relation.y;
                 ImportStmt importStmt = importStmts.get(importedId2Indexes.get(importedId));
@@ -319,8 +319,8 @@ public class NameSearch {
         if(functionId == -1) {
             return;
         }
-        for (int paraId : ( (PyFunctionEntity) singleCollect.getEntities().get(functionId)).getParameters()) {
-            String paraName = singleCollect.getEntities().get(paraId).getName();
+        for (int paraId : ( (PyFunctionEntity) singleCollect.getEntityById(functionId)).getParameters()) {
+            String paraName = singleCollect.getEntityById(paraId).getName();
             addNameMap(scopeId, paraName, paraId);
         }
     }
@@ -346,8 +346,8 @@ public class NameSearch {
             int baseId = baseInfo.x;
             //String baseName = baseInfo.y;
             //addNameMap(scopeId, baseName, baseId);
-            for(int childId : singleCollect.getEntities().get(baseId).getChildrenIds()) {
-                String childName = singleCollect.getEntities().get(childId).getName();
+            for(int childId : singleCollect.getEntityById(baseId).getChildrenIds()) {
+                String childName = singleCollect.getEntityById(childId).getName();
                 addNameMap(scopeId, childName, childId);
             }
         }
@@ -364,8 +364,8 @@ public class NameSearch {
         if(classId == -1) {
             return;
         }
-        ArrayList<String> baseNameList = ((ClassEntity) singleCollect.getEntities().get(classId)).getBaseClassNameList();
-        ArrayList<Integer> baseIdList = ((ClassEntity) singleCollect.getEntities().get(classId)).getBaseClassIdList();
+        ArrayList<String> baseNameList = ((ClassEntity) singleCollect.getEntityById(classId)).getBaseClassNameList();
+        ArrayList<Integer> baseIdList = ((ClassEntity) singleCollect.getEntityById(classId)).getBaseClassIdList();
         for(int index = 0; index < baseIdList.size(); index++) {
             int baseId = baseIdList.get(index);
             String baseName = baseNameList.get(index);
@@ -402,7 +402,7 @@ public class NameSearch {
         if(classId == -1) {
             return;
         }
-        ClassEntity classEntity = (ClassEntity) singleCollect.getEntities().get(classId);
+        ClassEntity classEntity = (ClassEntity) singleCollect.getEntityById(classId);
         for(int index = 0; index < classEntity.getBaseClassIdList().size(); index++ ) {
             int baseClassId = classEntity.getBaseClassIdList().get(index);
             String baseClassName = classEntity.getBaseClassNameList().get(index);
@@ -423,12 +423,12 @@ public class NameSearch {
         if(id == -1) {
             return grandPaId;
         }
-        int parentId = singleCollect.getEntities().get(id).getParentId();
+        int parentId = singleCollect.getEntityById(id).getParentId();
         if(parentId == -1) {
             return grandPaId;
         }
 
-        grandPaId = singleCollect.getEntities().get(parentId).getParentId();
+        grandPaId = singleCollect.getEntityById(parentId).getParentId();
         return grandPaId;
     }
 

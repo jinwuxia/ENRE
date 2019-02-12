@@ -26,7 +26,7 @@ public class CallVisitor extends DepVisitor {
         for (AbsEntity entity : singleCollect.getEntities()) {
             if (entity instanceof PyFunctionEntity
                     || entity instanceof ModuleEntity) {
-                //System.out.println("inside: " + uerr.getName());
+                System.out.println("inside: " + entity.getName());
                 setCallDep(entity.getId());
 
             }
@@ -74,7 +74,7 @@ public class CallVisitor extends DepVisitor {
             else{
                 if(calleeId != -1) {
                     saveRelation(modOrFunId, calleeId, Configure.RELATION_CALL, Configure.RELATION_CALLED_BY);
-                    //System.out.println("find=      " +  singleCollect.getEntities().get(calleeId) + "\n");
+                    //System.out.println("find=      " +  singleCollect.getEntityById(calleeId) + "\n");
                     //System.out.println("regular Call found " + simpleCalleeStr);
                     continue;
                 }
@@ -93,10 +93,13 @@ public class CallVisitor extends DepVisitor {
                 saveRelation(modOrFunId, possibleCalleeId, Configure.RELATION_IMPLICIT_EXTERNAL_CALL, Configure.RELATION_IMPLICIT_EXTERNAL_CALLED_BY);
             }
             if(possibleCallees.size() != 0) {
-                //System.out.println("external call found " + simpleCalleeStr);
+                System.out.println("external call found: " + simpleCalleeStr + "; callee: " + calleeStr);
+                for (int tmp_index : possibleCallees) {
+                    System.out.println(singleCollect.getEntityById(tmp_index).getName());
+                }
             }
             else {
-                //System.out.println("external call not found " + simpleCalleeStr);
+                System.out.println("external call not found: " + simpleCalleeStr + "; callee: " + calleeStr);
             }
             //System.out.println("find =      " + calleeId + "\n\n");
         }
@@ -383,11 +386,11 @@ public class CallVisitor extends DepVisitor {
         //System.out.println("new= " + newCalledStrs);
 
         //update calledFunctions
-        if(singleCollect.getEntities().get(modOrFunId) instanceof PyFunctionEntity) {
-            ((PyFunctionEntity) singleCollect.getEntities().get(modOrFunId)).setCalledFunctions(newCalledStrs);
+        if(singleCollect.getEntityById(modOrFunId) instanceof PyFunctionEntity) {
+            ((PyFunctionEntity) singleCollect.getEntityById(modOrFunId)).setCalledFunctions(newCalledStrs);
         }
-        else if(singleCollect.getEntities().get(modOrFunId) instanceof ModuleEntity) {
-            ((ModuleEntity) singleCollect.getEntities().get(modOrFunId)).setCalledFunctions(newCalledStrs);
+        else if(singleCollect.getEntityById(modOrFunId) instanceof ModuleEntity) {
+            ((ModuleEntity) singleCollect.getEntityById(modOrFunId)).setCalledFunctions(newCalledStrs);
         }
 
     }
@@ -400,11 +403,11 @@ public class CallVisitor extends DepVisitor {
      */
     private ArrayList<String> getCalledFunctions(int modOrFunId) {
         ArrayList<String> calledStrs = null;
-        if(singleCollect.getEntities().get(modOrFunId) instanceof PyFunctionEntity) {
-            calledStrs = ((PyFunctionEntity) singleCollect.getEntities().get(modOrFunId)).getCalledFunctions();
+        if(singleCollect.getEntityById(modOrFunId) instanceof PyFunctionEntity) {
+            calledStrs = ((PyFunctionEntity) singleCollect.getEntityById(modOrFunId)).getCalledFunctions();
         }
-        else if(singleCollect.getEntities().get(modOrFunId) instanceof ModuleEntity) {
-            calledStrs = ((ModuleEntity) singleCollect.getEntities().get(modOrFunId)).getCalledFunctions();
+        else if(singleCollect.getEntityById(modOrFunId) instanceof ModuleEntity) {
+            calledStrs = ((ModuleEntity) singleCollect.getEntityById(modOrFunId)).getCalledFunctions();
         }
         return calledStrs;
     }

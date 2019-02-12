@@ -17,7 +17,7 @@ public class InheritVisitor extends DepVisitor{
                 for (String baseClassStr : ((ClassEntity) entity).getBaseClassNameList()) {
                     int baseId = findBaseClass(baseClassStr, entity.getId());
 
-                    ((ClassEntity) singleCollect.getEntities().get(entity.getId())).addBaseClassId(baseId);
+                    ((ClassEntity) entity).addBaseClassId(baseId);
 
                     if(baseId != -1) {
                         //System.out.println("entityclass: " + uerr.getName() + "; baseclass: " + baseClassStr + "; basedId: " +  baseId);
@@ -40,7 +40,7 @@ public class InheritVisitor extends DepVisitor{
      * @return
      */
     private int findBaseClass(String baseClassStr, int classId) {
-        int scopeId = singleCollect.getEntities().get(classId).getParentId();
+        int scopeId = singleCollect.getEntityById(classId).getParentId();
         int flag = 1;
         while(baseClassStr.contains(Configure.DOT)) { //imported
             Tuple<Integer, String> matchedRes;
@@ -74,10 +74,10 @@ public class InheritVisitor extends DepVisitor{
         Tuple<Integer, String> res = new Tuple<Integer, String>(-1, "");
         String [] arr = baseStr.split("\\.");
         String name = arr[0];
-        for(int childId : singleCollect.getEntities().get(scopeId).getChildrenIds()) {
-            String childName = singleCollect.getEntities().get(childId).getName();
-            if(singleCollect.getEntities().get(childId) instanceof ModuleEntity) {
-                childName = ((ModuleEntity) singleCollect.getEntities().get(childId)).getModuleSimpleName();
+        for(int childId : singleCollect.getEntityById(scopeId).getChildrenIds()) {
+            String childName = singleCollect.getEntityById(childId).getName();
+            if(singleCollect.getEntityById(childId) instanceof ModuleEntity) {
+                childName = ((ModuleEntity) singleCollect.getEntityById(childId)).getModuleSimpleName();
             }
             if(name.equals(childName)) {
                 res.x = childId;
@@ -95,14 +95,14 @@ public class InheritVisitor extends DepVisitor{
      */
     private Tuple<Integer, String> getMatchImportedId(String baseStr, int scopeId) {
         Tuple<Integer, String> res = new Tuple<Integer, String>(-1, "");
-        while(scopeId != -1 && !(singleCollect.getEntities().get(scopeId) instanceof ModuleEntity)) {
-            scopeId = singleCollect.getEntities().get(scopeId).getParentId();
+        while(scopeId != -1 && !(singleCollect.getEntityById(scopeId) instanceof ModuleEntity)) {
+            scopeId = singleCollect.getEntityById(scopeId).getParentId();
         }
         if(scopeId == -1) {
             exit(1);
         }
 
-        ModuleEntity moduleEntity = (ModuleEntity) singleCollect.getEntities().get(scopeId);
+        ModuleEntity moduleEntity = (ModuleEntity) singleCollect.getEntityById(scopeId);
         for(Tuple<String,Integer> relation : moduleEntity.getRelations()) {
             if(relation.x.equals(Configure.RELATION_IMPORT)) {
                 //int importedId = relation.y;
@@ -131,9 +131,9 @@ public class InheritVisitor extends DepVisitor{
         if (moduleId == -1) {
             return -1;
         }
-        for (int childId : singleCollect.getEntities().get(moduleId).getChildrenIds()) {
-            if(singleCollect.getEntities().get(childId) instanceof ClassEntity) {
-                ClassEntity childEntity = (ClassEntity) singleCollect.getEntities().get(childId);
+        for (int childId : singleCollect.getEntityById(moduleId).getChildrenIds()) {
+            if(singleCollect.getEntityById(childId) instanceof ClassEntity) {
+                ClassEntity childEntity = (ClassEntity) singleCollect.getEntityById(childId);
                 if(childEntity.getName().equals(className)) {
                     return childId;
                 }

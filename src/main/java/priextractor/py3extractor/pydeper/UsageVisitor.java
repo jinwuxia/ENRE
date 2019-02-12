@@ -37,9 +37,9 @@ public class UsageVisitor{
     private void buildUsageMapForEntity(int id) {
         ArrayList<LocalName> localNames = null;
         Map<String, Integer> name2IdMap = null;
-        if(singleCollect.getEntities().get(id) instanceof PyFunctionEntity) {
-            localNames = ((PyFunctionEntity) singleCollect.getEntities().get(id)).getLocalNames();
-            name2IdMap = ((PyFunctionEntity) singleCollect.getEntities().get(id)).getName2IdMap();
+        if(singleCollect.getEntityById(id) instanceof PyFunctionEntity) {
+            localNames = ((PyFunctionEntity) singleCollect.getEntityById(id)).getLocalNames();
+            name2IdMap = ((PyFunctionEntity) singleCollect.getEntityById(id)).getName2IdMap();
         }
         if(localNames == null || name2IdMap == null) {
             return;
@@ -53,8 +53,8 @@ public class UsageVisitor{
             for(Map.Entry<String, Integer> entry : localName.getWeightedUsages().entrySet()) {
                 String usage = entry.getKey();
                 int weight = entry.getValue();
-                if(singleCollect.getEntities().get(id) instanceof PyFunctionEntity) {
-                    ((PyFunctionEntity) singleCollect.getEntities().get(id)).updateFinalUsageMap(usage, localNameId, weight);
+                if(singleCollect.getEntityById(id) instanceof PyFunctionEntity) {
+                    ((PyFunctionEntity) singleCollect.getEntityById(id)).updateFinalUsageMap(usage, localNameId, weight);
                 }
             }
         }
@@ -67,10 +67,10 @@ public class UsageVisitor{
      * @param id
      */
     private void findLocalName2IDForEntity(int id) {
-        for (LocalName localNameObject : ((PyFunctionEntity) singleCollect.getEntities().get(id)).getLocalNames()) {
+        for (LocalName localNameObject : ((PyFunctionEntity) singleCollect.getEntityById(id)).getLocalNames()) {
             String localName = localNameObject.getName();
             int localNameEntityId = searchNameInScope(localName, id);
-            ((PyFunctionEntity) singleCollect.getEntities().get(id)).getName2IdMap().put(localName, localNameEntityId);
+            ((PyFunctionEntity) singleCollect.getEntityById(id)).getName2IdMap().put(localName, localNameEntityId);
         }
     }
 

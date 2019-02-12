@@ -16,8 +16,8 @@ public class PyRelationInf extends RelationInterface {
     private boolean isInnerClass(AbsEntity entity) {
         int parentId = entity.getParentId();
         if(parentId != -1 && (
-                singleCollect.getEntities().get(parentId) instanceof AbsCLSEntity
-                        || singleCollect.getEntities().get(parentId) instanceof PyFunctionEntity)) {
+                singleCollect.getEntityById(parentId) instanceof AbsCLSEntity
+                        || singleCollect.getEntityById(parentId) instanceof PyFunctionEntity)) {
             return true;
         }
         return false;
@@ -25,10 +25,10 @@ public class PyRelationInf extends RelationInterface {
 
     private boolean isInnerFunction(AbsEntity entity) {
         int parentId = entity.getParentId();
-        if(parentId != -1 && (singleCollect.getEntities().get(parentId) instanceof AbsCLSEntity)) {
+        if(parentId != -1 && (singleCollect.getEntityById(parentId) instanceof AbsCLSEntity)) {
             return true;
         }
-        if(parentId != -1 && singleCollect.getEntities().get(parentId) instanceof PyFunctionEntity) {
+        if(parentId != -1 && singleCollect.getEntityById(parentId) instanceof PyFunctionEntity) {
             return true;
         }
         return false;
@@ -36,7 +36,7 @@ public class PyRelationInf extends RelationInterface {
 
     private boolean isInnerMethod(AbsEntity entity) {
         int parentId = entity.getParentId();
-        if(parentId != -1 && singleCollect.getEntities().get(parentId) instanceof PyFunctionEntity) {
+        if(parentId != -1 && singleCollect.getEntityById(parentId) instanceof PyFunctionEntity) {
             return true;
         }
         return false;
@@ -85,7 +85,7 @@ public class PyRelationInf extends RelationInterface {
             //else if (entity instanceof AbsVAREntity) {
             //    int parentId = entity.getParentId();
             //    if(parentId != -1) {
-            //        if(!(singleCollect.getEntities().get(parentId) instanceof ClassEntity)) {
+            //        if(!(singleCollect.getEntityById(parentId) instanceof ClassEntity)) {
             //            varCount ++;
             //        }
             //    }
@@ -274,13 +274,13 @@ public class PyRelationInf extends RelationInterface {
     private ArrayList<Tuple<String, String>> getInheritDepForEntity(int classId, String level) {
         ArrayList<Tuple<String, String>> deps = new ArrayList<Tuple<String, String>>();
 
-        AbsEntity entity = singleCollect.getEntities().get(classId);
+        AbsEntity entity = singleCollect.getEntityById(classId);
         String className1 = entity.getName();
         String fileName1 = getEntityFileName(classId);
 
         for (Tuple<String, Integer> relation : entity.getRelations()) {
             if (relation.x.equals(Configure.RELATION_INHERIT)) {
-                String className2 = singleCollect.getEntities().get(relation.y).getName();
+                String className2 = singleCollect.getEntityById(relation.y).getName();
                 String fileName2 = getEntityFileName(relation.y);
                 if (level.equals(Configure.RELATION_LEVEL_FILE)) {
                     if (!fileName1.equals(Configure.NULL_STRING)
@@ -309,13 +309,13 @@ public class PyRelationInf extends RelationInterface {
      */
     private ArrayList<Tuple<String,String>> getImportDepsForEntity(int functionOrModuelId, String level) {
         ArrayList<Tuple<String, String>> deps = new ArrayList<Tuple<String, String>>();
-        String name1 = singleCollect.getEntities().get(functionOrModuelId).getName();
+        String name1 = singleCollect.getEntityById(functionOrModuelId).getName();
         String fileName1 = getEntityFileName(functionOrModuelId);
 
-        for(Tuple<String, Integer> relation : singleCollect.getEntities().get(functionOrModuelId).getRelations()) {
+        for(Tuple<String, Integer> relation : singleCollect.getEntityById(functionOrModuelId).getRelations()) {
             if(relation.x.equals(Configure.RELATION_IMPORT)) {
                 int id2 = relation.y;
-                String name2 = singleCollect.getEntities().get(id2).getName();
+                String name2 = singleCollect.getEntityById(id2).getName();
                 //System.out.println("name1=" + name1);
                 //System.out.println("name2=" + name2);
                 String fileName2 = getEntityFileName(id2);
@@ -349,20 +349,20 @@ public class PyRelationInf extends RelationInterface {
             return fileName;
         }
 
-        if(singleCollect.getEntities().get(entityId) instanceof AbsFLDEntity) {
+        if(singleCollect.getEntityById(entityId) instanceof AbsFLDEntity) {
             int initFileId = getInitForPackage(entityId);
             if(initFileId != -1) {
-                return singleCollect.getEntities().get(initFileId).getName();
+                return singleCollect.getEntityById(initFileId).getName();
             }
         }
 
         int fileId = entityId;
         while(fileId != -1
-            && !(singleCollect.getEntities().get(fileId) instanceof ModuleEntity)) {
-            fileId = singleCollect.getEntities().get(fileId).getParentId();
+            && !(singleCollect.getEntityById(fileId) instanceof ModuleEntity)) {
+            fileId = singleCollect.getEntityById(fileId).getParentId();
         }
-        if(fileId != -1 && singleCollect.getEntities().get(fileId) instanceof ModuleEntity) {
-            return singleCollect.getEntities().get(fileId).getName();
+        if(fileId != -1 && singleCollect.getEntityById(fileId) instanceof ModuleEntity) {
+            return singleCollect.getEntityById(fileId).getName();
         }
         return fileName;
     }
@@ -373,9 +373,9 @@ public class PyRelationInf extends RelationInterface {
      * @return
      */
     private int getInitForPackage(int pkgId) {
-        for (int childId : singleCollect.getEntities().get(pkgId).getChildrenIds()) {
-            if(singleCollect.getEntities().get(childId) instanceof ModuleEntity) {
-                String childName = singleCollect.getEntities().get(childId).getName();
+        for (int childId : singleCollect.getEntityById(pkgId).getChildrenIds()) {
+            if(singleCollect.getEntityById(childId) instanceof ModuleEntity) {
+                String childName = singleCollect.getEntityById(childId).getName();
                 if(childName.endsWith(PyConstantString.INIT_FILE_NAME)) {
                     return  childId;
                 }
@@ -387,14 +387,14 @@ public class PyRelationInf extends RelationInterface {
     private ArrayList<Tuple<String, String>> getFunctionCallForEntity(int functionId, String level) {
         ArrayList<Tuple<String, String>> deps = new ArrayList<Tuple<String, String>>();
 
-        AbsEntity entity = singleCollect.getEntities().get(functionId);
+        AbsEntity entity = singleCollect.getEntityById(functionId);
         String callerName = entity.getName();
         String callerFileName = getEntityFileName(functionId);
 
         for (Tuple<String, Integer> relation : entity.getRelations()) {
             if(relation.x.equals(Configure.RELATION_CALL)) {
                 int calleeId = relation.y;
-                String calleeName = singleCollect.getEntities().get(calleeId).getName();
+                String calleeName = singleCollect.getEntityById(calleeId).getName();
                 String calleeFileName = getEntityFileName(calleeId);
                 Tuple<String, String> dep;
                 if(level.equals(Configure.RELATION_LEVEL_FILE)) {
@@ -418,7 +418,7 @@ public class PyRelationInf extends RelationInterface {
 
     ArrayList<Tuple<String, String>>  getImplicitExternalCallForEntity(int id1, String level) {
         ArrayList<Tuple<String, String>> deps = new ArrayList<Tuple<String, String>>();
-        AbsEntity entity = singleCollect.getEntities().get(id1);
+        AbsEntity entity = singleCollect.getEntityById(id1);
         String fileName1 = getEntityFileName(id1);
         String name1 = entity.getName();
         for (Tuple<String, Integer> relation : entity.getRelations()) {
@@ -426,7 +426,7 @@ public class PyRelationInf extends RelationInterface {
             String deptype = relation.x;
             if (deptype.equals(Configure.RELATION_IMPLICIT_EXTERNAL_CALL)) {
                 String fileName2 = getEntityFileName(id2);
-                String name2 = singleCollect.getEntities().get(id2).getName();
+                String name2 = singleCollect.getEntityById(id2).getName();
                 Tuple<String, String> dep;
 
                 if (level.equals(Configure.RELATION_LEVEL_FILE)) {
@@ -454,14 +454,14 @@ public class PyRelationInf extends RelationInterface {
     private ArrayList<Tuple<String, String>> getFunctionSetsForEntity(int functionId, String level) {
         ArrayList<Tuple<String, String>> deps = new ArrayList<Tuple<String, String>>();
 
-        AbsEntity entity = singleCollect.getEntities().get(functionId);
+        AbsEntity entity = singleCollect.getEntityById(functionId);
         String callerName = entity.getName();
         String callerFileName = getEntityFileName(functionId);
 
         for (Tuple<String, Integer> relation : entity.getRelations()) {
             if (relation.x.equals(Configure.RELATION_SET)) {
                 int varId = relation.y;
-                String varName = singleCollect.getEntities().get(varId).getName();
+                String varName = singleCollect.getEntityById(varId).getName();
                 String varFileName = getEntityFileName(varId);
                 Tuple<String, String> dep;
                 if(level.equals(Configure.RELATION_LEVEL_FILE)) {
@@ -491,14 +491,14 @@ public class PyRelationInf extends RelationInterface {
     private ArrayList<Tuple<String, String>> getFunctionUseForEntity(int functionId, String level) {
         ArrayList<Tuple<String, String>> deps = new ArrayList<Tuple<String, String>>();
 
-        AbsEntity entity = singleCollect.getEntities().get(functionId);
+        AbsEntity entity = singleCollect.getEntityById(functionId);
         String callerName = entity.getName();
         String callerFileName = getEntityFileName(functionId);
 
         for (Tuple<String, Integer> relation : entity.getRelations()) {
             if (relation.x.equals(Configure.RELATION_USE)) {
                 int varId = relation.y;
-                String varName = singleCollect.getEntities().get(varId).getName();
+                String varName = singleCollect.getEntityById(varId).getName();
                 String varFileName = getEntityFileName(varId);
                 Tuple<String, String> dep;
                 if(level.equals(Configure.RELATION_LEVEL_FILE)) {

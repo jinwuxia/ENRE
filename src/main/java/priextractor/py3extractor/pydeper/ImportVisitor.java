@@ -42,10 +42,10 @@ public class ImportVisitor extends DepVisitor {
                     parentId = pkg2IdMap.get(dirName);
                 }
 
-                singleCollect.getEntities().get(entity.getId()).setParentId(parentId);
+                singleCollect.getEntityById(entity.getId()).setParentId(parentId);
                 if(parentId != -1
-                        && singleCollect.getEntities().get(parentId) instanceof AbsFLDEntity) {
-                    singleCollect.getEntities().get(parentId).addChildId(entity.getId());
+                        && singleCollect.getEntityById(parentId) instanceof AbsFLDEntity) {
+                    singleCollect.getEntityById(parentId).addChildId(entity.getId());
                 }
             }
         }
@@ -66,10 +66,10 @@ public class ImportVisitor extends DepVisitor {
                 if(pkg2IdMap.containsKey(dirName)) {
                     parentId = pkg2IdMap.get(dirName);
                 }
-                singleCollect.getEntities().get(entity.getId()).setParentId(parentId);
+                singleCollect.getEntityById(entity.getId()).setParentId(parentId);
                 if(parentId != -1
-                        && singleCollect.getEntities().get(parentId) instanceof AbsFLDEntity) {
-                    singleCollect.getEntities().get(parentId).addChildId(entity.getId());
+                        && singleCollect.getEntityById(parentId) instanceof AbsFLDEntity) {
+                    singleCollect.getEntityById(parentId).addChildId(entity.getId());
                 }
             }
         }
@@ -126,7 +126,7 @@ public class ImportVisitor extends DepVisitor {
                     //save (importedID, importsList_index) into uerr
                     saveId2Id(entity.getId(), id, index);
                     saveRelation(entity.getId(), id, Configure.RELATION_IMPORT, Configure.RELATION_IMPORTED_BY);
-                    //System.out.println("setImportDep: find " + singleCollect.getEntities().get(id).getName());
+                    //System.out.println("setImportDep: find " + singleCollect.getEntityById(id).getName());
                 }
                 else  {
                     //System.out.println("setImportDep: cannot find " + impstr);
@@ -172,10 +172,10 @@ public class ImportVisitor extends DepVisitor {
             return findPkgOrMod(str, parentId);
         }
 
-        for (int childId : singleCollect.getEntities().get(parentId).getChildrenIds()) {
-            String name = singleCollect.getEntities().get(childId).getName();
-            if(singleCollect.getEntities().get(childId) instanceof ModuleEntity) {
-                name = ((ModuleEntity) singleCollect.getEntities().get(childId)).getModuleSimpleName();
+        for (int childId : singleCollect.getEntityById(parentId).getChildrenIds()) {
+            String name = singleCollect.getEntityById(childId).getName();
+            if(singleCollect.getEntityById(childId) instanceof ModuleEntity) {
+                name = ((ModuleEntity) singleCollect.getEntityById(childId)).getModuleSimpleName();
                 //System.out.println(name);
             }
             if(name.equals(str)) {
@@ -200,8 +200,8 @@ public class ImportVisitor extends DepVisitor {
             }
         }
         else { //scope != -1, it's parent id
-            for(int childId : singleCollect.getEntities().get(scopeId).getChildrenIds()) {
-                AbsEntity entity = singleCollect.getEntities().get(childId);
+            for(int childId : singleCollect.getEntityById(scopeId).getChildrenIds()) {
+                AbsEntity entity = singleCollect.getEntityById(childId);
                 if(isStrAModOrPkg(entity, str)) {
                     return entity.getId();
                 }
@@ -239,11 +239,11 @@ public class ImportVisitor extends DepVisitor {
      * @param index
      */
     private void saveId2Id(int entityId, int importedId, int index) {
-        if(singleCollect.getEntities().get(entityId) instanceof ModuleEntity) {
-            ((ModuleEntity) singleCollect.getEntities().get(entityId)).updateImportedId2Indexs(importedId, index);
+        if(singleCollect.getEntityById(entityId) instanceof ModuleEntity) {
+            ((ModuleEntity) singleCollect.getEntityById(entityId)).updateImportedId2Indexs(importedId, index);
         }
-        else if (singleCollect.getEntities().get(entityId) instanceof PyFunctionEntity) {
-            ((PyFunctionEntity) singleCollect.getEntities().get(entityId)).updateImportedId2Indexs(importedId, index);
+        else if (singleCollect.getEntityById(entityId) instanceof PyFunctionEntity) {
+            ((PyFunctionEntity) singleCollect.getEntityById(entityId)).updateImportedId2Indexs(importedId, index);
         }
     }
 
