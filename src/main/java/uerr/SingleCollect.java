@@ -32,7 +32,9 @@ public class SingleCollect {
         entities.add(entity);
     }
 
-
+    public AbsEntity getEntityById(int id) {
+        return entities.get(id);
+    }
 
     public boolean isFolder(int id) {
         if(id == -1) {
