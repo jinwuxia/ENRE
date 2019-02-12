@@ -17,7 +17,7 @@ public class ImplicitCallWriter {
         CsvWriter writer = new CsvWriter();
         Configure configure = Configure.getConfigureInstance();
 
-        String fileName = configure.getAnalyzedProjectName() +"implicit_external_file_deps.csv";
+        String fileName = configure.getAnalyzedProjectName() +"_implicit_external_file_dep.csv";
         Map<String, Map<String, Integer>> depmap = getImpFileDepMap();
         List<String[]> depList = getImpFileDepList(depmap);
         writer.writeCsv(depList, fileName);
