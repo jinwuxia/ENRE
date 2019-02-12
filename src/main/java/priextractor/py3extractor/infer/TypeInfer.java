@@ -11,6 +11,11 @@ import util.Configure;
 
 import java.util.ArrayList;
 
+/**
+ * This TypeInfer focus on the explicit type:
+ * eg.  obj  =  ClassName()
+ * eg.  function func(cls,...)
+ */
 public class TypeInfer {
     private SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
     private NameSearch nameSearch = NameSearch.getNameSearchInstance();
@@ -19,13 +24,21 @@ public class TypeInfer {
         for(AbsEntity entity : singleCollect.getEntities()) {
 
             if(entity instanceof AbsVAREntity) {
+                /**
+                 * * if var_entity is obj = ClassName() , so this var is a class object.
+                 */
                 if(((AbsVAREntity) entity).getValue() != null &&
                         ((AbsVAREntity) entity).getValue().contains(Configure.LEFT_PARENTHESES)
                         && ((AbsVAREntity) entity).getValue().contains(Configure.RIGHT_PARENTHESES)) {
                     inferTypeForClassObjectVar(entity.getId());
                 }
+
             }
 
+            /**
+             * if entity is a parameter named as cls, as the parameter of class's method.
+             * based on the tradition, cls refers to the class type.
+             */
             if(entity instanceof ClassMethodEntity) {
                 inferTypeForParaCls(entity.getId());
             }
@@ -64,7 +77,6 @@ public class TypeInfer {
 
     /**
      * type infer for classmethod's first parameter: cls
-
      * @param entityId
      */
     private void inferTypeForParaCls(int entityId) {

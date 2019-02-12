@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * build scopeMap for each uerr
- *  in each scope (module, class, function, method), record the visible name and its binding uerr
+ * build scopeMap for each entity
+ *  in each scope (module, class, function, method), record the visible name and its binding entity
  *
  *  Module: children, imported name.
  *  Function: children, parameter, located module's visible name, imported name.
