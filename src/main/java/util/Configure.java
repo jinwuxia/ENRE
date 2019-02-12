@@ -121,6 +121,7 @@ public class Configure {
     private String attributeName = analyzedProjectName + "-sdsm";
     private String schemaVersion = "1.0";
 
+
     public void setDefault() {
         outputJsonFile = analyzedProjectName  + "_dep.json";
         outputDotFile = analyzedProjectName + ".dot";
@@ -171,6 +172,7 @@ public class Configure {
             this.analyzedProjectName = analyzedProjectName + "/" + analyzedProjectName;
         }
     }
+
 
     public String getOutputJsonFile() {
         return outputJsonFile;
