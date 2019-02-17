@@ -60,7 +60,7 @@ public class ModuleEntity extends AbsFILEntity {
      * even if calleeStr is already added, it still be added
      * @param calleeStr
      */
-    public void addFunctionCall(String calleeStr) {
+    public void addCalledFunction(String calleeStr) {
         this.calledFunctions.add(calleeStr);
     }
 

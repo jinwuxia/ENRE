@@ -66,12 +66,18 @@ public class PyConstantString {
             "in",
             "raise"
     };
+    public static final String RESOLVED_TYPE_SUPER = "super";
+    public static final String RESOLVED_TYPE_BUILTIN = "builtin";
+    public static final String RESOLVED_TYPE_REGULAR = "regular";
+    public static final String RESOLVED_TYPE_LIBRARY = "library";
+    public static final String RESOLVED_TYPE_IMPLICIT = "implicit";
+    public static final String RESOLVED_TYPE_UNKNOWN = "unknown";
 
 
     public static String[] BUILT_IN_FUNCTIONS = {
             "abs",	"delattr",	"hash",	"memoryview",	"set",
             "all",	"dict",	"help",	"min",	"setattr",
-            "any",	"dir",	"hex",	"next",	"slice",
+            "any",	"dir",	"hex",	"next",	"slice", "exit",
             "ascii",	"divmod",	"id",	"object",	"sorted",
             "bin",	"enumerate",	"input",	"oct",	"staticmethod",
             "bool",	"eval",	"int",	"open",	"str",

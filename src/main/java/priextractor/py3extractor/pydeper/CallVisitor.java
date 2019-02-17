@@ -1,5 +1,6 @@
 package priextractor.py3extractor.pydeper;
 
+import entitybuilder.pybuilder.pyentity.ImportStmt;
 import uerr.AbsEntity;
 import entitybuilder.pybuilder.PyConstantString;
 import entitybuilder.pybuilder.pyentity.ModuleEntity;
@@ -26,7 +27,7 @@ public class CallVisitor extends DepVisitor {
         for (AbsEntity entity : singleCollect.getEntities()) {
             if (entity instanceof PyFunctionEntity
                     || entity instanceof ModuleEntity) {
-                System.out.println("inside: " + entity.getName());
+                //System.out.println("inside: " + entity.getName());
 
                 //modify calleeStr list: split the form of x().y() into x() and x().y().
                 int modOrFunId = entity.getId();
@@ -50,54 +51,136 @@ public class CallVisitor extends DepVisitor {
             return;
         }
         ArrayList<Integer> idList = new ArrayList<Integer>();
+        ArrayList<String> resolveTypeList = new ArrayList<>();
         for(int index = 0; index < calledFuns.size(); index ++) {
             String calleeStr = calledFuns.get(index);
             //System.out.println("oldCallee= " + calleeStr);
             //simplify calleeStr, making it have only one "()
             String simpleCalleeStr = simplifyCalleeStr(index, calledFuns, idList);
 
-            //case 1: callee is built-in function/Exception or super.m()
-            boolean isResolved = isResoveCase1(calleeStr, simpleCalleeStr);
+            //isresolved before, but id = -1
+            if(simpleCalleeStr.equals(PyConstantString.CUSTOM_PRE + "-1") && index > 0) {
+                String pre_type = resolveTypeList.get(index - 1);
+                if (isResolvedBefore(pre_type)){
+                    resolveTypeList.add(pre_type);
+                    idList.add(-1);
+                    System.out.println("call resolve," + pre_type + ","+ calleeStr + "," + simpleCalleeStr);
+                    continue;
+                }
+            }
+            //case 0: callee is super.m()
+            boolean isResolved = isResoveCase0(calleeStr, simpleCalleeStr);
             int calleeId = -1;
             if(isResolved) {
                 idList.add(calleeId);
+                resolveTypeList.add(PyConstantString.RESOLVED_TYPE_SUPER);
+                continue;
             }
-
-            //case 2: regular cases (same to static-typing language), it includes implicit_internal_call and regular explciit call.
-            calleeId = resolveCase2(modOrFunId, calleeStr, simpleCalleeStr);
-            idList.add(calleeId);
-            if(calleeId != -1) {
+            //case 1: callee is built-in function, built-in ExceptionType(), or methods of built-in type like string.join().
+            isResolved = isResolveCase1(calleeStr, simpleCalleeStr);
+            calleeId = -1;
+            if(isResolved) {
+                idList.add(calleeId);
+                resolveTypeList.add(PyConstantString.RESOLVED_TYPE_BUILTIN);
                 continue;
             }
 
-            //case 3: others, try to resolve use implict-resolution strategy
-            isResolved = isResolveCase3(modOrFunId, calleeStr, simpleCalleeStr);
+            //case 2: regular cases (same to static-typing language), it includes implicit_internal_call and regular explicit call.
+            calleeId = resolveCase2(modOrFunId, calleeStr, simpleCalleeStr);
+            idList.add(calleeId);
+            if(calleeId != -1) {
+                resolveTypeList.add(PyConstantString.RESOLVED_TYPE_REGULAR);
+                continue;
+            }
 
-            //case 4: the ones which are not resolved.
-            if (!isResolved) {
+            //case 3: import library, calledId = -1.
+            // In the future, if the library src code is available, we can resolve the id.
+            isResolved = isResolveCase3(modOrFunId, calleeStr);
+            if(isResolved) {
+                resolveTypeList.add(PyConstantString.RESOLVED_TYPE_LIBRARY);
+                continue;
+            }
+
+            //case 4: others, try to resolve use implicit-resolution strategy
+            isResolved = isResolveCase4(modOrFunId, calleeStr, simpleCalleeStr);
+            if (isResolved) {
+                resolveTypeList.add(PyConstantString.RESOLVED_TYPE_IMPLICIT);
+            }
+            else
+            {   //case 5: the ones which are not resolved.
+                resolveTypeList.add(PyConstantString.RESOLVED_TYPE_UNKNOWN);
                 System.out.println("call resolve,unknown," + calleeStr + "," + simpleCalleeStr);
             }
         }
     }
 
+     private boolean isResolvedBefore(String pre_type) {
+         if (pre_type.equals(PyConstantString.RESOLVED_TYPE_BUILTIN)
+                 ||pre_type.equals(PyConstantString.RESOLVED_TYPE_LIBRARY)
+                 ||pre_type.equals(PyConstantString.RESOLVED_TYPE_SUPER)
+                 ||pre_type.equals(PyConstantString.RESOLVED_TYPE_IMPLICIT)
+                 ||pre_type.equals(PyConstantString.RESOLVED_TYPE_UNKNOWN)) {
+             return true;
+         }
+         return false;
+     }
+
 
     /**
-     * case 1: callee is built-in function/Exception or super.m()
+     * case 0: callee is super.m()
+     *
+     * if super(),call parent.init()
+     *      *      * if super().method1(),  and if parent are more than one,
+     *      *      * we don't know which parent the super will refer to, until we see method1().
+     *      *      * beacuse not every parent has method1() method member.
      * @param calleeStr
      * @param simpleCalleeStr
      * @return
      */
-    private  boolean isResoveCase1(String calleeStr, String simpleCalleeStr) {
-        if (isBuiltinFunction(simpleCalleeStr) || isBuiltinException(simpleCalleeStr)) {
-            System.out.println("call resolve,built-in," + calleeStr + "," + simpleCalleeStr);
-            return true;
-        }
-        if(isSuperCallee(simpleCalleeStr)) {
+    private  boolean isResoveCase0(String calleeStr, String simpleCalleeStr) {
+        String destStr = simpleCalleeStr.split("\\(")[0];
+        if(destStr.equals(PyConstantString.SUPER)) {
             System.out.println("call resolve,super," + calleeStr + "," + simpleCalleeStr);
             return true;
         }
         return false;
     }
+
+    /**
+     * case 1: callee is built-in function/Exception, otherType like String
+     * @param calleeStr
+     * @param simpleCalleeStr
+     * @return
+     */
+    private boolean isResolveCase1(String calleeStr, String simpleCalleeStr) {
+        boolean isResolved = false;
+        String str = simpleCalleeStr.split("\\(")[0];
+
+        if (!str.contains(Configure.DOT)) {
+            if (isContained(str, PyConstantString.BUILT_IN_FUNCTIONS)
+                    || isContained(str, PyConstantString.BUILT_IN_EXCEPTIONS)) {
+                isResolved = true;
+            }
+        }
+        else {
+            String [] strTmp = str.split("\\.");
+            str = strTmp[strTmp.length - 1];
+            if(isContained(str, PyConstantString.BUILT_IN_LIST_METHODS)
+                || isContained(str, PyConstantString.BUILT_IN_DICT_METHODS)
+                || isContained(str, PyConstantString.BUILT_IN_FILE_METHOD)
+                || isContained(str, PyConstantString.BUILT_IN_SET_METHODS)
+                || isContained(str, PyConstantString.BUILT_IN_STRING_METHODS)
+                || isContained(str, PyConstantString.BUILT_IN_TUPLE_METHODS)) {
+                isResolved = true;
+            }
+        }
+
+        if(isResolved) {
+            System.out.println("call resolve,builtin," + calleeStr + "," + simpleCalleeStr);
+        }
+        return isResolved;
+    }
+
 
     /**
      * case 2: regular cases (same to static-typing language):
@@ -124,11 +207,27 @@ public class CallVisitor extends DepVisitor {
         return calleeId;
     }
 
+    /**
+     * case 3: x.y() or x.y().z(). the begining x is the entity imported from python library.
+     * @param modOrFunId
+     * @param calleeStr
+     * @return
+     */
+    private boolean isResolveCase3(int modOrFunId, String calleeStr) {
+        String possibleImportedName = calleeStr.split("\\(")[0].split("\\.")[0];
+        Map<String,Integer> importedNameMap = getAllImportedName(modOrFunId);
+        if (importedNameMap.containsKey(possibleImportedName)) {
+            System.out.println("call resolve,library," + calleeStr + "," + calleeStr);
+            return true;
+        }
+        return false;
+    }
+
 
     /**
-     * case 3: others, try to resolve use implict-resolution strategy
+     * case 4: others, try to resolve use implict-resolution strategy
      */
-    private boolean isResolveCase3(int modOrFunId, String calleeStr, String simpleCalleeStr) {
+    private boolean isResolveCase4(int modOrFunId, String calleeStr, String simpleCalleeStr) {
         ImplicitCallResolver implicitCallResolver = new ImplicitCallResolver();
         ArrayList<Integer> possibleCallees = implicitCallResolver.resolveCallee(modOrFunId, calleeStr, simpleCalleeStr);
         if(possibleCallees.size() != 0) {
@@ -188,23 +287,6 @@ public class CallVisitor extends DepVisitor {
     }
 
 
-    /**
-     * if super(),call parent.init()
-     *      * if super().method1(),  and if parent are more than one,
-     *      * we don't know which parent the super will refer to, until we see method1().
-     *      * beacuse not every parent has method1() method member.
-     * @param simpleCalleeStr
-     * @return
-     */
-    private boolean isSuperCallee(String simpleCalleeStr) {
-        String destStr = simpleCalleeStr.split("\\(")[0];
-        //System.out.println("newCallee= " + destStr);
-        if(destStr.equals(PyConstantString.SUPER)) {
-            return true;
-        }
-        return false;
-    }
-
 
     /**
      * searcher callee which are not "super", not builtin functions.
@@ -247,32 +329,9 @@ public class CallVisitor extends DepVisitor {
     }
 
 
-
-    /**
-     * judge whether str is builtin function or not.
-     * @param simpleCalleeStr
-     * @return
-     */
-    private boolean isBuiltinFunction(String simpleCalleeStr) {
-        String str = simpleCalleeStr.split("\\(")[0];
-        if(str.contains(Configure.DOT)) {
-            return false;
-        }
-        for(int i = 0; i < PyConstantString.BUILT_IN_FUNCTIONS.length; i++) {
-            if(str.equals(PyConstantString.BUILT_IN_FUNCTIONS[i])) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isBuiltinException(String simpleCalleeStr) {
-        String str = simpleCalleeStr.split("\\(")[0];
-        if(str.contains(Configure.DOT)) {
-            return false;
-        }
-        for(int i = 0; i < PyConstantString.BUILT_IN_EXCEPTIONS.length; i++) {
-            if(str.equals(PyConstantString.BUILT_IN_EXCEPTIONS[i])) {
+    private boolean isContained(String str, String[] strList) {
+        for(int i = 0; i < strList.length; i++) {
+            if(str.equals(strList[i])) {
                 return true;
             }
         }
@@ -533,5 +592,54 @@ public class CallVisitor extends DepVisitor {
         return count;
     }
 
+
+    /**
+     * get importedNameMap[name]=0/1 for function or module
+     * @param modOrFunId  the id of funtion or module
+     * @return
+     */
+    private Map<String, Integer> getAllImportedName(int modOrFunId) {
+        Map<String, Integer> mapRes = new HashMap();
+        AbsEntity entity = singleCollect.getEntityById(modOrFunId);
+        ArrayList<ImportStmt> importStmts = new ArrayList<>();
+
+        if(entity instanceof ModuleEntity) {
+            ModuleEntity moduleEntity = (ModuleEntity) entity;
+            importStmts.addAll(moduleEntity.getImportStmts());
+        }
+        else if (entity instanceof PyFunctionEntity) {
+            PyFunctionEntity functionEntity = (PyFunctionEntity) entity;
+            importStmts.addAll(functionEntity.getImportStmts());
+
+            int moduleId = findLoactedModuleId(modOrFunId);
+            if(moduleId != -1) {
+                ModuleEntity moduleEntity = (ModuleEntity) singleCollect.getEntityById(moduleId);
+                importStmts.addAll(moduleEntity.getImportStmts());
+            }
+        }
+        for (ImportStmt importStmt : importStmts) {
+            String name = importStmt.getImpor();
+            String as = importStmt.getAs();
+            if(!as.equals("")) {
+                name = as;
+            }
+            mapRes.put(name, 1);
+        }
+        return mapRes;
+    }
+
+
+    /**
+     *
+     * @param funcId
+     * @return
+     */
+    private int findLoactedModuleId(int funcId) {
+        int modId = funcId;
+        while(modId != -1 && !(singleCollect.getEntityById(modId) instanceof ModuleEntity)) {
+            modId = singleCollect.getEntityById(modId).getParentId();
+        }
+        return modId;
+    }
 
 }

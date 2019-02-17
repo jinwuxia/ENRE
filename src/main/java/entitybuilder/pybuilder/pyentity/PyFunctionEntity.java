@@ -1,6 +1,7 @@
 package entitybuilder.pybuilder.pyentity;
 
 import uerr.AbsFUNEntity;
+import uerr.LocalName;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +16,14 @@ public class PyFunctionEntity extends AbsFUNEntity {
     //store the final usagewithweight ("usage", (nameEntityId, weight))/
     // in python parser, setdep and usedep will use this to save relations
     protected Map<String, Map<Integer, Integer>> finalUsageMap = new HashMap<String, Map<Integer, Integer>>();
+
+
+    protected ArrayList<String> calledFunctions = new ArrayList<String>();
+
+    //generate in the first visit. will be further processed in the second visit.
+    //in the second visit, all these information is atored in name2IdMap, name2UsageMap, name2RoleMap.
+    protected ArrayList<LocalName> localNames = new ArrayList<LocalName>(); //the initial Names appear in a function
+    protected Map<String, Integer> name2IdMap = new HashMap<String, Integer>(); //map from the usedName inside function into the entityId.
 
 
 
@@ -61,5 +70,61 @@ public class PyFunctionEntity extends AbsFUNEntity {
         int oldWeight = finalUsageMap.get(usage).get(nameEntityId);
         finalUsageMap.get(usage).put(nameEntityId, oldWeight + weight);
     }
+
+
+    /**
+     * go python
+     * @param functionName
+     */
+    public void addCalledFunction(String functionName) {
+        calledFunctions.add(functionName);
+    }
+
+    /**
+     * python
+     * @return
+     */
+    public ArrayList<String> getCalledFunctions() {
+        return calledFunctions;
+    }
+
+    /**
+     * python
+     * @param calledFunctions
+     */
+    public void setCalledFunctions(ArrayList<String> calledFunctions) {
+        this.calledFunctions.clear();
+        this.calledFunctions.addAll(calledFunctions);
+    }
+
+
+
+
+    /**
+     * python
+     * @param oneLocalName
+     */
+    public void addLocalName(LocalName oneLocalName) {
+        localNames.add(oneLocalName);
+    }
+
+    /**
+     * python
+     * @return
+     */
+    public ArrayList<LocalName> getLocalNames() {
+        return localNames;
+    }
+
+    /** python
+     *
+     * @return
+     */
+    public Map<String, Integer> getName2IdMap() {
+        return name2IdMap;
+    }
+
+
+
 
 }

@@ -5,12 +5,9 @@ import uerr.SingleCollect;
 import entitybuilder.pybuilder.PyConstantString;
 import entitybuilder.pybuilder.pyentity.*;
 import util.Configure;
-import util.OsUtil;
 import util.StringUtil;
 
 import java.util.ArrayList;
-
-import static java.lang.System.exit;
 
 public class PyProcessTask {
 
@@ -429,8 +426,9 @@ public class PyProcessTask {
      */
     private int processLocOrGloName(int moduleOrFunctionId, String str, String usage) {
         int resId = -1;
+        /*
         if(isStrAVar(str)) { // without (), without dot
-            resId = processNameWithoutDot(moduleOrFunctionId,  str, usage);
+            resId = processName(moduleOrFunctionId,  str, usage);
         }
         else if(isStrACallee(str)) { //such as x.y(), y(), self.y()
             resId = processCallee(moduleOrFunctionId, str);
@@ -439,8 +437,17 @@ public class PyProcessTask {
             //because the name has dot: x.y,
             // so x should be already appear in var in a separate way.
             // or, x is a imported name.
-            resId = processNameWithDot(moduleOrFunctionId, str, usage);
+            resId = processName(moduleOrFunctionId, str, usage);
         }
+        */
+
+        if(isStrACallee(str)) { //such as x.y(), y(), self.y()
+            resId = processCallee(moduleOrFunctionId, str);
+        }
+        else {
+            resId = processName(moduleOrFunctionId, str, usage);
+        }
+
         return resId;
     }
 
@@ -465,6 +472,7 @@ public class PyProcessTask {
     }
 
 
+
     /**
      * the name with dot.
      * it must be X.Y.  X should be already added into var or imported name,
@@ -472,6 +480,7 @@ public class PyProcessTask {
      * @param parentId  moduleId or functionId
      * @param str
      */
+    /*
     private int processNameWithDot(int parentId, String str, String usage) {
         int nameIndex = -1;
 
@@ -483,16 +492,22 @@ public class PyProcessTask {
         }
         return nameIndex;
     }
+    */
 
 
-    /** it is processed in the same way with processNameWithDot.
-     * May be in the future, it is different,so we duplicate it.
+    /**
+     *
+     * the name with dot.
+     *      * it must be X.Y.  X should be already added into var or imported name,
+     *      * so  add X.y into localName
+     *
+     *
      * the name without dot.
      * it must be Y.  Y should be already added into var.
      * @param parentId  moduleId or functionId
      * @param str
      */
-    private int processNameWithoutDot(int parentId, String str, String usage) {
+    private int processName(int parentId, String str, String usage) {
         int nameIndex = -1;
         //maybe duplicated, check if exist.
         if(str.equals(PyConstantString.SELF)) {  //if local name = self, do not process, then return.
@@ -623,7 +638,7 @@ public class PyProcessTask {
         int nameIndex = -1;
         if(singleCollect.getEntityById(parentId) instanceof ModuleEntity) {
             nameIndex = ((ModuleEntity) singleCollect.getEntityById(parentId)).getCalledFunctions().size();
-            ((ModuleEntity) singleCollect.getEntityById(parentId)).addFunctionCall(str);
+            ((ModuleEntity) singleCollect.getEntityById(parentId)).addCalledFunction(str);
             //((ModuleEntity) singleCollect.getEntityById(parentId)).updateCalledWeightedFunction(str);
         }
         else if (singleCollect.getEntityById(parentId) instanceof PyFunctionEntity) {

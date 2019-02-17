@@ -22,6 +22,14 @@ public class GoFunEntity extends AbsFUNEntity {
     protected ArrayList<LocalBlock> localBlocks = new ArrayList<LocalBlock>();
 
 
+    protected ArrayList<String> calledFunctions = new ArrayList<String>();
+
+    //generate in the first visit. will be further processed in the second visit.
+    //in the second visit, all these information is atored in name2IdMap, name2UsageMap, name2RoleMap.
+    protected ArrayList<LocalName> localNames = new ArrayList<LocalName>(); //the initial Names appear in a function
+    protected Map<String, Integer> name2IdMap = new HashMap<String, Integer>(); //map from the usedName inside function into the entityId.
+
+
     public GoFunEntity() {}
 
     public GoFunEntity(String name) {
@@ -144,5 +152,53 @@ public class GoFunEntity extends AbsFUNEntity {
     public void addLocalBlock(LocalBlock block) {
         localBlocks.add(block);
     }
+
+
+    /**
+     * go
+     * @param functionName
+     */
+    public void addCalledFunction(String functionName) {
+        calledFunctions.add(functionName);
+    }
+
+    /**
+     * go
+     * @return
+     */
+    public ArrayList<String> getCalledFunctions() {
+        return calledFunctions;
+    }
+
+
+
+
+
+    /**
+     * go
+     * @param oneLocalName
+     */
+    public void addLocalName(LocalName oneLocalName) {
+        localNames.add(oneLocalName);
+    }
+
+    /**
+     * go
+     * @return
+     */
+    public ArrayList<LocalName> getLocalNames() {
+        return localNames;
+    }
+
+    /** go
+     *
+     * @return
+     */
+    public Map<String, Integer> getName2IdMap() {
+        return name2IdMap;
+    }
+
+
+
 
 }
