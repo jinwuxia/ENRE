@@ -1,8 +1,7 @@
 package entitybuilder.gobuilder.goentity;
 
-import uerr.AbsFUNEntity;
 
-public class MethodEntity extends AbsFUNEntity {
+public class MethodEntity extends GoFunEntity {
     //private AbsVAREntity receiver;
     private int receiverVarId;
 

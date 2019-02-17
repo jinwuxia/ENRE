@@ -78,9 +78,9 @@ public class ProcessTask {
             varEntity.setLocalBlockId(functionIndex);
             singleCollect.addEntity(varEntity);
             if (isParaOrRet.equals(GoConstantString.SAVE_TYPE_PARAMETER)) {
-                ((AbsFUNEntity) singleCollect.getEntityById(functionIndex)).addParameter(varEntityIndex);
+                ((GoFunEntity) singleCollect.getEntityById(functionIndex)).addParameter(varEntityIndex);
             } else {
-                ((AbsFUNEntity) singleCollect.getEntityById(functionIndex)).addReturn(varEntityIndex);
+                ((GoFunEntity) singleCollect.getEntityById(functionIndex)).addReturn(varEntityIndex);
             }
         }
     }
@@ -475,7 +475,7 @@ public class ProcessTask {
     private void saveLocalName(int functionIndex, String name, int localBlockId, String type, String value, String usage) {
         LocalName localNameEntity = new LocalName(name, localBlockId, type, value);
         localNameEntity.updateUsage(usage);//add to function's localNames
-        ((AbsFUNEntity) singleCollect.getEntityById(functionIndex)).addLocalName(localNameEntity);
+        ((GoFunEntity) singleCollect.getEntityById(functionIndex)).addLocalName(localNameEntity);
     }
 
     /** we don't know the role of the operand.
@@ -496,7 +496,7 @@ public class ProcessTask {
         if(name.equals(Configure.BLANK_IDENTIFIER) || name.equals(GoConstantString.NIL) ) {
             return;
         }
-        AbsFUNEntity functionEntity = (AbsFUNEntity) singleCollect.getEntityById(functionIndex);
+        GoFunEntity functionEntity = (GoFunEntity) singleCollect.getEntityById(functionIndex);
         //if 1
         if (helperVisitor.isOperandNameInLeftAssignment(ctx)) {
             String usage = GoConstantString.OPERAND_NAME_USAGE_SET;
@@ -504,11 +504,11 @@ public class ProcessTask {
             if(id == -1) {
                 LocalName localName = new LocalName(name, localBlockId, Configure.NULL_STRING, Configure.NULL_STRING);
                 localName.updateUsage(usage);
-                ((AbsFUNEntity) singleCollect.getEntityById(functionIndex)).addLocalName(localName);
+                ((GoFunEntity) singleCollect.getEntityById(functionIndex)).addLocalName(localName);
             }
             else
             {
-                ((AbsFUNEntity) singleCollect.getEntityById(functionIndex)).getLocalNames().get(id).updateUsage(usage);
+                ((GoFunEntity) singleCollect.getEntityById(functionIndex)).getLocalNames().get(id).updateUsage(usage);
             }
         }
         else if (helperVisitor.isOperandNameInRightAssignment(ctx) ||
@@ -523,7 +523,7 @@ public class ProcessTask {
             }
             else
             {
-                ((AbsFUNEntity) singleCollect.getEntityById(functionIndex)).getLocalNames().get(id).updateUsage(usage);
+                ((GoFunEntity) singleCollect.getEntityById(functionIndex)).getLocalNames().get(id).updateUsage(usage);
             }
         }
     }
@@ -569,7 +569,7 @@ public class ProcessTask {
         ArrayList<AbsVAREntity> returnVars = getVarFromParameters(returns);
 
         int functionIndex = singleCollect.getCurrentIndex();
-        AbsFUNEntity functionEntity = new AbsFUNEntity(functionName);
+        GoFunEntity functionEntity = new GoFunEntity(functionName);
         functionEntity.setId(functionIndex);
         functionEntity.setParentId(fileIndex); //functionDecl only appear in the topLevel
         singleCollect.addEntity(functionEntity);
@@ -619,8 +619,8 @@ public class ProcessTask {
      */
     public void processMethodCallPrimaryExpr(int functionIndex, String str) {
         if (functionIndex != -1) {
-            if (singleCollect.getEntityById(functionIndex) instanceof AbsFUNEntity) {
-                ((AbsFUNEntity) singleCollect.getEntityById(functionIndex)).addCalledFunction(str);
+            if (singleCollect.getEntityById(functionIndex) instanceof GoFunEntity) {
+                ((GoFunEntity) singleCollect.getEntityById(functionIndex)).addCalledFunction(str);
             } else if (singleCollect.getEntityById(functionIndex) instanceof MethodEntity) {
                 ((MethodEntity) singleCollect.getEntityById(functionIndex)).addCalledFunction(str);
             }
@@ -638,10 +638,10 @@ public class ProcessTask {
      */
     public int processLocalBlock(int functionIndex, int parentBlockId, int depth, String blockName)
     {
-        AbsFUNEntity functionEntity = (AbsFUNEntity) singleCollect.getEntityById(functionIndex);
+        GoFunEntity functionEntity = (GoFunEntity) singleCollect.getEntityById(functionIndex);
         int blockId = functionEntity.getLocalBlocks().size();
         LocalBlock localBlock = new LocalBlock(blockId, blockName, parentBlockId, depth);
-        ((AbsFUNEntity) singleCollect.getEntityById(functionIndex)).addLocalBlock(localBlock);
+        ((GoFunEntity) singleCollect.getEntityById(functionIndex)).addLocalBlock(localBlock);
         return blockId;
     }
 

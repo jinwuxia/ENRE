@@ -1,11 +1,8 @@
 package priextractor.goextractor.godeper;
 
 import entitybuilder.gobuilder.GoConstantString;
+import entitybuilder.gobuilder.goentity.*;
 import uerr.*;
-import entitybuilder.gobuilder.goentity.AliasTypeEntity;
-import entitybuilder.gobuilder.goentity.InterfaceEntity;
-import entitybuilder.gobuilder.goentity.StructEntity;
-import entitybuilder.gobuilder.goentity.StructFieldEntity;
 import priextractor.goextractor.search.*;
 import util.Configure;
 import util.Tuple;
@@ -38,7 +35,7 @@ public class FuncDepVisitor {
         for (AbsEntity entity : singleCollect.getEntities()) {
             if(entity instanceof AbsFUNEntity) {
                 int functionId = entity.getId();
-                Map<String, ArrayList<String>> name2usage = ((AbsFUNEntity) entity).getName2UsageMap();
+                Map<String, ArrayList<String>> name2usage = ((GoFunEntity) entity).getName2UsageMap();
                 Map<String, Integer> name2Id = ((AbsFUNEntity) entity).getName2IdMap();
                 for (Map.Entry<String, ArrayList<String>> entry : name2usage.entrySet()) {
                     String varName = entry.getKey();
@@ -63,8 +60,8 @@ public class FuncDepVisitor {
         for (AbsEntity entity : singleCollect.getEntities()) {
             if(entity instanceof AbsFUNEntity) {
                 int functionId = entity.getId();
-                Map<String, ArrayList<String>> name2usage = ((AbsFUNEntity) entity).getName2UsageMap();
-                Map<String, Integer> name2Id = ((AbsFUNEntity) entity).getName2IdMap();
+                Map<String, ArrayList<String>> name2usage = ((GoFunEntity) entity).getName2UsageMap();
+                Map<String, Integer> name2Id = ((GoFunEntity) entity).getName2IdMap();
                 for (Map.Entry<String, ArrayList<String>> entry : name2usage.entrySet()) {
                     String varName = entry.getKey();
                     for (String usage : entry.getValue()) {
