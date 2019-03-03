@@ -126,4 +126,14 @@ public class TraceCallRelationInterface extends RelationInterface {
     public ArrayList<Tuple<String, String>> getFunctionCalls(String level) {
         return null;
     }
+
+    @Override
+    public ArrayList<Tuple<String, String>> getImplicitAll(String level) {
+        return null;
+    }
+
+    @Override
+    public ArrayList<Tuple<String, String>> getImplicitByCategory(String level, String deptype) {
+        return null;
+    }
 }

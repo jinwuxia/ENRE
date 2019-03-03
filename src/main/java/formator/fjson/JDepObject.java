@@ -25,7 +25,7 @@ public class JDepObject {
         return schemaVersion;
     }
 
-    @XmlAttribute(name = "schema-version")
+    @XmlAttribute(name = "@schemaVersion")
     public void setSchemaVersion(String schemaVersion) {
         this.schemaVersion = schemaVersion;
     }
