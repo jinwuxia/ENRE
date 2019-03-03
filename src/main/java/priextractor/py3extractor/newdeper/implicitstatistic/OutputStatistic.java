@@ -1,4 +1,4 @@
-package implicitstatistic;
+package priextractor.py3extractor.newdeper.implicitstatistic;
 
 import uerr.SingleCollect;
 import util.Configure;
@@ -6,6 +6,7 @@ import writer.CsvWriter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class OutputStatistic {
@@ -72,9 +73,9 @@ public class OutputStatistic {
      */
     private ArrayList<String[]> doSummaryForField() {
         ArrayList<String[]> summaryDetail = new ArrayList<>();
-        for (Map.Entry<String, ArrayList<Integer>> entry : statisticMember.getFieldName2ClassMap().entrySet()) {
+        for (Map.Entry<String, List<Integer>> entry : statisticMember.getFieldName2ClassMap().entrySet()) {
             String fieldName = entry.getKey();
-            ArrayList<Integer> classIdList = entry.getValue();
+            List<Integer> classIdList = entry.getValue();
             String classNameListStr = transformList(classIdList);
             int class_count = classIdList.size();
 
@@ -90,7 +91,7 @@ public class OutputStatistic {
      * @param classIdList
      * @return
      */
-    private String transformList(ArrayList<Integer> classIdList) {
+    private String transformList(List<Integer> classIdList) {
         ArrayList<String> classNameList = new ArrayList<>();
         for (int classId : classIdList) {
             String className = singleCollectInstance.getEntityById(classId).getName();

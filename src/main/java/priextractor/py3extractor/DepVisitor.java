@@ -1,11 +1,13 @@
 package priextractor.py3extractor.pydeper;
 
+import expression.ExpressionCollect;
 import uerr.SingleCollect;
 import util.Tuple;
 
 public abstract class DepVisitor {
 
     protected SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
+    protected ExpressionCollect expressionCollect = ExpressionCollect.getExpressionCollect();
     /**
      * relationType1: entityId1 -> entityId2
      * relationType2: entityId2 -> entityId1

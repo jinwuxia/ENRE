@@ -1,4 +1,4 @@
-package implicitstatistic;
+package priextractor.py3extractor.newdeper.implicitstatistic;
 
 import uerr.*;
 import util.Configure;
@@ -7,7 +7,7 @@ import util.Tuple;
 import java.util.*;
 
 /**
- * StatisticMember: do the basic implicitstatistic for further infer the type of object in the forms of object.v or object.m()
+ * StatisticMember: do the basic priextractor.py3extractor.newdeper.implicitstatistic for further infer the type of object in the forms of object.v or object.m()
  */
 public class StatisticMember {
 
@@ -21,25 +21,25 @@ public class StatisticMember {
     /**
      * map{fieldname, classID_list}
      */
-    private Map<String, ArrayList<Integer>> fieldName2ClassMap = new HashMap<>();
+    private Map<String, List<Integer>> fieldName2ClassMap = new HashMap<>();
 
     /**
      * map{baseID, childID_list}
      */
-    private Map<Integer, ArrayList<Integer>> inheritMap = new HashMap<>();
+    private Map<Integer, List<Integer>> inheritMap = new HashMap<>();
 
     /**
      * when initialize, do statistics.
      */
     public StatisticMember() {
-        groupMemberWithSameName();
+        groupClassByMemeberName();
         groupClassByParent();
 
     }
 
 
 
-    public Map<String, ArrayList<Integer>> getFieldName2ClassMap() {
+    public Map<String, List<Integer>> getFieldName2ClassMap() {
         return fieldName2ClassMap;
     }
 
@@ -47,9 +47,10 @@ public class StatisticMember {
         return methodName2ClassMap;
     }
 
-    public Map<Integer, ArrayList<Integer>> getInheritMap() {
-        return inheritMap;
-    }
+
+
+
+
 
     /**
      * group class based on its parent class.
@@ -58,7 +59,6 @@ public class StatisticMember {
      * set inheritMap
      */
     private void groupClassByParent() {
-        Configure configure = Configure.getConfigureInstance();
         for(AbsEntity entity :  singleCollectInstance.getEntities()) {
             int entityId = entity.getId();
 
@@ -67,7 +67,7 @@ public class StatisticMember {
             }
 
             for(Tuple<String, Integer> relation :  entity.getRelations()) {
-                if(!(relation.x.equals(configure.RELATION_INHERIT))) {
+                if(!(relation.x.equals(Configure.RELATION_INHERIT))) {
                     continue;
                 }
                 int baseId = relation.y;
@@ -99,7 +99,7 @@ public class StatisticMember {
      *
      * set  methodName2ClassMap and fieldName2ClassMap
      */
-    private void groupMemberWithSameName() {
+    private void groupClassByMemeberName() {
         for (AbsEntity entity : singleCollectInstance.getEntities()) {
             int parentId = entity.getParentId();
             if (parentId != -1 && singleCollectInstance.getEntityById(parentId) instanceof AbsCLSEntity) {
@@ -113,9 +113,9 @@ public class StatisticMember {
                  * if entity is a field Entity
                  */
                 else if (entity instanceof AbsVAREntity) {
-                    addFieldToMap(entity, parentId);
+                    String fieldName = entity.getName();
+                    addToMap(fieldName, parentId, fieldName2ClassMap);
                 }
-
             }
         }
     }
@@ -153,23 +153,23 @@ public class StatisticMember {
         }
     }
 
+
+
+
+
+
+
     /**
-     * add {fieldname, classId} into fieldName2ClassMap
-     * @param entity
-     * @param parentId
+     * add name, id to map<String, List<Integer>
+     * @param name
+     * @param id
+     * @param oneMap
      */
-    private void addFieldToMap(AbsEntity entity, int parentId) {
-        String fieldName = entity.getName();
-        if(isPublicMember(fieldName)) {
-            if(!fieldName2ClassMap.containsKey(fieldName)) {
-                fieldName2ClassMap.put(fieldName, new ArrayList<Integer>());
-            }
-            fieldName2ClassMap.get(fieldName).add(parentId);
+    private void addToMap(String name, int id, Map<String, List<Integer>> oneMap) {
+        if(!oneMap.containsKey(name)) {
+            oneMap.put(name, new ArrayList<>());
         }
+        oneMap.get(name).add(id);
     }
-
-
-
-
 
 }
