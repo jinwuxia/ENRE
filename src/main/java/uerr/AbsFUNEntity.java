@@ -7,6 +7,7 @@ import java.util.Map;
 public class AbsFUNEntity extends AbsEntity {
     protected ArrayList<Integer> parameters = new ArrayList<Integer>();
     protected ArrayList<Integer> returns = new ArrayList<Integer>();
+    protected int typeId = -1; // return type id of the funtion
 
 
 
@@ -19,6 +20,9 @@ public class AbsFUNEntity extends AbsEntity {
         setSimpleName();
     }
 
+    public int getTypeId() {
+        return typeId;
+    }
 
     public ArrayList<Integer> getParameters() {
         return parameters;

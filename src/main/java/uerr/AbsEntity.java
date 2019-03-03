@@ -12,6 +12,7 @@ public class AbsEntity {
     protected int parentId = -1;
     protected ArrayList<Integer> childrenIds = new ArrayList<Integer>();
     protected ArrayList<Tuple<String,Integer>> relations = new ArrayList<Tuple<String, Integer>>();
+    protected int expContainerId = -1;
 
 
     public String getSimpleName() {
@@ -68,6 +69,14 @@ public class AbsEntity {
 
     public ArrayList<Integer> getChildrenIds() {
         return childrenIds;
+    }
+
+    public int getExpContainerId() {
+        return expContainerId;
+    }
+
+    public void setExpContainerId(int expContainerId) {
+        this.expContainerId = expContainerId;
     }
 
     @Override

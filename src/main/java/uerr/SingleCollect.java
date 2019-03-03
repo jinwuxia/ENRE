@@ -3,6 +3,7 @@ package uerr;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SingleCollect {
@@ -136,5 +137,83 @@ public class SingleCollect {
 
 
 
+    public List<Integer> findParentIds(List<Integer> childIds) {
+        List<Integer> parentIds = new ArrayList<>();
+        //System.out.println("child: " + childIds);
+        for (Integer chilId : childIds) {
+            int parentId = singleCollectInstance.getEntityById(chilId).getParentId();
+            if(parentId != -1) {
+                parentIds.add(parentId);
+            }
+        }
+        //System.out.println("parent: " + parentIds);
+        return parentIds;
+    }
+
+    public List<Integer> findTypeIds(List<Integer> entityIds) {
+        List<Integer> typeIds = new ArrayList<>();
+        for (Integer entityId : entityIds ) {
+            int typeId = -1;
+            if (entityId != -1) {
+                typeId = getTypeId(entityId);
+            }
+            typeIds.add(typeId);
+        }
+        return typeIds;
+    }
+
+
+    public int getTypeId(int entityId) {
+        AbsEntity entity = singleCollectInstance.getEntityById(entityId);
+        int typeId = entity.getId();//for class, import, folder, type=bind
+        if (entity instanceof AbsVAREntity) {
+            typeId = ((AbsVAREntity) entity).getTypeId();
+        }
+        else if (entity instanceof AbsFUNEntity) {
+            typeId = ((AbsFUNEntity) entity).getTypeId();
+        }
+        return typeId;
+    }
+
+
+    /**
+     * if module, it longname = fileName
+     * if others, it longname = parentsimplename.parentsimplename....
+     * @param id
+     * @return
+     */
+    public String getLongName(int id) {
+        String longname = "";
+        while(id != -1) {
+            //System.out.println("name:" + singleCollect.getEntityById(id).getName());
+            //System.out.println("simplename:" + singleCollect.getEntityById(id).getSimpleName());
+            AbsEntity entity = singleCollectInstance.getEntityById(id);
+            String name = entity.getSimpleName();
+            if(entity instanceof AbsFILEntity) {
+                name = entity.getName();
+            }
+            if(name.endsWith(".py")) {
+                name = name.split("\\.py")[0];
+            }
+            if(name.endsWith(".go")) {
+                name = name.split("\\.go")[0];
+            }
+            if(!longname.equals("")) {
+                longname = name + "." + longname;
+            }
+            else {
+                longname = name;
+            }
+            id = singleCollectInstance.getEntityById(id).getParentId();
+        }
+        return longname;
+    }
+
+
+    public void printAllEntity() {
+        for (AbsEntity entity : singleCollectInstance.getEntities()) {
+            System.out.println(entity);
+        }
+    }
 
 }
