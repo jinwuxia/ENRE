@@ -15,20 +15,8 @@ public class PyConstantString {
     public static final String CLASS_METHOD_CLS_PARAMETER = "cls";
     public static final String SUPER = "super";
 
-    public static final String CUSTOM_PRE = "CUSTOM_PRE";
 
     public static final String COMMENT = "'''";
-    public static final String STRING_LETERAL_1 = "\"";
-    public static final String STRING_LETERAL_2  = "'";
-
-    public static final String NAME_USAGE_USE = "Use";
-    public static final String NAME_USAGE_SET = "Set";
-
-
-    public static final String ENTITY_CLASS_METHOD = "class_method";
-    public static final String ENTITY_CLASS_STATIC_METHOD = "class_static_method";
-    public static final String ENTITY_INST_METHOD = "instance_method";
-    public static final String ENTITY_FUNCTION = "function";
 
 
     public static final String [] KEYWORDS =  {
@@ -66,12 +54,6 @@ public class PyConstantString {
             "in",
             "raise"
     };
-    public static final String RESOLVED_TYPE_SUPER = "super";
-    public static final String RESOLVED_TYPE_BUILTIN = "builtin";
-    public static final String RESOLVED_TYPE_REGULAR = "regular";
-    public static final String RESOLVED_TYPE_LIBRARY = "library";
-    public static final String RESOLVED_TYPE_IMPLICIT = "implicit";
-    public static final String RESOLVED_TYPE_UNKNOWN = "unknown";
 
 
     public static String[] BUILT_IN_FUNCTIONS = {
