@@ -468,4 +468,16 @@ public class GoRelationInf extends RelationInterface {
         ArrayList<Tuple<String, String>> receiveDeps = new ArrayList<Tuple<String, String>>();
         return receiveDeps;
     }
+
+    @Override
+    public ArrayList<Tuple<String, String>> getImplicitAll(String level) {
+        ArrayList<Tuple<String, String>> receiveDeps = new ArrayList<Tuple<String, String>>();
+        return receiveDeps;
+    }
+
+    @Override
+    public ArrayList<Tuple<String, String>> getImplicitByCategory(String level, String deptype) {
+        ArrayList<Tuple<String, String>> receiveDeps = new ArrayList<Tuple<String, String>>();
+        return receiveDeps;
+    }
 }

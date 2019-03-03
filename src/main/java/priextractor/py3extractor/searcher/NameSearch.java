@@ -37,9 +37,6 @@ public class NameSearch {
     //(scopeId, (name, nameEntityId))
     private HashMap<Integer, HashMap<String, Integer>> nameMap = new HashMap<Integer, HashMap<String, Integer>>();
 
-    public HashMap<Integer, HashMap<String, Integer>> getNameMap() {
-        return nameMap;
-    }
 
     public HashMap<String, Integer> getNameMapOfScope(int scopeId) {
         if(nameMap.containsKey(scopeId)) {
@@ -70,6 +67,15 @@ public class NameSearch {
         return -1;
     }
 
+   public boolean isNameInScope(String name, int scopeId) {
+        if(nameMap.containsKey(scopeId)) {
+            if(nameMap.get(scopeId).containsKey(name)) {
+                return true;
+            }
+        }
+        return false;
+   }
+
     /**
      * cannot change the order, since the scope is a hierarchy.
      */
@@ -83,7 +89,7 @@ public class NameSearch {
 
 
     /**
-     * class object scope: class's children
+     * class 's type var scope: class's children
      */
     public void buildNameScopeForVar() {
         for(AbsEntity entity : singleCollect.getEntities()) {
@@ -361,7 +367,7 @@ public class NameSearch {
      */
     private void findBasesClassesInDepth(ArrayList<Tuple<Integer, String>> allBaseClasses, int classId) {
         //System.out.println("interation: "  + allBaseClasses);
-        if(classId == -1) {
+        if(classId == -1 || !(singleCollect.getEntityById(classId) instanceof ClassEntity)) {
             return;
         }
         ArrayList<String> baseNameList = ((ClassEntity) singleCollect.getEntityById(classId)).getBaseClassNameList();

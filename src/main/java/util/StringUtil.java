@@ -41,4 +41,13 @@ public final class StringUtil {
         }
         return path;
     }
+
+    public static boolean isContained(String str, String[] strList) {
+        for(int i = 0; i < strList.length; i++) {
+            if(str.equals(strList[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

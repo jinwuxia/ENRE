@@ -1,5 +1,6 @@
 package priextractor.py3extractor.pydeper;
 
+import priextractor.py3extractor.DepVisitor;
 import uerr.AbsEntity;
 import uerr.AbsFLDEntity;
 import entitybuilder.pybuilder.pyentity.ImportStmt;

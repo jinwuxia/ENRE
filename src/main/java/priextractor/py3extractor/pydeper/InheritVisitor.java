@@ -1,5 +1,6 @@
 package priextractor.py3extractor.pydeper;
 
+import priextractor.py3extractor.DepVisitor;
 import uerr.AbsEntity;
 import entitybuilder.pybuilder.pyentity.ClassEntity;
 import entitybuilder.pybuilder.pyentity.ModuleEntity;
@@ -8,7 +9,7 @@ import util.Tuple;
 
 import static java.lang.System.exit;
 
-public class InheritVisitor extends DepVisitor{
+public class InheritVisitor extends DepVisitor {
 
     @Override
     public void setDep() {
@@ -20,11 +21,11 @@ public class InheritVisitor extends DepVisitor{
                     ((ClassEntity) entity).addBaseClassId(baseId);
 
                     if(baseId != -1) {
-                        //System.out.println("entityclass: " + uerr.getName() + "; baseclass: " + baseClassStr + "; basedId: " +  baseId);
+                        //System.out.println("entityclass: " + entity.getName() + "; baseclass: " + baseClassStr + "; basedId: " +  baseId);
                         saveRelation(entity.getId(), baseId, Configure.RELATION_INHERIT, Configure.RELATION_INHERITED_BY);
                     }
                     else {
-                        //System.out.println("entityclass: " + uerr.getName() + "; baseclass: " + baseClassStr + " not found");
+                        //System.out.println("entityclass: " + entity.getName() + "; baseclass: " + baseClassStr + " not found");
                     }
                 }
             }
@@ -42,6 +43,14 @@ public class InheritVisitor extends DepVisitor{
     private int findBaseClass(String baseClassStr, int classId) {
         int scopeId = singleCollect.getEntityById(classId).getParentId();
         int flag = 1;
+
+        if(!baseClassStr.contains(Configure.DOT)) {
+            Tuple<Integer, String> matchedRes = getMatchImportedId(baseClassStr, scopeId);
+            if(matchedRes.x != -1) {
+                return matchedRes.x;
+            }
+        }
+
         while(baseClassStr.contains(Configure.DOT)) { //imported
             Tuple<Integer, String> matchedRes;
             if(flag == 1) {
@@ -61,6 +70,7 @@ public class InheritVisitor extends DepVisitor{
             baseClassStr = baseClassStr.substring(matchedStr.length() + 1, baseClassStr.length());
         }
         return findClassInModule(baseClassStr, scopeId);
+
     }
 
 

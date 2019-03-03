@@ -3,7 +3,45 @@ package util;
 import java.io.File;
 
 public class Configure {
+
+    public static final String RELATION_IMPLICIT_P= "P";
+    public static final String RELATION_IMPLICIT_P1 = "P1";
+    public static final String RELATION_IMPLICIT_P2 = "P2";
+    public static final String RELATION_IMPLICIT_P3 = "P3";
+    public static final String RELATION_IMPLICIT_P4 = "P4";
+    public static final String RELATION_IMPLICIT_P5 = "P5";
+    public static final String RELATION_IMPLICIT_P6 = "P6";
+    public static final String RELATION_IMPLICIT_P7 = "P7";
+    public static final String RELATION_IMPLICIT_P8 = "P8";
+    public static final String RELATION_IMPLICIT_P9 = "P9";
+    public static final String RELATION_IMPLICIT_P10 = "P10";
+    public static final String RELATION_IMPLICIT_P11 = "P>10";
     private Configure() {}
+
+    public static final String RELATION_IMPLICIT_ALL = "implicit";
+    public static final String RELATION_IMPLICIT_ALLED = "implicited_";
+
+
+    public static final String EXPRESSION_CALL = "call";
+    public static final String EXPRESSION_SET = "set";
+    public static final String EXPRESSION_USE = "use";
+    public static final String EXPRESSION_DOT = "dot";
+
+
+    public static final String PRE_SUPER = "super";
+    //expression atom resolve type
+    public static final String RESOLVED_TYPE_SUPER = "super";
+    public static final String RESOLVED_TYPE_BUILTIN = "builtin";
+    public static final String RESOLVED_TYPE_REGULAR = "regular";
+    public static final String RESOLVED_TYPE_LIBRARY = "library";
+    public static final String RESOLVED_TYPE_IMPLICIT = "implicit";
+    public static final String RESOLVED_TYPE_IMPLICIT_POSSIBLE = "implicit_possible";
+    public static final String RESOLVED_TYPE_IMPLICIT_REFINE = "implicit_refine";
+    public static final String RESOLVED_TYPE_IMPLICIT_ABSTRACT = "implicit_abstract";
+    public static final String RESOLVED_TYPE_IMPLICIT_EXTENSION = "implicit_extension";
+    public static final String RESOLVED_TYPE_UNKNOWN = "unknown";
+
+
 
     public static final String WINDOWS = "windows";
     public static final String LINUX = "linux";
@@ -44,6 +82,7 @@ public class Configure {
     public static final String BASIC_ENTITY_CLASS = "class";
     public static final String BASIC_ENTITY_FILE = "file";
     public static final String BASIC_ENTITY_FOLDER = "folder";
+    public static final String BASIC_ENTITY_VARIABLE = "variable";
     public static final String IMPLICIT_DEPENDENCY = "Implicit";
     public static final String EXPLICIT_DEPENDENCY = "Explicit";
 
@@ -64,9 +103,7 @@ public class Configure {
     public static final String RELATION_CALLED_BY = "Called by";
 
     public static final String RELATION_IMPLICIT_INTERNAL_CALL = "Nternal Implicit Call";
-    public static final String RELATION_IMPLICIT_INTERNAL_CALLED_BY = "Nternal Implicit Call by";
     public static final String RELATION_IMPLICIT_EXTERNAL_CALL = "External Implicit Call";
-    public static final String RELATION_IMPLICIT_EXTERNAL_CALLED_BY = "External Implicit Call by";
 
     public static final String RELATION_DYNAMIC_TRACE_CLASS_CALL = "Dynamic Trace Call";
 
@@ -186,17 +223,11 @@ public class Configure {
         return outputCsvNodeFile;
     }
 
-    public void setOutputJsonFile(String outputJsonFile) {
-        this.outputJsonFile = outputJsonFile;
-    }
 
     public String getOutputXmlFile() {
         return outputXmlFile;
     }
 
-    public void setOutputXmlFile(String outputXmlFile) {
-        this.outputXmlFile = outputXmlFile;
-    }
 
     public void setSchemaVersion(String schemaVersion) {
         this.schemaVersion = schemaVersion;
@@ -210,9 +241,6 @@ public class Configure {
         return attributeName;
     }
 
-    public void setAttributeName(String attributeName) {
-        this.attributeName = attributeName;
-    }
 
     public String getLang() {
         return lang;
@@ -233,8 +261,5 @@ public class Configure {
         return curr_pro_suffix;
     }
 
-    public String getOutputDotFile() {
-        return outputDotFile;
-    }
 }
 

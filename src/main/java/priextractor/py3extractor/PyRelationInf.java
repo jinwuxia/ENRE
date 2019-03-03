@@ -172,6 +172,46 @@ public class PyRelationInf extends RelationInterface {
     }
 
     @Override
+    public ArrayList<Tuple<String, String>> getImplicitAll(String level) {
+        ArrayList<Tuple<String, String>> deps = new ArrayList<Tuple<String, String>>();
+        for(AbsEntity entity : singleCollect.getEntities()) {
+            ArrayList<Tuple<String, String>> dep = getImplicitAllForEntity(entity.getId(), level);
+            deps.addAll(dep);
+        }
+        return deps;
+    }
+
+    @Override
+    public ArrayList<Tuple<String, String>> getImplicitByCategory(String level, String deptype) {
+        ArrayList<Tuple<String, String>> deps = new ArrayList<Tuple<String, String>>();
+        if(!dependCollect.getDepends().containsKey(deptype)) {
+            return deps;
+        }
+        for (Tuple<Integer, Integer> relation : dependCollect.getDepends().get(deptype)) {
+            int id1 = relation.x;
+            int id2 = relation.y;
+            AbsEntity entity = singleCollect.getEntityById(id1);
+            String fileName1 = getEntityFileName(id1);
+            String name1 = entity.getName();
+            String fileName2 = getEntityFileName(id2);
+            String name2 = singleCollect.getEntityById(id2).getName();
+            Tuple<String, String> dep;
+            if (level.equals(Configure.RELATION_LEVEL_FILE)) {
+                if (!fileName1.equals(Configure.NULL_STRING) && !fileName2.equals(Configure.NULL_STRING)) {
+                    dep = new Tuple<String, String>(fileName1, fileName2);
+                    deps.add(dep);
+                }
+            } else {
+                dep = new Tuple<String, String>(name1, name2);
+                deps.add(dep);
+            }
+        }
+        return deps;
+    }
+
+
+
+    @Override
     public ArrayList<Tuple<String, String>> getFunctionParas(String level) {
         ArrayList<Tuple<String, String>> deps = new ArrayList<Tuple<String, String>>();
         return deps;
@@ -445,6 +485,40 @@ public class PyRelationInf extends RelationInterface {
 
         return deps;
     }
+
+
+
+    ArrayList<Tuple<String, String>>  getImplicitAllForEntity(int id1, String level) {
+        ArrayList<Tuple<String, String>> deps = new ArrayList<Tuple<String, String>>();
+        AbsEntity entity = singleCollect.getEntityById(id1);
+        String fileName1 = getEntityFileName(id1);
+        String name1 = entity.getName();
+        for (Tuple<String, Integer> relation : entity.getRelations()) {
+            int id2 = relation.y;
+            String deptype = relation.x;
+            if (deptype.startsWith(Configure.RELATION_IMPLICIT_ALL) && !deptype.startsWith(Configure.RELATION_IMPLICIT_ALLED)) {
+                String fileName2 = getEntityFileName(id2);
+                String name2 = singleCollect.getEntityById(id2).getName();
+                Tuple<String, String> dep;
+
+                if (level.equals(Configure.RELATION_LEVEL_FILE)) {
+                    if (!fileName1.equals(Configure.NULL_STRING)
+                            && !fileName2.equals(Configure.NULL_STRING)) {
+                        dep = new Tuple<String, String>(fileName1, fileName2);
+                        deps.add(dep);
+                    }
+                    //System.out.println("FunctionCall: " + callerFileName + Configure.COMMA +  calleeFileName);
+                } else {
+                    dep = new Tuple<String, String>(name1, name2);
+                    deps.add(dep);
+                }
+            }
+        }
+
+        return deps;
+    }
+
+
 
     /**
      * get funciton-set-var relations

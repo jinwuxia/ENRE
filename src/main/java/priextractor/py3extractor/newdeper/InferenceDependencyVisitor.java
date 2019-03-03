@@ -3,7 +3,6 @@ package priextractor.py3extractor.newdeper;
 import expression.Expression;
 import expression.ExpressionAtom;
 import priextractor.py3extractor.DepVisitor;
-import priextractor.py3extractor.newdeper.implicitstatistic.AtomResoveSummary;
 import uerr.AbsEntity;
 import util.Configure;
 
@@ -53,7 +52,7 @@ public class InferenceDependencyVisitor extends DepVisitor {
 
 
     /**
-     * store into dependCollect: P1-Px
+     * store all source-code inner dependencies into dependCollect: P1,P2,..., P10, P>10
      */
     public void setDepByCategory() {
         for (AbsEntity entity : singleCollect.getEntities()) {
