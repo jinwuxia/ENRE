@@ -113,20 +113,30 @@ public class OutputStatistic {
         for (String[] row : detailArray) {
             //String fieldOrMethodName = row[0];
             int class_count =  Integer.parseInt(row[2]);
-            if(class_count >= 5) {
-                class_count = 5;
-            }
             if (!res.containsKey(class_count)) {
                 res.put(class_count, 0);
             }
             res.put(class_count, res.get(class_count) + 1);
         }
+
         ArrayList<String[]> arrayList = new ArrayList<>();
+        String[] titles = new String[]{"P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P>10"};
+        arrayList.add(titles);
+
+        int[] values = new int[]{0,0,0,0,0,0,0,0,0,0,0};
         for(Map.Entry<Integer, Integer> entry : res.entrySet()) {
-            String class_count = entry.getKey().toString();
-            String member_count = entry.getValue().toString();
-            arrayList.add(new String[]{class_count, member_count});
+            int class_count = entry.getKey(); //type=P1,...
+            if(class_count >= 11) {
+                class_count = 11;
+            }
+            int index = class_count - 1;
+            values[index] += entry.getValue(); //the number of vars
         }
+        String [] valueStrs = new String[values.length];
+        for (int i = 0; i < valueStrs.length; i++) {
+            valueStrs[i] = Integer.toString(values[i]);
+        }
+        arrayList.add(valueStrs);
         return arrayList;
     }
 
