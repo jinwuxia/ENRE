@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class XDepObject {
     private String schemaVersion;
     private String name;
-    private XFiles variables;
+    private XNodes variables;
     private XCells cells;
 
     public String getName() {
@@ -31,11 +31,11 @@ public class XDepObject {
     }
 
     @XmlElement(name = "variables")
-    public void setVariables(XFiles variables) {
+    public void setVariables(XNodes variables) {
         this.variables = variables;
     }
 
-    public XFiles getVariables() {
+    public XNodes getVariables() {
         return variables;
     }
 

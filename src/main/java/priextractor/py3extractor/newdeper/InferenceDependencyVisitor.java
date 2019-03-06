@@ -52,7 +52,7 @@ public class InferenceDependencyVisitor extends DepVisitor {
 
 
     /**
-     * store all source-code inner dependencies into dependCollect: P1,P2,..., P10, P>10
+     * store all source-code inner dependencies into atomDependCollect: exp, P1,P2,..., P10, P>10
      */
     public void setDepByCategory() {
         for (AbsEntity entity : singleCollect.getEntities()) {
@@ -81,9 +81,9 @@ public class InferenceDependencyVisitor extends DepVisitor {
                         if(possibleTypeOrBindSet.isEmpty()) {
                             continue;
                         }
-                        String type = getProbabilityType(atomId, atomCount, atom);
+                        String type = getProbabilityType(resolveManner, atomId, atomCount, atom);
                         for (Integer id2 : possibleTypeOrBindSet) {
-                            dependCollect.addOnedep(type, entiyId, id2);
+                            atomDependCollect.addOnedep(type, entiyId, id2);
                         }
                     }
                 }
@@ -93,10 +93,10 @@ public class InferenceDependencyVisitor extends DepVisitor {
 
 
     /**
-     * return p=1,2,3,4,5,6,7,8,9,10,>10
+     * return exp, p1,2,3,4,5,6,7,8,9,10,>10
      * @return
      */
-    public static String getProbabilityType(int atomId, int atomCount, ExpressionAtom atom) {
+    public static String getProbabilityType(String resolvedManner, int atomId, int atomCount, ExpressionAtom atom) {
         String possible_count_string;
         List<Integer> possibleTypeOrBinds;
 
@@ -106,50 +106,60 @@ public class InferenceDependencyVisitor extends DepVisitor {
             possibleTypeOrBinds = atom.getTypeIdList();
         }
         Set<Integer> possibleTypeOrBindSet = SequencecUtil.transformList(possibleTypeOrBinds);
-        possible_count_string = constructTypeP(possibleTypeOrBindSet.size());
+        possible_count_string = constructTypeP(resolvedManner, possibleTypeOrBindSet.size());
         return possible_count_string;
 
     }
 
 
-    private static String constructTypeP(int p) {
+    /**
+     * classfoy src-code atom dependency into exp, and,  implicit(p0, p1, p2, p3,...)
+     * @param resolvedManner
+     * @param p
+     * @return
+     */
+    private static String constructTypeP(String resolvedManner, int p) {
         String possible_count_string;
+        if(resolvedManner.equals(Configure.RESOLVED_TYPE_REGULAR) && p == 1) {
+            return Configure.RELATION_ATOM_EXPLICIT;
+
+        }
         switch (p) {
             case 0:
-                possible_count_string = Configure.RELATION_IMPLICIT_P;
+                possible_count_string = Configure.RELATION_ATOM_IMPLICIT_P; //impossible
                 break;
             case 1:
-                possible_count_string = Configure.RELATION_IMPLICIT_P1;
+                possible_count_string = Configure.RELATION_ATOM_IMPLICIT_P1;
                 break;
             case 2:
-                possible_count_string = Configure.RELATION_IMPLICIT_P2;
+                possible_count_string = Configure.RELATION_ATOM_IMPLICIT_P2;
                 break;
             case 3:
-                possible_count_string = Configure.RELATION_IMPLICIT_P3;
+                possible_count_string = Configure.RELATION_ATOM_IMPLICIT_P3;
                 break;
             case 4:
-                possible_count_string = Configure.RELATION_IMPLICIT_P4;
+                possible_count_string = Configure.RELATION_ATOM_IMPLICIT_P4;
                 break;
             case 5:
-                possible_count_string = Configure.RELATION_IMPLICIT_P5;
+                possible_count_string = Configure.RELATION_ATOM_IMPLICIT_P5;
                 break;
             case 6:
-                possible_count_string = Configure.RELATION_IMPLICIT_P6;
+                possible_count_string = Configure.RELATION_ATOM_IMPLICIT_P6;
                 break;
             case 7:
-                possible_count_string = Configure.RELATION_IMPLICIT_P7;
+                possible_count_string = Configure.RELATION_ATOM_IMPLICIT_P7;
                 break;
             case 8:
-                possible_count_string = Configure.RELATION_IMPLICIT_P8;
+                possible_count_string = Configure.RELATION_ATOM_IMPLICIT_P8;
                 break;
             case 9:
-                possible_count_string = Configure.RELATION_IMPLICIT_P9;
+                possible_count_string = Configure.RELATION_ATOM_IMPLICIT_P9;
                 break;
             case 10:
-                possible_count_string = Configure.RELATION_IMPLICIT_P10;
+                possible_count_string = Configure.RELATION_ATOM_IMPLICIT_P10;
                 break;
             default: //>10
-                possible_count_string = Configure.RELATION_IMPLICIT_P11;
+                possible_count_string = Configure.RELATION_ATOM_IMPLICIT_P11;
                 break;
         }
         return possible_count_string;

@@ -20,11 +20,11 @@ public class TraceCallRelationInterface extends RelationInterface {
     private String depfilename = configure.getUsageSrcPath();
 
     /**
-     * implement our getAllFiles, the data not from uerr, it is from outside workflow like.
+     * implement our getAllNodes, the data not from uerr, it is from outside workflow like.
      * @return
      */
     @Override
-    public ArrayList<String> getAllFiles() {
+    public ArrayList<String> getAllNodes(String level) {
         ArrayList<String> classList = new ArrayList<>();
 
         String classname = Configure.NULL_STRING;
@@ -83,11 +83,6 @@ public class TraceCallRelationInterface extends RelationInterface {
 
 
     @Override
-    public ArrayList<Tuple<String, String>> getImplicitExternalCalls(String level) {
-        return null;
-    }
-
-    @Override
     public ArrayList<Tuple<String, String>> getImportDeps(String level) {
         return null;
     }
@@ -128,12 +123,7 @@ public class TraceCallRelationInterface extends RelationInterface {
     }
 
     @Override
-    public ArrayList<Tuple<String, String>> getImplicitAll(String level) {
-        return null;
-    }
-
-    @Override
-    public ArrayList<Tuple<String, String>> getImplicitByCategory(String level, String deptype) {
+    public ArrayList<Tuple<String, String>> getDepByCategory(String level, String deptype) {
         return null;
     }
 }

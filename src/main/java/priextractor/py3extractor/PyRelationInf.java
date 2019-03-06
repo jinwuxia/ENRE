@@ -1,6 +1,7 @@
 package priextractor.py3extractor;
 
 import entitybuilder.pybuilder.PyConstantString;
+import sun.security.krb5.Config;
 import uerr.*;
 import entitybuilder.pybuilder.pyentity.*;
 import util.Configure;
@@ -161,39 +162,27 @@ public class PyRelationInf extends RelationInterface {
     }
 
 
+    /**
+     * only this process function_level, other methods in this file are default
+     * @param level
+     * @param deptype
+     * @return
+     */
     @Override
-    public ArrayList<Tuple<String, String>> getImplicitExternalCalls(String level) {
+    public ArrayList<Tuple<String, String>> getDepByCategory(String level, String deptype) {
         ArrayList<Tuple<String, String>> deps = new ArrayList<Tuple<String, String>>();
-        for(AbsEntity entity : singleCollect.getEntities()) {
-            ArrayList<Tuple<String, String>> dep = getImplicitExternalCallForEntity(entity.getId(), level);
-            deps.addAll(dep);
-        }
-        return deps;
-    }
-
-    @Override
-    public ArrayList<Tuple<String, String>> getImplicitAll(String level) {
-        ArrayList<Tuple<String, String>> deps = new ArrayList<Tuple<String, String>>();
-        for(AbsEntity entity : singleCollect.getEntities()) {
-            ArrayList<Tuple<String, String>> dep = getImplicitAllForEntity(entity.getId(), level);
-            deps.addAll(dep);
-        }
-        return deps;
-    }
-
-    @Override
-    public ArrayList<Tuple<String, String>> getImplicitByCategory(String level, String deptype) {
-        ArrayList<Tuple<String, String>> deps = new ArrayList<Tuple<String, String>>();
-        if(!dependCollect.getDepends().containsKey(deptype)) {
+        if(!atomDependCollect.getDepends().containsKey(deptype)) {
             return deps;
         }
-        for (Tuple<Integer, Integer> relation : dependCollect.getDepends().get(deptype)) {
+        for (Tuple<Integer, Integer> relation : atomDependCollect.getDepends().get(deptype)) {
             int id1 = relation.x;
             int id2 = relation.y;
             AbsEntity entity = singleCollect.getEntityById(id1);
             String fileName1 = getEntityFileName(id1);
+            String functionName1 = getEntityFunctionName(id1);
             String name1 = entity.getName();
             String fileName2 = getEntityFileName(id2);
+            String functionName2 = getEntityFunctionName(id2);
             String name2 = singleCollect.getEntityById(id2).getName();
             Tuple<String, String> dep;
             if (level.equals(Configure.RELATION_LEVEL_FILE)) {
@@ -201,7 +190,13 @@ public class PyRelationInf extends RelationInterface {
                     dep = new Tuple<String, String>(fileName1, fileName2);
                     deps.add(dep);
                 }
-            } else {
+            }else if(level.equals(Configure.RELATION_LEVEL_FUNCTION)) {
+                if(!functionName1.equals(Configure.NULL_STRING) && !functionName2.equals(Configure.NULL_STRING)) {
+                    dep = new Tuple<>(functionName1, functionName2);
+                    deps.add(dep);
+                }
+            }
+            else {
                 dep = new Tuple<String, String>(name1, name2);
                 deps.add(dep);
             }
@@ -407,6 +402,35 @@ public class PyRelationInf extends RelationInterface {
         return fileName;
     }
 
+
+
+    /**
+     * get function/method's name which the entityId) is inside
+     * @param entityId   functionId, methodId, varId
+     * @return
+     */
+    private String getEntityFunctionName(int entityId) {
+        String functionName = Configure.NULL_STRING;
+        if(entityId == -1
+            || singleCollect.getEntityById(entityId) instanceof AbsFLDEntity
+            || singleCollect.getEntityById(entityId) instanceof AbsFILEntity
+            || singleCollect.getEntityById(entityId) instanceof ClassEntity) {
+            return functionName;
+        }
+
+        int functionId = entityId;
+        while(functionId != -1
+                && !(singleCollect.getEntityById(functionId) instanceof AbsFUNEntity)) {
+            functionId = singleCollect.getEntityById(functionId).getParentId();
+        }
+        if(functionId != -1 && singleCollect.getEntityById(functionId) instanceof AbsFUNEntity) {
+            return singleCollect.getEntityById(functionId).getName();
+        }
+        return functionName;
+    }
+
+
+
     /**
      * find init file id for this package
      * @param pkgId
@@ -452,69 +476,6 @@ public class PyRelationInf extends RelationInterface {
 
             }
         }
-        return deps;
-    }
-
-
-    ArrayList<Tuple<String, String>>  getImplicitExternalCallForEntity(int id1, String level) {
-        ArrayList<Tuple<String, String>> deps = new ArrayList<Tuple<String, String>>();
-        AbsEntity entity = singleCollect.getEntityById(id1);
-        String fileName1 = getEntityFileName(id1);
-        String name1 = entity.getName();
-        for (Tuple<String, Integer> relation : entity.getRelations()) {
-            int id2 = relation.y;
-            String deptype = relation.x;
-            if (deptype.equals(Configure.RELATION_IMPLICIT_EXTERNAL_CALL)) {
-                String fileName2 = getEntityFileName(id2);
-                String name2 = singleCollect.getEntityById(id2).getName();
-                Tuple<String, String> dep;
-
-                if (level.equals(Configure.RELATION_LEVEL_FILE)) {
-                    if (!fileName1.equals(Configure.NULL_STRING)
-                            && !fileName2.equals(Configure.NULL_STRING)) {
-                        dep = new Tuple<String, String>(fileName1, fileName2);
-                        deps.add(dep);
-                    }
-                    //System.out.println("FunctionCall: " + callerFileName + Configure.COMMA +  calleeFileName);
-                } else {
-                    dep = new Tuple<String, String>(name1, name2);
-                    deps.add(dep);
-                }
-            }
-        }
-
-        return deps;
-    }
-
-
-
-    ArrayList<Tuple<String, String>>  getImplicitAllForEntity(int id1, String level) {
-        ArrayList<Tuple<String, String>> deps = new ArrayList<Tuple<String, String>>();
-        AbsEntity entity = singleCollect.getEntityById(id1);
-        String fileName1 = getEntityFileName(id1);
-        String name1 = entity.getName();
-        for (Tuple<String, Integer> relation : entity.getRelations()) {
-            int id2 = relation.y;
-            String deptype = relation.x;
-            if (deptype.startsWith(Configure.RELATION_IMPLICIT_ALL) && !deptype.startsWith(Configure.RELATION_IMPLICIT_ALLED)) {
-                String fileName2 = getEntityFileName(id2);
-                String name2 = singleCollect.getEntityById(id2).getName();
-                Tuple<String, String> dep;
-
-                if (level.equals(Configure.RELATION_LEVEL_FILE)) {
-                    if (!fileName1.equals(Configure.NULL_STRING)
-                            && !fileName2.equals(Configure.NULL_STRING)) {
-                        dep = new Tuple<String, String>(fileName1, fileName2);
-                        deps.add(dep);
-                    }
-                    //System.out.println("FunctionCall: " + callerFileName + Configure.COMMA +  calleeFileName);
-                } else {
-                    dep = new Tuple<String, String>(name1, name2);
-                    deps.add(dep);
-                }
-            }
-        }
-
         return deps;
     }
 

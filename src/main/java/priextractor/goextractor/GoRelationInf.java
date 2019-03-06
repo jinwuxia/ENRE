@@ -462,21 +462,8 @@ public class GoRelationInf extends RelationInterface {
         return receiveDeps;
     }
 
-
     @Override
-    public ArrayList<Tuple<String, String>> getImplicitExternalCalls(String level) {
-        ArrayList<Tuple<String, String>> receiveDeps = new ArrayList<Tuple<String, String>>();
-        return receiveDeps;
-    }
-
-    @Override
-    public ArrayList<Tuple<String, String>> getImplicitAll(String level) {
-        ArrayList<Tuple<String, String>> receiveDeps = new ArrayList<Tuple<String, String>>();
-        return receiveDeps;
-    }
-
-    @Override
-    public ArrayList<Tuple<String, String>> getImplicitByCategory(String level, String deptype) {
+    public ArrayList<Tuple<String, String>> getDepByCategory(String level, String deptype) {
         ArrayList<Tuple<String, String>> receiveDeps = new ArrayList<Tuple<String, String>>();
         return receiveDeps;
     }

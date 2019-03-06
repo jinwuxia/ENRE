@@ -5,7 +5,6 @@ import expression.ExpressionAtom;
 import expression.ExpressionCollect;
 import priextractor.py3extractor.newdeper.InferenceDependencyVisitor;
 import priextractor.py3extractor.newdeper.UnknownResolver;
-import sun.security.krb5.Config;
 import uerr.SingleCollect;
 import util.Configure;
 import writer.CsvWriter;
@@ -36,7 +35,7 @@ public class AtomResoveSummary {
                 summaryForTotalMap(expressionList.get(expId)); //resovledTypeMap
 
                 //for only project code, except for built-in, super, library,
-                // sum up the src code resolved type in P1-P10, P>10
+                // sum up the src code resolved type in exp, P1-P10, P>10
                 summaryPcategoryInSrc(expressionList.get(expId)); //categoryByPInSrc
             }
         }
@@ -98,20 +97,22 @@ public class AtomResoveSummary {
 
 
     /**
-     * categoryByPInSrc
+     * output categoryByPInSrc: exp, p1,p2,p3,...
      */
     private List<String[]> outputCategoryP() {
-        String types[] = {Configure.RELATION_IMPLICIT_P1,
-        Configure.RELATION_IMPLICIT_P2,
-        Configure.RELATION_IMPLICIT_P3,
-        Configure.RELATION_IMPLICIT_P4,
-        Configure.RELATION_IMPLICIT_P5,
-        Configure.RELATION_IMPLICIT_P6,
-        Configure.RELATION_IMPLICIT_P7,
-        Configure.RELATION_IMPLICIT_P8,
-        Configure.RELATION_IMPLICIT_P9,
-        Configure.RELATION_IMPLICIT_P10,
-        Configure.RELATION_IMPLICIT_P11};
+        String types[] = {
+                Configure.RELATION_ATOM_EXPLICIT,
+                Configure.RELATION_ATOM_IMPLICIT_P1,
+                Configure.RELATION_ATOM_IMPLICIT_P2,
+                Configure.RELATION_ATOM_IMPLICIT_P3,
+                Configure.RELATION_ATOM_IMPLICIT_P4,
+        Configure.RELATION_ATOM_IMPLICIT_P5,
+        Configure.RELATION_ATOM_IMPLICIT_P6,
+        Configure.RELATION_ATOM_IMPLICIT_P7,
+        Configure.RELATION_ATOM_IMPLICIT_P8,
+        Configure.RELATION_ATOM_IMPLICIT_P9,
+        Configure.RELATION_ATOM_IMPLICIT_P10,
+        Configure.RELATION_ATOM_IMPLICIT_P11};
 
         List<String> valueList = new ArrayList<>();
         for (String type : types) {
@@ -133,7 +134,7 @@ public class AtomResoveSummary {
 
     /**
      * except the built-in, super, library,
-     * statistic the P0-P10
+     * statistic the exp, P1-P10
      * @param expression
      */
     private void summaryPcategoryInSrc(Expression expression) {
@@ -146,7 +147,7 @@ public class AtomResoveSummary {
                     && !resolveManner.equals(Configure.RESOLVED_TYPE_LIBRARY)
                     && !resolveManner.equals(Configure.RESOLVED_TYPE_SUPER)
             ) {
-                String possible_count_string = InferenceDependencyVisitor.getProbabilityType(atomId, atomCount, atom);
+                String possible_count_string = InferenceDependencyVisitor.getProbabilityType(resolveManner, atomId, atomCount, atom);
                 if(!categoryByPInSrc.containsKey(possible_count_string)) {
                     categoryByPInSrc.put(possible_count_string, 0);
                 }
@@ -250,7 +251,7 @@ public class AtomResoveSummary {
             ExpressionAtom atom = expression.getExpressionAtomList().get(atomId);
             String resolveManner = atom.getResolvedManner();
             if(resolveManner.startsWith(Configure.RESOLVED_TYPE_IMPLICIT)) {
-                String possible_count_string = InferenceDependencyVisitor.getProbabilityType(atomId, atomCount, atom);
+                String possible_count_string = InferenceDependencyVisitor.getProbabilityType(resolveManner, atomId, atomCount, atom);
                 if(!possibleResolvedTypeMap.containsKey(possible_count_string)) {
                     possibleResolvedTypeMap.put(possible_count_string, 0);
                 }

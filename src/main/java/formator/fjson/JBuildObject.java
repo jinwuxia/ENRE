@@ -13,7 +13,7 @@ public class JBuildObject {
 
     public JDepObject buildObjectProcess(MapObject mapObject) {
         Configure configure = Configure.getConfigureInstance();
-        ArrayList<String> files = mapObject.getFiles();
+        ArrayList<String> files = mapObject.getNodes();
         Map<Integer, Map<Integer, Map<String, Integer>>> finalRes = mapObject.getFinalRes();
         ArrayList<JCellObject> cellObjects = buildCellObjects(finalRes); //transform finalRes into cellObjects
 

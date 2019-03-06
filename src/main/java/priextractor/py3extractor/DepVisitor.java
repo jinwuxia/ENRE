@@ -1,7 +1,7 @@
 package priextractor.py3extractor;
 
 import expression.ExpressionCollect;
-import uerr.DependCollect;
+import uerr.AtomDependCollect;
 import uerr.SingleCollect;
 import util.Tuple;
 
@@ -9,7 +9,7 @@ public abstract class DepVisitor {
 
     protected SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
     protected ExpressionCollect expressionCollect = ExpressionCollect.getExpressionCollect();
-    protected DependCollect dependCollect = DependCollect.getInstance();
+    protected AtomDependCollect atomDependCollect = AtomDependCollect.getInstance();
     /**
      * relationType1: entityId1 -> entityId2
      * relationType2: entityId2 -> entityId1
