@@ -4,18 +4,19 @@ import java.io.File;
 
 public class Configure {
 
-    public static final String RELATION_IMPLICIT_P= "P";
-    public static final String RELATION_IMPLICIT_P1 = "P1";
-    public static final String RELATION_IMPLICIT_P2 = "P2";
-    public static final String RELATION_IMPLICIT_P3 = "P3";
-    public static final String RELATION_IMPLICIT_P4 = "P4";
-    public static final String RELATION_IMPLICIT_P5 = "P5";
-    public static final String RELATION_IMPLICIT_P6 = "P6";
-    public static final String RELATION_IMPLICIT_P7 = "P7";
-    public static final String RELATION_IMPLICIT_P8 = "P8";
-    public static final String RELATION_IMPLICIT_P9 = "P9";
-    public static final String RELATION_IMPLICIT_P10 = "P10";
-    public static final String RELATION_IMPLICIT_P11 = "P>10";
+    public static final String RELATION_ATOM_EXPLICIT = "exp";
+    public static final String RELATION_ATOM_IMPLICIT_P = "P";
+    public static final String RELATION_ATOM_IMPLICIT_P1 = "P1";
+    public static final String RELATION_ATOM_IMPLICIT_P2 = "P2";
+    public static final String RELATION_ATOM_IMPLICIT_P3 = "P3";
+    public static final String RELATION_ATOM_IMPLICIT_P4 = "P4";
+    public static final String RELATION_ATOM_IMPLICIT_P5 = "P5";
+    public static final String RELATION_ATOM_IMPLICIT_P6 = "P6";
+    public static final String RELATION_ATOM_IMPLICIT_P7 = "P7";
+    public static final String RELATION_ATOM_IMPLICIT_P8 = "P8";
+    public static final String RELATION_ATOM_IMPLICIT_P9 = "P9";
+    public static final String RELATION_ATOM_IMPLICIT_P10 = "P10";
+    public static final String RELATION_ATOM_IMPLICIT_P11 = "P>10";
     private Configure() {}
 
     public static final String RELATION_IMPLICIT_ALL = "implicit";

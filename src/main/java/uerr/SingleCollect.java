@@ -193,10 +193,12 @@ public class SingleCollect {
                 name = entity.getName();
             }
             if(name.endsWith(".py")) {
-                name = name.split("\\.py")[0];
+                //name = name.split("\\.py")[0];
+                name = entity.getSimpleName();
             }
             if(name.endsWith(".go")) {
-                name = name.split("\\.go")[0];
+                //name = name.split("\\.go")[0];
+                name = entity.getSimpleName();
             }
             if(!longname.equals("")) {
                 longname = name + "." + longname;

@@ -7,15 +7,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DependCollect {
+public class AtomDependCollect {
     //{deptype, id1}= list[ id2]
     private Map<String, List<Tuple<Integer, Integer>>> depends = new HashMap<>();
-    private static DependCollect dependCollectInstance = new DependCollect();
+    private static AtomDependCollect atomDependCollectInstance = new AtomDependCollect();
 
-    private DependCollect(){}
+    private AtomDependCollect(){}
 
-    public static DependCollect getInstance() {
-        return dependCollectInstance;
+    public static AtomDependCollect getInstance() {
+        return atomDependCollectInstance;
     }
 
     public void addOnedep(String type, int id1, int id2) {
