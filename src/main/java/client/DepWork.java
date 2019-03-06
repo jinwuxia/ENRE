@@ -39,6 +39,8 @@ public class DepWork {
         long endTime = System.currentTimeMillis();
         System.out.println("\nConsumed time: " + (float) ((endTime - startTime) / 1000.00) + " s,  or " + (float) ((endTime - startTime) / 60000.00) + " min.\n");
 
+
+        /**
         //build hierarchical dependencies
         HiDeper hiDeper = new HiDeper();
         hiDeper.run();
@@ -58,6 +60,7 @@ public class DepWork {
         writer.run(jDepObject, xDepObject, allNodes, allEdges);
 
         //output the summary of the acquired results.
+         **/
         summary();
 
     }
