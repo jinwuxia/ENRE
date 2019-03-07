@@ -1,6 +1,8 @@
 package uerr;
 
 
+import entitybuilder.pybuilder.pyentity.ModuleEntity;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -177,7 +179,7 @@ public class SingleCollect {
 
 
     /**
-     * if module, it longname = fileName
+     * if module, it longname = fileName(without .py)
      * if others, it longname = parentsimplename.parentsimplename....
      * @param id
      * @return
@@ -189,17 +191,10 @@ public class SingleCollect {
             //System.out.println("simplename:" + singleCollect.getEntityById(id).getSimpleName());
             AbsEntity entity = singleCollectInstance.getEntityById(id);
             String name = entity.getSimpleName();
-            if(entity instanceof AbsFILEntity) {
-                name = entity.getName();
+            if(entity instanceof ModuleEntity) {
+                name = ((ModuleEntity) entity).getModuleSimpleName();
             }
-            if(name.endsWith(".py")) {
-                //name = name.split("\\.py")[0];
-                name = entity.getSimpleName();
-            }
-            if(name.endsWith(".go")) {
-                //name = name.split("\\.go")[0];
-                name = entity.getSimpleName();
-            }
+
             if(!longname.equals("")) {
                 longname = name + "." + longname;
             }
@@ -214,7 +209,7 @@ public class SingleCollect {
 
     public void printAllEntity() {
         for (AbsEntity entity : singleCollectInstance.getEntities()) {
-            System.out.println(entity);
+            System.out.println(getLongName(entity.getId()));
         }
     }
 

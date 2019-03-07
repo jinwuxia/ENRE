@@ -53,13 +53,14 @@ public class PyProcessTask {
         String onlyFileName = StringUtil.getLastStrByPathDelimiter(fileName);
         String moduleSimpleName = onlyFileName.split(PyConstantString.DOT_PY)[0];
 
+
         int moduleId = singleCollect.getCurrentIndex();
         ModuleEntity moduleEntity = new ModuleEntity(moduleId, fileName);
         moduleEntity.setModuleSimpleName(moduleSimpleName);
         singleCollect.addEntity(moduleEntity);
 
         //set parent and child
-        //System.out.println("modulename:" + fileName);
+        //System.out.println("modulename:" + fileName + "," + moduleSimpleName);
         return moduleId;
     }
 

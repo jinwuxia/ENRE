@@ -4,7 +4,6 @@ import priextractor.py3extractor.newdeper.implicitstatistic.OutputStatistic;
 import formator.Formator;
 import formator.fjson.JDepObject;
 import priextractor.py3extractor.newdeper.implicitstatistic.StatisticMember;
-import sun.security.krb5.Config;
 import writer.JsonWriter;
 import writer.UndWriter;
 import util.Configure;
