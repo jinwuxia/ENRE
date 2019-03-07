@@ -1,19 +1,19 @@
 package client;
 
-import formator.spreadsheet.Csvgrapher;
-import priextractor.AnayzerIntf;
-import entitybuilder.BuilderIntf;
 import formator.Formator;
 import formator.fjson.JDepObject;
 import formator.fxml.XDepObject;
+import formator.spreadsheet.Csvgrapher;
 import hianalyzer.HiDepData;
 import hianalyzer.HiDeper;
+import priextractor.AnayzerIntf;
+import entitybuilder.BuilderIntf;
 import priextractor.goextractor.GoRelationInf;
 import priextractor.py3extractor.PyRelationInf;
 import util.RelationInterface;
 import writer.UndWriter;
-import writer.WriterIntf;
 import util.Configure;
+import writer.WriterIntf;
 
 import java.util.ArrayList;
 
@@ -40,14 +40,14 @@ public class DepWork {
         System.out.println("\nConsumed time: " + (float) ((endTime - startTime) / 1000.00) + " s,  or " + (float) ((endTime - startTime) / 60000.00) + " min.\n");
 
 
-        /**
+
         //build hierarchical dependencies
         HiDeper hiDeper = new HiDeper();
         hiDeper.run();
         //hiDeper.tmpOutput();
         HiDepData hiDepData = HiDepData.getInstance();
 
-        Formator formator = new Formator(depTypes);
+        Formator formator = new Formator(depTypes, Configure.RELATION_LEVEL_FILE);
         JDepObject jDepObject = formator.getfJsonDataModel();
         XDepObject xDepObject = formator.getfXmlDataModel();
 
@@ -60,7 +60,7 @@ public class DepWork {
         writer.run(jDepObject, xDepObject, allNodes, allEdges);
 
         //output the summary of the acquired results.
-         **/
+
         summary();
 
     }

@@ -44,7 +44,7 @@ public class Experiment {
 
     private void generateAtomDepAtFunctionLevel() {
         String[] all_dep_exp = new String[] {Configure.RELATION_ATOM_EXPLICIT,  Configure.RELATION_ATOM_IMPLICIT_P1};
-        String expJsonFile = configure.getAnalyzedProjectName() + "_enre_atom_exp_p1_function_call.json";
+        String expJsonFile = configure.getAnalyzedProjectName() + "_atom_exp_p1_function_call.json";
         String level = Configure.RELATION_LEVEL_FUNCTION;
         outDepToJsonFile(expJsonFile, all_dep_exp, level);
 
@@ -58,7 +58,7 @@ public class Experiment {
         String[] all_dep_exp = new String[] {Configure.RELATION_ATOM_EXPLICIT,
                 Configure.RELATION_EXTEND, Configure.RELATION_INHERIT,
                 Configure.RELATION_IMPORT};
-        String expJsonFile = configure.getAnalyzedProjectName() + "_enre_allExplicitDep.json";
+        String expJsonFile = configure.getAnalyzedProjectName() + "_explicitDep.json";
         String level = Configure.RELATION_LEVEL_FILE;
         outDepToJsonFile(expJsonFile, all_dep_exp, level);
 
@@ -93,7 +93,7 @@ public class Experiment {
         //export  implicit deps at file level
         for (int i = 0; i < depsList.size(); i++) {
             String[] depType = depsList.get(i);
-            String partialJsonfile = configure.getAnalyzedProjectName() + "_enreImplicitDep_P" + Integer.toString(i+1) + ".json";
+            String partialJsonfile = configure.getAnalyzedProjectName() + "_implicitDep_P" + Integer.toString(i+1) + ".json";
             String level = Configure.RELATION_LEVEL_FILE;
             outDepToJsonFile(partialJsonfile, depType, level);
         }

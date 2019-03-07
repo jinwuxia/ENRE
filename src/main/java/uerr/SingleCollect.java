@@ -213,4 +213,20 @@ public class SingleCollect {
         }
     }
 
+
+    /**
+     * @param rootname has no '.', has no '/', is a folder
+     * @return
+     */
+    public int getRoot(String rootname) {
+        for (AbsEntity entity: singleCollectInstance.getEntities()) {
+            if(entity instanceof AbsFLDEntity
+                    && entity.getParentId() == -1
+                    && entity.getSimpleName().equals(rootname)) {
+                return entity.getId();
+            }
+        }
+        return -1;
+    }
+
 }

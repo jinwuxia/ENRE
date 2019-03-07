@@ -1,5 +1,6 @@
 package priextractor.py3extractor.pydeper;
 
+import entitybuilder.pybuilder.PyConstantString;
 import priextractor.py3extractor.DepVisitor;
 import uerr.AbsEntity;
 import uerr.AbsFLDEntity;
@@ -12,88 +13,14 @@ import util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ImportVisitor extends DepVisitor {
 
-    private HashMap<String, Integer> pkg2IdMap = new HashMap<String, Integer>();
-    private HashMap<String, Integer> mod2IdMap = new HashMap<String, Integer>();
-
-    public ImportVisitor() {
-        buildPkgMap(); //fullpathname->id
-        //buildModuleMap(); //simplename->id
-    }
 
     @Override
     public void setDep() {
-        bindPkg2Pkg();
-        bindMod2Pkg();
-
         setImportDep(); //import
-    }
-
-    /**
-     * build parent-child relation between pkgs
-      */
-    private void bindPkg2Pkg() {
-        for(AbsEntity entity :  singleCollect.getEntities()) {
-            if(entity instanceof AbsFLDEntity) {
-                String dirName = StringUtil.deleteLastStrByPathDelimiter(((AbsFLDEntity) entity).getFullPath());
-                int parentId = -1;
-                if(pkg2IdMap.containsKey(dirName)) {
-                    parentId = pkg2IdMap.get(dirName);
-                }
-
-                singleCollect.getEntityById(entity.getId()).setParentId(parentId);
-                if(parentId != -1
-                        && singleCollect.getEntityById(parentId) instanceof AbsFLDEntity) {
-                    singleCollect.getEntityById(parentId).addChildId(entity.getId());
-                }
-            }
-        }
-    }
-
-    /**
-     * module's parent is package.
-     * is it possible that a module's parent is also a module.?????????????/
-     *
-     *
-     * build parent-child relation between module and pkgs
-     */
-    private void bindMod2Pkg() {
-        for (AbsEntity entity : singleCollect.getEntities()) {
-            if(entity instanceof ModuleEntity) {
-                String dirName = StringUtil.deleteLastStrByPathDelimiter(entity.getName());
-                int parentId = -1;
-                if(pkg2IdMap.containsKey(dirName)) {
-                    parentId = pkg2IdMap.get(dirName);
-                }
-                singleCollect.getEntityById(entity.getId()).setParentId(parentId);
-                if(parentId != -1
-                        && singleCollect.getEntityById(parentId) instanceof AbsFLDEntity) {
-                    singleCollect.getEntityById(parentId).addChildId(entity.getId());
-                }
-            }
-        }
-    }
-
-    /**
-     * map["packagename"] = packageId
-     * @return
-     */
-    private void buildPkgMap() {
-        for(AbsEntity entity : singleCollect.getEntities()) {
-            if(entity instanceof AbsFLDEntity) {
-                this.pkg2IdMap.put(((AbsFLDEntity) entity).getFullPath(), entity.getId());
-            }
-        }
-    }
-
-    private void buildModuleMap() {
-        for(AbsEntity entity : singleCollect.getEntities()) {
-            if(entity instanceof ModuleEntity) {
-                this.mod2IdMap.put(((ModuleEntity) entity).getModuleSimpleName(), entity.getId());
-            }
-        }
     }
 
 
@@ -102,6 +29,7 @@ public class ImportVisitor extends DepVisitor {
      */
     private void setImportDep() {
         for(AbsEntity entity : singleCollect.getEntities()) {
+            int entityId = entity.getId();
             ArrayList<ImportStmt> importStmts = null;
             if(entity instanceof ModuleEntity) {
                 importStmts = ((ModuleEntity) entity).getImportStmts();
@@ -120,14 +48,17 @@ public class ImportVisitor extends DepVisitor {
                     impstr = (importStmt.getFrom() + Configure.DOT + impstr);
                 }
                 //System.out.println("looking for " + impstr);
-                int scope = -1; //should get it based on from.
-                int id = findImportedEntity(impstr, scope);
 
-                if(id != -1) {
+                int importId = findImport(impstr, entityId);
+
+                //int scope = -1; //should get it based on from.
+                //int id = findImportedEntity(impstr, scope);
+
+                if(importId != -1) {
                     //save (importedID, importsList_index) into uerr
-                    saveId2Id(entity.getId(), id, index);
-                    saveRelation(entity.getId(), id, Configure.RELATION_IMPORT, Configure.RELATION_IMPORTED_BY);
-                    //System.out.println("setImportDep: find " + singleCollect.getEntityById(id).getName());
+                    saveId2Id(entityId, importId, index);
+                    saveRelation(entityId, importId, Configure.RELATION_IMPORT, Configure.RELATION_IMPORTED_BY);
+                    //System.out.println("setImportDep: find " + singleCollect.getLongName(importId));
                 }
                 else  {
                     //System.out.println("setImportDep: cannot find " + impstr);
@@ -137,100 +68,116 @@ public class ImportVisitor extends DepVisitor {
     }
 
 
-
     /**
+     * impStr can be:
+     *     1) full qualified name:  x.y.z.... in this case, x is root.
+     *     2) current name: y.z or y. in this case, y is a entity under current file's parent=>package
      *
-     * @param impstr
-     * @param scope
+     *     for the two case, split qualified name into arry,
+     *     first find the root, i.e., [0], then treat as parent to find next
+     * @param impStr
+     * @param entityId the entity that has import statement
      * @return
      */
-    private int findImportedEntity(String impstr, int scope) {
-        while(impstr.contains(Configure.DOT)) {
-            String [] arr = impstr.split("\\.");
-            String pre = arr[0];
-            String post = impstr.substring(pre.length() + 1, impstr.length());
-            scope = findPkgOrMod(pre, scope);
-            impstr = post;
-            //System.out.println("scope=" + scope + "; impstr=" + impstr);
-            if(scope == -1) {
+    private int findImport(String impStr, int entityId) {
+        String[] impStrList = impStr.split("\\.");
+
+        String rootName = impStrList[0];
+        int rootId = singleCollect.getRoot(rootName);
+        if( rootId == -1) {
+            rootId = findRootInLocatedFolder(rootName, entityId);
+        }
+        if(rootId == -1) {
+            return -1;
+        }
+
+        // in parentId, find child who has name impStrList[i]
+        int parentId = rootId;
+        for (int i = 1; i < impStrList.length; i++) {
+            String name = impStrList[i];
+            if(i == impStrList.length - 1 && name.equals(Configure.STAR)) {
+                return parentId;
+            }
+
+            int childId = findChildByName(name, parentId);
+            if(childId == -1) {
                 return -1;
             }
+            parentId = childId;
+
         }
-        return findObject(impstr, scope);
+        return parentId;
     }
 
+
+    private int findRootInLocatedFolder(String name, int entityId) {
+        int folderId = findLocatedFolder(entityId);
+        if(folderId == -1) {
+            return -1;
+        }
+        return findChildByName(name, folderId);
+    }
+
+
     /**
-     * in parent scope, find a str's id
-     * @param str
-     * @param parentId
+     * find the folder which contains entityId
+     * @param entityId
      * @return
      */
-    private int findObject(String str, int parentId) {
-        if(str.equals(Configure.STAR)) {
-            return parentId;
+    private int findLocatedFolder(int entityId) {
+        int id = entityId;
+        while (id != -1 && !(singleCollect.getEntityById(id) instanceof AbsFLDEntity)) {
+            id = singleCollect.getEntityById(id).getParentId();
         }
-        if(parentId == -1) { //import q (a is module or package)
-            return findPkgOrMod(str, parentId);
-        }
+        return id;
+    }
 
-        for (int childId : singleCollect.getEntityById(parentId).getChildrenIds()) {
-            String name = singleCollect.getEntityById(childId).getName();
-            if(singleCollect.getEntityById(childId) instanceof ModuleEntity) {
-                name = ((ModuleEntity) singleCollect.getEntityById(childId)).getModuleSimpleName();
-                //System.out.println(name);
+
+    /**
+     *  look for child who has name
+     *  if id is a package, then add _init_'s children and _all_'s content into  childrenlist.
+     * @param searchName
+     * @param id
+     * @return
+     */
+    private int findChildByName(String searchName, int id) {
+        List<Integer> children = singleCollect.getEntityById(id).getChildrenIds();
+        if(singleCollect.getEntityById(id) instanceof AbsFLDEntity) {
+            int initFileId = getInitForPackage(id);
+            if(initFileId != -1) {
+                children.addAll(singleCollect.getEntityById(initFileId).getChildrenIds());
             }
-            if(name.equals(str)) {
+        }
+        for (int childId : children) {
+            AbsEntity childEntity = singleCollect.getEntityById(childId);
+            String childSimpleName = childEntity.getSimpleName();
+            if(childEntity instanceof ModuleEntity) {
+                childSimpleName = ((ModuleEntity) childEntity).getModuleSimpleName();
+            }
+            if(searchName.equals(childSimpleName)) {
                 return childId;
             }
         }
         return -1;
     }
 
+
     /**
-     * in scope , find id of package ir module
-     * @param str
-     * @param scopeId
+     * find init file id for this package
+     * @param pkgId
      * @return
      */
-    private int findPkgOrMod(String str, int scopeId) {
-        if(scopeId == -1) {
-            for (AbsEntity entity : singleCollect.getEntities()) {
-                if(isStrAModOrPkg(entity, str)) {
-                    return entity.getId();
-                }
-            }
-        }
-        else { //scope != -1, it's parent id
-            for(int childId : singleCollect.getEntityById(scopeId).getChildrenIds()) {
-                AbsEntity entity = singleCollect.getEntityById(childId);
-                if(isStrAModOrPkg(entity, str)) {
-                    return entity.getId();
+    private int getInitForPackage(int pkgId) {
+        for (int childId : singleCollect.getEntityById(pkgId).getChildrenIds()) {
+            if(singleCollect.getEntityById(childId) instanceof ModuleEntity) {
+                String childName = singleCollect.getEntityById(childId).getName();
+                if(childName.endsWith(PyConstantString.INIT_FILE_NAME)) {
+                    return  childId;
                 }
             }
         }
         return -1;
     }
-
-
-    /**
-     * judge the str is module or package uerr's name or not.
-     * because module's name is a full path , so the code is here
-     */
-    private boolean isStrAModOrPkg(AbsEntity entity, String str) {
-        String name = "";
-        if(entity instanceof AbsFLDEntity) {
-            name = entity.getName();
-        }
-        else if (entity instanceof ModuleEntity) {
-            name = ((ModuleEntity) entity).getModuleSimpleName();
-        }
-        if(name.equals(str)) {
-            return true;
-        }
-        return false;
-    }
-
-
 
 
     /**
@@ -247,12 +194,6 @@ public class ImportVisitor extends DepVisitor {
             ((PyFunctionEntity) singleCollect.getEntityById(entityId)).updateImportedId2Indexs(importedId, index);
         }
     }
-
-
-
-
-
-
 
 
 }

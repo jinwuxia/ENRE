@@ -21,14 +21,14 @@ public class PyDepLyzer {
 
         buildParentChildDepForFileFolder();
 
-        SingleCollect.getSingleCollectInstance().printAllEntity();
+        //SingleCollect.getSingleCollectInstance().printAllEntity();
 
         DepVisitor depVisitor = new ImportVisitor();
         depVisitor.setDep();
         System.out.println("Import dependency identified successfully");
 
 
-        /**
+
         depVisitor = new InheritVisitor();
         depVisitor.setDep();
         System.out.println("Inherit dependency identified successfully");
@@ -52,7 +52,7 @@ public class PyDepLyzer {
         inferenceDependencyVisitor.setDep();
         inferenceDependencyVisitor.setDepByCategory();
         System.out.println("resolve expression and save implicit dependency successfully");
-         */
+
 
 
     }
