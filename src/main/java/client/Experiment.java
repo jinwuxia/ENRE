@@ -34,17 +34,18 @@ public class Experiment {
         //generate all explicit dependency
         generateAllExplicit();
 
-        //atom exp + atom p1
-        //generateAtomDepAtFunctionLevel();
+        // all function calls has been saved into entity,
+        // export all explciit and implicit function calls
+        generateAllFunctionCall();
 
         //generateUnderstandFormatsForExperiments();
 
     }
 
 
-    private void generateAtomDepAtFunctionLevel() {
-        String[] all_dep_exp = new String[] {Configure.RELATION_ATOM_EXPLICIT,  Configure.RELATION_ATOM_IMPLICIT_P1};
-        String expJsonFile = configure.getAnalyzedProjectName() + "_atom_exp_p1_function_call.json";
+    private void generateAllFunctionCall() {
+        String[] all_dep_exp = new String[] {Configure.RELATION_CALL};
+        String expJsonFile = configure.getAnalyzedProjectName() + "_allExpImp_call.json";
         String level = Configure.RELATION_LEVEL_FUNCTION;
         outDepToJsonFile(expJsonFile, all_dep_exp, level);
 

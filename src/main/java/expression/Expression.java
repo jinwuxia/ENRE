@@ -85,14 +85,26 @@ public class Expression {
         }
     }
 
+
+    /**
+     * if has no dot, left, then set.
+     * if last has (, then cal.   z.y() or y()
+     * if has dot, last has no (, then dot.  z.y or z.y().x
+     * other is use
+     * @param newStr
+     * @return
+     */
     private String inferUsage(String newStr) {
-        if(newStr.contains("(")) {
+        String[] arr = newStr.split("\\.");
+        String last = arr[arr.length - 1];
+
+        if(last.contains("(")) {
             return Configure.EXPRESSION_CALL;
         }
-        if(location.equals("left") && !newStr.contains(".")) {
+        else if(location.equals("left") && !newStr.contains(".")) {
             return Configure.EXPRESSION_SET;
         }
-        if(newStr.contains(".")) {
+        else if(newStr.contains(".")) {
             return Configure.EXPRESSION_DOT;
         }
         return Configure.EXPRESSION_USE;

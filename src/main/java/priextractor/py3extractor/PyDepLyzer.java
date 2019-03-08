@@ -2,6 +2,7 @@ package priextractor.py3extractor;
 
 import entitybuilder.pybuilder.pyentity.ModuleEntity;
 import priextractor.py3extractor.infer.TypeInfer;
+import priextractor.py3extractor.newdeper.CallVisitor;
 import priextractor.py3extractor.newdeper.InferenceDependencyVisitor;
 import priextractor.py3extractor.newdeper.ResolverTemplate;
 import priextractor.py3extractor.pydeper.*;
@@ -53,7 +54,9 @@ public class PyDepLyzer {
         inferenceDependencyVisitor.setDepByCategory();
         System.out.println("resolve expression and save implicit dependency successfully");
 
-
+        CallVisitor callVisitor = new CallVisitor();
+        callVisitor.setDep();
+        System.out.println("resolve calls successfully");
 
     }
 

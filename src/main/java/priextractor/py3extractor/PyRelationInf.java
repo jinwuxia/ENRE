@@ -153,10 +153,8 @@ public class PyRelationInf extends RelationInterface {
     public ArrayList<Tuple<String, String>> getFunctionCalls(String level) {
         ArrayList<Tuple<String, String>> deps = new ArrayList<Tuple<String, String>>();
         for(AbsEntity entity : singleCollect.getEntities()) {
-            if (entity instanceof PyFunctionEntity) {
-                ArrayList<Tuple<String, String>> dep = getFunctionCallForEntity(entity.getId(), level);
-                deps.addAll(dep);
-            }
+            ArrayList<Tuple<String, String>> dep = getFunctionCallForEntity(entity.getId(), level);
+            deps.addAll(dep);
         }
         return deps;
     }
@@ -410,25 +408,25 @@ public class PyRelationInf extends RelationInterface {
      * @return
      */
     private String getEntityFunctionName(int entityId) {
-        String functionName = Configure.NULL_STRING;
-        if(entityId == -1
-            || singleCollect.getEntityById(entityId) instanceof AbsFLDEntity
-            || singleCollect.getEntityById(entityId) instanceof AbsFILEntity
-            || singleCollect.getEntityById(entityId) instanceof ClassEntity) {
-            return functionName;
+        int functionId = getLocatedFunction(entityId);
+        if(functionId == -1) {
+            return Configure.NULL_STRING;
         }
+        return singleCollect.getLongName(functionId);
+    }
 
+
+    private int getLocatedFunction(int entityId) {
         int functionId = entityId;
-        while(functionId != -1
-                && !(singleCollect.getEntityById(functionId) instanceof AbsFUNEntity)) {
+        while(functionId != -1 && !(singleCollect.getEntityById(functionId) instanceof AbsFUNEntity)) {
             functionId = singleCollect.getEntityById(functionId).getParentId();
         }
         if(functionId != -1 && singleCollect.getEntityById(functionId) instanceof AbsFUNEntity) {
-            return singleCollect.getEntityById(functionId).getName();
+            return functionId;
         }
-        return functionName;
-    }
+        return -1;
 
+    }
 
 
     /**
@@ -448,20 +446,20 @@ public class PyRelationInf extends RelationInterface {
         return -1;
     }
 
-    private ArrayList<Tuple<String, String>> getFunctionCallForEntity(int functionId, String level) {
+    private ArrayList<Tuple<String, String>> getFunctionCallForEntity(int entityId, String level) {
         ArrayList<Tuple<String, String>> deps = new ArrayList<Tuple<String, String>>();
-
-        AbsEntity entity = singleCollect.getEntityById(functionId);
-        String callerName = entity.getName();
-        String callerFileName = getEntityFileName(functionId);
+        AbsEntity entity = singleCollect.getEntityById(entityId);
+        String callerName = singleCollect.getLongName(entityId);
 
         for (Tuple<String, Integer> relation : entity.getRelations()) {
             if(relation.x.equals(Configure.RELATION_CALL)) {
                 int calleeId = relation.y;
-                String calleeName = singleCollect.getEntityById(calleeId).getName();
-                String calleeFileName = getEntityFileName(calleeId);
+                String calleeName = singleCollect.getLongName(calleeId);
+
                 Tuple<String, String> dep;
                 if(level.equals(Configure.RELATION_LEVEL_FILE)) {
+                    String callerFileName = getEntityFileName(entityId);
+                    String calleeFileName = getEntityFileName(calleeId);
                     if(!callerFileName.equals(Configure.NULL_STRING)
                             && !calleeFileName.equals(Configure.NULL_STRING)) {
                         dep = new Tuple<String, String>(callerFileName, calleeFileName);
@@ -469,9 +467,20 @@ public class PyRelationInf extends RelationInterface {
                     }
                     //System.out.println("FunctionCall: " + callerFileName + Configure.COMMA +  calleeFileName);
                 }
+                else if (level.equals(Configure.RELATION_LEVEL_FUNCTION)){
+                    String functionName1 = getEntityFunctionName(entityId);
+                    String functionName2 = getEntityFunctionName(calleeId);
+                    if(!functionName1.equals(Configure.NULL_STRING)
+                            && !functionName2.equals(Configure.NULL_STRING)) {
+                        dep = new Tuple<String, String>(functionName1, functionName2);
+                        deps.add(dep);
+                        //System.out.println("call " + functionName1 + ", " + functionName2);
+                    }
+                }
                 else {
                     dep = new Tuple<String, String>(callerName, calleeName);
                     deps.add(dep);
+
                 }
 
             }

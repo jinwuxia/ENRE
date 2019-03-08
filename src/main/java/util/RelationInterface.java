@@ -77,6 +77,7 @@ public abstract class RelationInterface {
                     String functionName = SingleCollect.getSingleCollectInstance().getLongName(entity.getId());
                     nodes.add(functionName);
                 }
+                //System.out.println("functions: " + nodes);
             }
         }
         return nodes;
