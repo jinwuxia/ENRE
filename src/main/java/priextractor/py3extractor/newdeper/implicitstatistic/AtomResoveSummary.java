@@ -4,7 +4,7 @@ import expression.Expression;
 import expression.ExpressionAtom;
 import expression.ExpressionCollect;
 import priextractor.py3extractor.newdeper.InferenceDependencyVisitor;
-import priextractor.py3extractor.newdeper.UnknownResolver;
+import priextractor.py3extractor.newdeper.resolver.UnknownResolver;
 import uerr.SingleCollect;
 import util.Configure;
 import writer.CsvWriter;

@@ -12,6 +12,7 @@ import java.util.Set;
 public class InferenceDependencyVisitor extends DepVisitor {
 
     /**
+     * no use
      * atom usage = EXPRESSION_CALL, XX_SET, XX_DOT, XX_USE
      */
     @Override

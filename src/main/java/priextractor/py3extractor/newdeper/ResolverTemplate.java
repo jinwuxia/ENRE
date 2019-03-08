@@ -1,6 +1,7 @@
 package priextractor.py3extractor.newdeper;
 
 import priextractor.py3extractor.newdeper.implicitstatistic.AtomResoveSummary;
+import priextractor.py3extractor.newdeper.resolver.*;
 
 public class ResolverTemplate {
 

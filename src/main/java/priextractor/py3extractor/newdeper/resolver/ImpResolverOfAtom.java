@@ -1,4 +1,4 @@
-package priextractor.py3extractor.newdeper;
+package priextractor.py3extractor.newdeper.resolver;
 
 
 import expression.Expression;

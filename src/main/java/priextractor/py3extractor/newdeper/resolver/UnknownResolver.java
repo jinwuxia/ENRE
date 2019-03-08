@@ -1,7 +1,8 @@
-package priextractor.py3extractor.newdeper;
+package priextractor.py3extractor.newdeper.resolver;
 
 import expression.Expression;
 import expression.ExpressionAtom;
+import priextractor.py3extractor.newdeper.SequencecUtil;
 import uerr.SingleCollect;
 import util.Configure;
 
