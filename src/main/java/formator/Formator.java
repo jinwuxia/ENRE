@@ -33,5 +33,9 @@ public class Formator {
         //xmlFormat.toXml(xDepObject);
     }
 
+    public MapObject getMapObject() {
+        return this.mapObject;
+    }
+
 
 }

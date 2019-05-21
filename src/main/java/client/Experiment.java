@@ -1,15 +1,24 @@
 package client;
 
+import expression.ExpressionAtom;
+import expression.ExpressionCollect;
+import priextractor.py3extractor.PyRelationInf;
 import priextractor.py3extractor.newdeper.implicitstatistic.OutputStatistic;
 import formator.Formator;
 import formator.fjson.JDepObject;
 import priextractor.py3extractor.newdeper.implicitstatistic.StatisticMember;
+import uerr.AbsEntity;
+import uerr.SingleCollect;
+import util.Tuple;
+import writer.CsvWriter;
 import writer.JsonWriter;
 import writer.UndWriter;
 import util.Configure;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -40,6 +49,9 @@ public class Experiment {
 
         //generateUnderstandFormatsForExperiments();
 
+        generateAtomResolvings();
+
+        generateP1AsCSV();
     }
 
 
@@ -172,5 +184,84 @@ public class Experiment {
         System.out.println("Export " + partialJsonfile);
 
     }
+
+    private void generateAtomResolvings() {
+        List<String[]> res = new ArrayList<>();
+        SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
+        ExpressionCollect expressionCollect = ExpressionCollect.getExpressionCollect();
+        for (AbsEntity entity1 : singleCollect.getEntities()) {
+            int entityId1 = entity1.getId();
+            String entityName1 = singleCollect.getLongName(entityId1);
+            int containerId = entity1.getExpContainerId();
+            if (containerId == -1) {
+                continue;
+            }
+            List<ExpressionAtom> atoms = expressionCollect.getContainerById(containerId).getExpressionAtomList();
+            for (ExpressionAtom atom : atoms) {
+                if(atom.getResolvedManner().startsWith(Configure.RESOLVED_TYPE_IMPLICIT)
+                    && !atom.getBindIdList().isEmpty() && atom.getBindIdList().size() == 1) {
+                    int entityId2 = atom.getBindIdList().get(0);
+                    String entityName2 = singleCollect.getLongName(entityId2);
+                    res.add(new String[]{entityName1.replaceAll(",", ";"), atom.getStr().replaceAll(",", ";"), entityName2.replaceAll(",", ";")});
+
+                }
+            }
+        }
+        CsvWriter csvWriter = new CsvWriter();
+        csvWriter.writeCsv(res, configure.getAnalyzedProjectName() + "_atomDetail.csv");
+    }
+
+
+
+    private void generateP1AsCSV() {
+        class Result {
+            Result(String type, int weight) {
+                this.type = type;
+                this.weight = weight;
+            }
+            String type;
+            int weight;
+        }
+
+        String level = Configure.RELATION_LEVEL_FILE;
+        PyRelationInf relationInf = new PyRelationInf();
+        //List<String> files = relationInf.getAllNodes(level);
+        ArrayList<Tuple<String, String>> deps = relationInf.getDepByType(level, Configure.RELATION_ATOM_IMPLICIT_P1);
+        Map<String, Map<String, Result>> mapMap = new HashMap<>();
+        for (Tuple<String, String> dep : deps) {
+            String file1 = dep.x;
+            String file2 = dep.y;
+            String isCross = "cross-file";
+            if (file1.equals(file2)) {
+                isCross = "inside-file";
+            }
+            if(!mapMap.containsKey(file1)) {
+                mapMap.put(file1, new HashMap<>());
+            }
+            if(!mapMap.get(file1).containsKey(file2)) {
+                mapMap.get(file1).put(file2, new Result(isCross, 0));
+            }
+            int oldWeight = mapMap.get(file1).get(file2).weight;
+            mapMap.get(file1).put(file2, new Result(isCross, oldWeight + 1));
+        }
+
+        List<String[]> resList = new ArrayList<>();
+        for (Map.Entry<String, Map<String, Result>> entry : mapMap.entrySet()) {
+            String file1 = entry.getKey();
+            for (Map.Entry<String, Result> entry2 : entry.getValue().entrySet()) {
+                String file2 = entry2.getKey();
+                String type = entry2.getValue().type;
+                int weight = entry2.getValue().weight;
+                resList.add(new String[] {file1, file2, type, Integer.toString(weight)});
+            }
+        }
+
+        CsvWriter csvWriter = new CsvWriter();
+        csvWriter.writeCsv(resList, configure.getAnalyzedProjectName() + "_implicit_dep_P1.csv");
+
+    }
+
+
+
 
 }

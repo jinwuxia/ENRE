@@ -2,13 +2,14 @@ package priextractor.py3extractor.newdeper;
 
 import expression.ExpressionAtom;
 import priextractor.py3extractor.DepVisitor;
+import uerr.SingleCollect;
 import util.Configure;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * save calling function dependency (all possible calls) into entity
+ * save calling function dependency (only P1 possible calls) into entity
  *
  */
 public class CallVisitor extends DepVisitor {
@@ -34,7 +35,7 @@ public class CallVisitor extends DepVisitor {
     }
 
     /**
-     * find all possible callee Ids
+     * find explicit and possible callee Ids
      *  if called is a.b().c() then ->b() ->c()
      * @param atom
      * @return
@@ -42,6 +43,7 @@ public class CallVisitor extends DepVisitor {
     private List<Integer> findCalleeAtomIds(ExpressionAtom atom) {
         List<Integer> entityIds = new ArrayList<>();
         String usage = atom.getUsageType();
+
         if(usage.equals(Configure.EXPRESSION_CALL)) {
             entityIds = atom.getBindIdList();
         }
