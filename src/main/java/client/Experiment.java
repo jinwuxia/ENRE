@@ -52,6 +52,9 @@ public class Experiment {
         generateAtomResolvings();
 
         generateP1AsCSV();
+
+        //generate all explicit () dependencies and implicit P1-p11 dependencies.
+        defaultAll();
     }
 
 
@@ -124,6 +127,18 @@ public class Experiment {
         System.out.println("Export " + depFile);
     }
 
+
+    private void defaultAll() {
+        String[] depTypes = new String[] {
+                Configure.RELATION_IMPORT, Configure.RELATION_INHERIT, Configure.RELATION_IMPLEMENT, Configure.RELATION_ATOM_EXPLICIT,
+                Configure.RELATION_ATOM_IMPLICIT_P1, Configure.RELATION_ATOM_IMPLICIT_P2, Configure.RELATION_ATOM_IMPLICIT_P3, Configure.RELATION_ATOM_IMPLICIT_P4, Configure.RELATION_ATOM_IMPLICIT_P5, Configure.RELATION_ATOM_IMPLICIT_P6, Configure.RELATION_ATOM_IMPLICIT_P7, Configure.RELATION_ATOM_IMPLICIT_P8,Configure.RELATION_ATOM_IMPLICIT_P9,Configure.RELATION_ATOM_IMPLICIT_P10, Configure.RELATION_ATOM_IMPLICIT_P11};
+        Formator partialFormator = new Formator(depTypes, Configure.RELATION_LEVEL_FILE);
+        JDepObject partialJDepObject = partialFormator.getfJsonDataModel();
+        JsonWriter jsonWriter = new JsonWriter();
+        String depFile = configure.getAnalyzedProjectName() + "_default_all_dep.json";
+        jsonWriter.toJson(partialJDepObject, depFile);
+        System.out.println("Export " + depFile);
+    }
 
 
 
