@@ -5,6 +5,14 @@ import util.Configure;
 import static java.lang.System.exit;
 
 
+/**
+ *  cmd1:  extract relations from source code for python and golang
+ *  java -jar *.jar  python/lang sourcedir usagedir projectname 111111111
+ *
+ *  cmd2: extract relations from input data source/external data source:
+ *  java jar *.jar  datasource   entity.csv dep.csv
+ *  it outputs the dependency in datasource into json format.
+ */
 public class Main {
 
     public static void main(String[] args) {

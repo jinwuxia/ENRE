@@ -31,7 +31,7 @@ public class TraceCallRelationInterface extends RelationInterface {
         try(BufferedReader br = new BufferedReader(new FileReader(entityfilename))) {
             while((classname = br.readLine()) != null) {
                 classList.add(classname);
-                //System.out.println(classname);
+                System.out.println(classname);
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
