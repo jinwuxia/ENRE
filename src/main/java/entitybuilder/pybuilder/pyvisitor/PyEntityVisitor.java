@@ -330,6 +330,8 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
      * @param ctx
      */
     private void furtherVisitAtomExpr(String str, Python3Parser.Atom_exprContext ctx) {
+        //get code line number
+        int lineno = ctx.getStart().getLine();
         //if it is "", it must bse literal string, number, [...], (...), none, true, false,..
         if(!str.equals(Configure.NULL_STRING)) {
             String location = "right";
@@ -341,7 +343,7 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
                 //location = PyConstantString.NAME_USAGE_SET;
                 location = "left";
             }
-            int nameId = processTask.processAtomExpr(isLeftAssign, moduleId, classId, functionId, str, location);
+            int nameId = processTask.processAtomExpr(isLeftAssign, moduleId, classId, functionId, str, location, lineno);
             //System.out.println(str + " " + nameId);
             //the following is for post-processing the existed leftVar with rightValue
             if(isLeftAssign) {

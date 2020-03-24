@@ -259,7 +259,7 @@ public class PyProcessTask {
      * @param location
      * return varID, or -1(if localName, not var)
      */
-    public int processAtomExpr(boolean isLeftAssign, int moduleId, int classId, int functionId, String str, String location) {
+    public int processAtomExpr(boolean isLeftAssign, int moduleId, int classId, int functionId, String str, String location,int lineno) {
         int resId = -1;
         int parentId = moduleId;
         if(functionId != -1) {
@@ -281,12 +281,12 @@ public class PyProcessTask {
                     resId = processLocOrGloVar(parentId, str);
                 }
                 //it a local Name or global Name, save into Name
-                processLocOrGloName(parentId, str, location);
+                processLocOrGloName(parentId, str, location, lineno);
             }
         }
         //it a local Name or global Name:  self.X, x, x.y, x.y(), x/new()
         else {
-            processLocOrGloName(parentId, str, location);
+            processLocOrGloName(parentId, str, location, lineno);
         }
         return resId;
     }
@@ -430,7 +430,7 @@ public class PyProcessTask {
      * @param str
      * @param usage
      */
-    private void processLocOrGloName(int parentId, String str, String usage) {
+    private void processLocOrGloName(int parentId, String str, String usage, int lineno) {
         //get the expression container for current module/function
         AbsEntity entity =  singleCollect.getEntityById(parentId);
         int expContainerId = entity.getExpContainerId();
@@ -445,11 +445,14 @@ public class PyProcessTask {
         if(-1 == expIndex) {
             String aliasStr = simplifyStr(expContainerId, str);
             //System.out.println("after: " + aliasStr);
-            expressionCollect.getContainerById(expContainerId).addExpression(new Expression(str,aliasStr, usage, 1));
+            List<Integer> linenoList = new ArrayList<>();
+            linenoList.add(lineno);
+            expressionCollect.getContainerById(expContainerId).addExpression(new Expression(str,aliasStr, usage, 1,linenoList));
         }
         else {
             int oldFreq = expressionCollect.getContainerById(expContainerId).getExpressionList().get(expIndex).getFreq();
             expressionCollect.getContainerById(expContainerId).getExpressionList().get(expIndex).setFreq(oldFreq + 1);
+            expressionCollect.getContainerById(expContainerId).getExpressionList().get(expIndex).addLineno(lineno);
         }
 
 

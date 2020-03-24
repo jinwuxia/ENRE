@@ -1,6 +1,5 @@
 package expression;
 
-import org.omg.PortableInterceptor.INACTIVE;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -10,6 +9,7 @@ import java.util.Set;
 public class ExpressionAtom {
     private String str;
     private int freq=0;
+    private List<Integer> lineno = new ArrayList<>();
     private boolean isResolved = false;
     private List<Integer> bindIdList = new ArrayList<>(); //possible Ids
     private List<Integer> typeIdList = new ArrayList<>(); //bind to var, it is var type;  bind to method, it is method return type.
@@ -17,10 +17,12 @@ public class ExpressionAtom {
     private String resolvedManner=""; //builtin, library, super, regular, implicit
 
 
-    public ExpressionAtom(String str, String usageType, int freq) {
+
+    public ExpressionAtom(String str, String usageType, int freq, List<Integer> lineno) {
         this.str = str;
         this.usageType = usageType;
         this.freq = freq;
+        this.lineno = lineno;
     }
 
     public void setTypeIdList(List<Integer> typeIdList) {
@@ -85,6 +87,9 @@ public class ExpressionAtom {
         this.typeIdList = typeIds;
     }
 
+    public List<Integer> getLineno() {
+        return lineno;
+    }
 
     @Override
     public String toString() {

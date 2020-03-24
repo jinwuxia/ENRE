@@ -1,5 +1,6 @@
 package client;
 
+import expression.Expression;
 import expression.ExpressionAtom;
 import expression.ExpressionCollect;
 import priextractor.py3extractor.PyRelationInf;
@@ -33,7 +34,7 @@ public class Experiment {
         OutputStatistic outputStatistic = new OutputStatistic(statisticMember);
         outputStatistic.doSummary();
 
-
+        printExpLineno();
         //P1, P1+P2, P1+p2+p3, ...., Pall for all atom dependencies
         //generateAccumlatedDepByCategory();
 
@@ -55,6 +56,31 @@ public class Experiment {
 
         //generate all explicit () dependencies and implicit P1-p11 dependencies.
         defaultAll();
+    }
+
+
+    private void printExpLineno() {
+
+        System.out.println(".............print ine number.................");
+        SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
+        ExpressionCollect expressionCollect = ExpressionCollect.getExpressionCollect();
+        for (AbsEntity entity1 : singleCollect.getEntities()) {
+            int entityId1 = entity1.getId();
+            String entityName1 = singleCollect.getLongName(entityId1);
+            int containerId = entity1.getExpContainerId();
+            if (containerId == -1) {
+                continue;
+            }
+            //List<ExpressionAtom> atoms = expressionCollect.getContainerById(containerId).getExpressionAtomList();
+            List<Expression> exps = expressionCollect.getContainerById(containerId).getExpressionList();
+            for (Expression exp : exps) {
+                String expStr = exp.getRawStr();
+                List<Integer> lineno = exp.getLineno();
+                System.out.println(entityName1);
+                System.out.println(expStr + ",  line: " + lineno.toString());
+
+            }
+        }
     }
 
 

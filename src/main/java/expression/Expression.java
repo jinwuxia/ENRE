@@ -12,13 +12,15 @@ public class Expression {
     private String aliasStr; // simplify rawStr into aliasStr, then use aliasStr to expand into atoms
     private String location; //right or left
     private int freq;
+    private List<Integer> lineno = new ArrayList<>(); //code line number, because the same string expression put together, so its lineno is a list
     private List<ExpressionAtom> expressionAtomList = new ArrayList<>();
 
-    public Expression(String exp, String aliasStr, String location, int freq) {
+    public Expression(String exp, String aliasStr, String location, int freq, List<Integer> lineno) {
         this.rawStr = exp;
         this.location = location;
         this.aliasStr = aliasStr;
         this.freq = freq;
+        this.lineno = lineno;
         extendExpressionToAtoms();
 
 
@@ -40,6 +42,12 @@ public class Expression {
         return expressionAtomList;
     }
 
+    public List<Integer> getLineno(){
+        return this.lineno;
+    }
+    public void addLineno(int num) {
+        this.lineno.add(num);
+    }
 
     /**alias name: even if have parameter, the para in alias  does not contain () and ".".
      * extend rawStr into expression atom by using "dot"
@@ -69,7 +77,7 @@ public class Expression {
             if(isMatchedParenthese(newStr)) {
                 int freq = this.freq;  // the freq of atom = the freq of expression
                 String usageType = inferUsage(newStr);
-                ExpressionAtom atom = new ExpressionAtom(newStr, usageType, freq);
+                ExpressionAtom atom = new ExpressionAtom(newStr, usageType, freq, this.lineno);
                 this.expressionAtomList.add(atom);
                 //System.out.println("extend:" + newStr);
             }
