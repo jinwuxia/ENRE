@@ -1,5 +1,12 @@
 package entitybuilder.pybuilder.pyvisitor;
 
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+
 import entitybuilder.pybuilder.PyConstantString;
 import parser.parsepy.Python3BaseVisitor;
 import parser.parsepy.Python3Parser;
@@ -9,6 +16,7 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
     private String fileFullPath;
     private PyProcessTask processTask = new PyProcessTask();
     private PyContextHelper contextHelper = new PyContextHelper();
+    protected static Configure configure = Configure.getConfigureInstance();
 
     private int moduleId = -1;
     private int classId = -1;
@@ -33,6 +41,7 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
             //its parent is a package or none. after finishing all files, we should set the parentId for each module
             //save into singlecollection.entities.
             moduleId = processTask.processModule(fileFullPath);
+           // System.out.println("moduleId");
         }
     }
 
@@ -281,6 +290,15 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
         }
         return str;
     }
+    /*@Override 
+    public String visitArgument(Python3Parser.ArgumentContext ctx) {
+    	String str = "";
+    	if(!ctx.isEmpty()) {
+    		str += visitChildren(ctx);
+    		//System.out.println("visitArgument:" + str);
+    	}
+    	return visitChildren(ctx); 
+    }*/
 
     /**
      * grammar: atom_expr: (AWAIT)? atom trailer*;
@@ -293,32 +311,40 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
      */
     @Override
     public String visitAtom_expr(Python3Parser.Atom_exprContext ctx) {
+    	System.out.println("visitAtom_expr_input:"+ctx.getText());
         String str = "";
         if(ctx == null) {
             return str;
         }
         if(ctx.AWAIT() != null) {
             str += ctx.AWAIT().getText();
+            //System.out.println("ctx.AWAIT().getText():"+str);
             str += " ";
         }
         //only get name, not includes literal tring, number, [...], (...), none, true, false,..
         if(ctx.atom() != null) {
+        	
             str += visitAtom(ctx.atom());
+            //System.out.println("ctx.atom():"+str);
         }
         if(ctx.trailer() != null && !ctx.trailer().isEmpty()) {
             for (Python3Parser.TrailerContext trailerContext : ctx.trailer()) {
                 if(trailerContext instanceof Python3Parser.AttributetrailerContext) {
                     str += visitAttributetrailer((Python3Parser.AttributetrailerContext) trailerContext);
+                    //System.out.println("AttributetrailerContext:"+str);
                 }
                 else if (trailerContext instanceof Python3Parser.ArglisttrailerContext){
                     str += visitArglisttrailer((Python3Parser.ArglisttrailerContext) trailerContext);
+                    //System.out.println("ArglisttrailerContext:"+str);
                 }
                 else if (trailerContext instanceof  Python3Parser.SubscriptlisttrailerContext) {
                     str += visitSubscriptlisttrailer((Python3Parser.SubscriptlisttrailerContext) trailerContext);
+                    //System.out.println("SubscriptlisttrailerContext:"+str);
                 }
             }
         }
         if(!str.equals(PyConstantString.IF_NAME)) {
+        	//System.out.println("endline:"+ctx.getText());
             furtherVisitAtomExpr(str, ctx);
         }
         return str;
@@ -329,22 +355,49 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
      * @param str
      * @param ctx
      */
+    public static void writeTxt(String file, String conent) {
+    	BufferedWriter out = null;
+    	try {
+    		out = new BufferedWriter(new OutputStreamWriter(
+    				new FileOutputStream(file, true)));
+    		out.write(conent+"\r\n");
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	} finally {
+    		try {
+    			out.close();
+    	} catch (IOException e) {
+    		e.printStackTrace();
+    		}
+    	}
+    }
+
+    
     private void furtherVisitAtomExpr(String str, Python3Parser.Atom_exprContext ctx) {
-        //get code line number
+        //get code line number, last line number, row number, last row number 
+    	String str1 = ctx.getStart().getText();
         int lineno = ctx.getStart().getLine();
+        int lastlineno = ctx.getStop().getLine();
+        int rowNo = ctx.getStart().getCharPositionInLine();
+        int lastrowNo = ctx.getStop().getStopIndex() - ctx.getStop().getStartIndex() 
+        						+1 + ctx.getStop().getCharPositionInLine();
+        
+        System.out.println("0827:"+fileFullPath);
+        String out = Fileoperation.readTxtLine(fileFullPath, lineno, lastlineno,rowNo,lastrowNo);
+        System.out.println("0827:"+out);
+      
         //if it is "", it must bse literal string, number, [...], (...), none, true, false,..
         if(!str.equals(Configure.NULL_STRING)) {
             String location = "right";
-            //String usage = PyConstantString.NAME_USAGE_USE; //default usage
+            
             boolean isLeftAssign = contextHelper.isAtomExprInLeftAssignment(ctx);
             boolean isLeftAugAssign = contextHelper.isAtomExprInLeftAugassignment(ctx);
-            //System.out.println(str + ", isLeftAssignment= " +  isLeftAssign + "; isLeftAugAssign= " + isLeftAugAssign);
+            
             if(isLeftAssign || isLeftAugAssign) {
                 //location = PyConstantString.NAME_USAGE_SET;
                 location = "left";
             }
-            int nameId = processTask.processAtomExpr(isLeftAssign, moduleId, classId, functionId, str, location, lineno);
-            //System.out.println(str + " " + nameId);
+            int nameId = processTask.processAtomExpr(isLeftAssign, moduleId, classId, functionId, str, location, lineno,lastlineno,rowNo,lastrowNo,out);
             //the following is for post-processing the existed leftVar with rightValue
             if(isLeftAssign) {
                 leftVarId = nameId;
@@ -398,8 +451,12 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
         if(ctx.dictorsetmaker() != null) {
             visitDictorsetmaker(ctx.dictorsetmaker());
         }
+        //if(ctx.STRING() != null) {
+        	//str += "LITERAL_STRING";
+        //}
         if(ctx.NAME() != null) {
             str += ctx.NAME().getText();
+        	//str += ctx.NAME().equals("STRING");
         }
         return str;
     }

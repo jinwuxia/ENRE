@@ -3,6 +3,8 @@ package expression;
 import java.util.ArrayList;
 import java.util.List;
 
+import uerr.SingleCollect;
+
 /**
  * hold expression list for an entity
  * one entity has on expressionContainer
@@ -55,6 +57,21 @@ public class ExpressionContainer {
             expressionAtomList.addAll(expression.getExpressionAtomList());
         }
         return expressionAtomList;
+    }
+
+    /*
+     * get the corresponding  file location 
+     */
+    
+    public String getLocatedFile(int id) {
+    	SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
+    	while(id != -1 && !singleCollect.isFile(id)) {
+    		id = singleCollect.getEntityById(id).getParentId();
+    	}
+    	if(singleCollect.isFile(id)) {
+    		return singleCollect.getLongName(id);
+    	}
+    	else return "";
     }
 
 

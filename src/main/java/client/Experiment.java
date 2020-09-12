@@ -3,6 +3,7 @@ package client;
 import expression.Expression;
 import expression.ExpressionAtom;
 import expression.ExpressionCollect;
+import expression.ExpressionContainer;
 import priextractor.py3extractor.PyRelationInf;
 import priextractor.py3extractor.newdeper.implicitstatistic.OutputStatistic;
 import formator.Formator;
@@ -20,6 +21,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import entitybuilder.pybuilder.pyvisitor.Fileoperation;
+import entitybuilder.pybuilder.pyvisitor.ListToArray;
+import entitybuilder.pybuilder.pyvisitor.Replacer;
 
 
 /**
@@ -52,10 +59,14 @@ public class Experiment {
 
         generateAtomResolvings();
 
+        getAPI();
+
         generateP1AsCSV();
 
+        //test();
         //generate all explicit () dependencies and implicit P1-p11 dependencies.
         defaultAll();
+        
     }
 
 
@@ -64,6 +75,7 @@ public class Experiment {
         System.out.println(".............print ine number.................");
         SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
         ExpressionCollect expressionCollect = ExpressionCollect.getExpressionCollect();
+        //expressionCollect.printAllAtoms();
         for (AbsEntity entity1 : singleCollect.getEntities()) {
             int entityId1 = entity1.getId();
             String entityName1 = singleCollect.getLongName(entityId1);
@@ -71,13 +83,18 @@ public class Experiment {
             if (containerId == -1) {
                 continue;
             }
+            ArrayList<AbsEntity> exps2 = singleCollect.getEntities();
+            System.out.println("\n");
+            
             //List<ExpressionAtom> atoms = expressionCollect.getContainerById(containerId).getExpressionAtomList();
             List<Expression> exps = expressionCollect.getContainerById(containerId).getExpressionList();
             for (Expression exp : exps) {
                 String expStr = exp.getRawStr();
                 List<Integer> lineno = exp.getLineno();
+                List<Integer> lastlineno = exp.getLastLineno();
                 System.out.println(entityName1);
-                System.out.println(expStr + ",  line: " + lineno.toString());
+                System.out.println(expStr + ";  startline: " + lineno.toString());
+                System.out.println(expStr + ";  endline: " + lastlineno.toString());
 
             }
         }
@@ -226,6 +243,7 @@ public class Experiment {
 
     }
 
+    //
     private void generateAtomResolvings() {
         List<String[]> res = new ArrayList<>();
         SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
@@ -303,6 +321,73 @@ public class Experiment {
     }
 
 
+    /**
+     * This method provides  a way to extract the API
+     */
+    private void getAPI() {
+        List<String[]> res = new ArrayList<>();
+        SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
+        ExpressionCollect expressionCollect = ExpressionCollect.getExpressionCollect();
+        
+        
+        String level = Configure.RELATION_LEVEL_FILE;
+        PyRelationInf relationInf = new PyRelationInf();
+        ArrayList<Tuple<String, String>> deps = relationInf.getDepByType(level, Configure.RELATION_ATOM_IMPLICIT_P1);
+        
+        for (AbsEntity entity1 : singleCollect.getEntities()) {
+        	
+            int entityId1 = entity1.getId();
+            String entityName1 = singleCollect.getLongName(entityId1);
+            int containerId = entity1.getExpContainerId();
+            if (containerId == -1) {
+                continue;
+            }
+            //List<Expression> exps = expressionCollect.getContainerById(containerId).getExpressionList();
+            ArrayList<ExpressionContainer> expcs = expressionCollect.getContainers();
+            
+            for(ExpressionContainer expc : expcs) {
+            	List<Expression> exps = expc.getExpressionList();
+            	String full_path = expc. getLocatedFile(expc.getParentId());
+            	for (Expression exp : exps) {
+                	ListToArray lis = new ListToArray();
+                	
+                	List<ExpressionAtom> atomlist = exp.getExpressionAtomList();
+                	ExpressionAtom[] atom = lis.exp_conversion(atomlist);
+                	
+                    List<String> testlist = exp.gettext();
+                    String[] test = lis.str_conversion(testlist);
+                    if(test.length <= 0 ) continue;
+                    
+                    List<Integer> line = exp.getLineno();
+                    Integer[] lineno = lis.int_conversion(line);
+                    
+                    List<Integer> lastline = exp.getLastLineno();
+                    Integer[] lastlineno = lis.int_conversion(lastline);
+                    
+                    List<Integer> row = exp.getrowNo();
+                    Integer[] rowno = lis.int_conversion(row);
+                    
+                    List<Integer> lastrow = exp.getlastrowNo();
+                    Integer[] lastrowno = lis.int_conversion(lastrow);
+                    
+                    Replacer rep = new Replacer();
+                    String substitutive = rep.replace(test[0]);
+                    
+                    
+                    
+                    String[] herein = {full_path,test[0],Integer.toString(lineno[0]),Integer.toString(lastlineno[0]),Integer.toString(rowno[0]),Integer.toString(lastrowno[0]),substitutive,atom[0].getResolvedManner()};//
+                    res.add(herein);
+                        
+                    
+                }
+            }
+            
+        }
+        
+        CsvWriter csvWriter = new CsvWriter();
+        csvWriter.writeCsv(res, configure.getAnalyzedProjectName() + "_api.csv");
+    }
+    
 
 
 }

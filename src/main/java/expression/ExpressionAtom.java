@@ -7,22 +7,32 @@ import java.util.List;
 import java.util.Set;
 
 public class ExpressionAtom {
+	
     private String str;
     private int freq=0;
     private List<Integer> lineno = new ArrayList<>();
+    private List<Integer> lastlineno = new ArrayList<>();
+    private List<Integer> rowNo = new ArrayList<>();
+    private List<Integer> lastrowNo = new ArrayList<>();
+    private List<String> text = new ArrayList<>();
     private boolean isResolved = false;
     private List<Integer> bindIdList = new ArrayList<>(); //possible Ids
     private List<Integer> typeIdList = new ArrayList<>(); //bind to var, it is var type;  bind to method, it is method return type.
-    private String usageType=""; //use, set, dot, call
+    private String usageType=""; //use, set, dot, call//print
     private String resolvedManner=""; //builtin, library, super, regular, implicit
 
 
 
-    public ExpressionAtom(String str, String usageType, int freq, List<Integer> lineno) {
+    public ExpressionAtom(String str, String usageType, int freq, List<Integer> lineno,List<Integer> lastlineno, List<Integer> rowNo, List<Integer> lastrowNo,List<String> text) {
         this.str = str;
         this.usageType = usageType;
         this.freq = freq;
         this.lineno = lineno;
+        this.lastlineno = lastlineno;
+        this.rowNo  = rowNo;
+        this.lastrowNo = lastrowNo;
+        this.text = text;
+        
     }
 
     public void setTypeIdList(List<Integer> typeIdList) {
@@ -30,7 +40,7 @@ public class ExpressionAtom {
     }
 
     public void setResolved(boolean resolved) {
-        isResolved = resolved;
+        this.isResolved = resolved;
     }
 
     public void setBindIdList(List<Integer> bindIdList) {
@@ -90,6 +100,19 @@ public class ExpressionAtom {
     public List<Integer> getLineno() {
         return lineno;
     }
+    public List<Integer> getLastLineno() {
+        return lastlineno;
+    }
+    public List<Integer> getRowNo(){
+    	return rowNo;
+    }
+    public List<Integer> getLastRowNo(){
+    	return lastrowNo;
+    }
+    public List<String> getText(){
+    	return text;
+    }
+    
 
     @Override
     public String toString() {
