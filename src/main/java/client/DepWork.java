@@ -8,14 +8,19 @@ import hianalyzer.HiDepData;
 import hianalyzer.HiDeper;
 import priextractor.AnayzerIntf;
 import entitybuilder.BuilderIntf;
+import expression.Expression;
+import expression.ExpressionCollect;
 import priextractor.goextractor.GoRelationInf;
 import priextractor.py3extractor.PyRelationInf;
+import uerr.AbsEntity;
+import uerr.SingleCollect;
 import util.RelationInterface;
 import writer.UndWriter;
 import util.Configure;
 import writer.WriterIntf;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * it should be template method pattern, so that the steps and oder of processing are fixed.
@@ -28,10 +33,13 @@ public class DepWork {
 
         long startTime = System.currentTimeMillis();
 
+        
         //identify Entities
         BuilderIntf entityTreeBuilder = new BuilderIntf();
+        
         entityTreeBuilder.run();
 
+        
         //extract Deps
         AnayzerIntf entityDepAnalyzer = new AnayzerIntf();
         entityDepAnalyzer.run();
@@ -60,6 +68,7 @@ public class DepWork {
         writer.run(jDepObject, xDepObject, allNodes, allEdges);
 
         //output the summary of the acquired results.
+
 
         summary();
 
@@ -112,5 +121,42 @@ public class DepWork {
             System.out.println(undWriter.priDepStatis()+ "\n");
         }
     }
+    private static void test() {
+    	SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
+        ExpressionCollect expressionCollect = ExpressionCollect.getExpressionCollect();
+        int i = 0 ;
+        for (AbsEntity entity1 : singleCollect.getEntities()) {
+        	if(i >= 1)  break;
+            int containerId = entity1.getExpContainerId();
+            if (containerId == -1) continue;
+            List<Expression> exps = expressionCollect.getContainerById(containerId).getExpressionList();
+            for (Expression exp : exps) {
+                if(true) {
+                    List<String> testlist = exp.gettext();
+                    String[] test = new String[testlist.size()];
+                    testlist.toArray(test);
+                    List<Integer> line = exp.getLineno();
+                    Integer[] lineno = new Integer[line.size()];
+                    line.toArray(lineno);
+                    List<Integer> lastline = exp.getLastLineno();
+                    Integer[] lastlineno = new Integer[lastline.size()];
+                    lastline.toArray(lastlineno);
+                    List<Integer> row = exp.getrowNo();
+                    Integer[] rowno = new Integer[row.size()];
+                    lastline.toArray(rowno);
+                    List<Integer> lastrow = exp.getlastrowNo();
+                    Integer[] lastrowno = new Integer[lastrow.size()];
+                    lastline.toArray(lastrowno);
+                    System.out.println("test0824"+test[0]+Integer.toString(lineno[0])+Integer.toString(lastlineno[0])+Integer.toString(rowno[0])+Integer.toString(lastrowno[0])+"readyforchange");
+                    
+                    
+                }
+            }
+            i++;
+        }
+    }
+
+    
+    
 
 }

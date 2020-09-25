@@ -1,8 +1,13 @@
 package entitybuilder;
 
 import parser.ParserInf;
+import uerr.AbsEntity;
+import uerr.SingleCollect;
 import entitybuilder.gobuilder.govisitor.GoEntityVisitor;
 import entitybuilder.pybuilder.pyvisitor.PyEntityVisitor;
+import expression.Expression;
+import expression.ExpressionCollect;
+
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 import org.antlr.v4.runtime.tree.ParseTree;
 import util.Configure;
@@ -10,6 +15,7 @@ import util.FileUtil;
 import util.StringUtil;
 
 import java.io.IOException;
+import java.util.List;
 
 public class BuilderIntf {
 
@@ -52,6 +58,7 @@ public class BuilderIntf {
 
     public void run(){
         FileUtil fileUtil = new FileUtil(configure.getInputSrcPath());
+        
         for (String fileFullPath : fileUtil.getFileNameList(configure.getCurr_pro_suffix())) {
 
             setTree(fileFullPath); //use the original filepath, Antlr Parser will read the content of the file.
@@ -60,14 +67,18 @@ public class BuilderIntf {
             if(tree != null && visitor != null) {
                 System.out.println(fileFullPath);
                 visitor.visit(tree);
+                
             }
+            
             tree = null;
             visitor = null;
         }
+        
         System.out.println("Identify entities successfully...");
 
 
     }
+
 
 
 }

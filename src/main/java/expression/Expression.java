@@ -13,17 +13,32 @@ public class Expression {
     private String location; //right or left
     private int freq;
     private List<Integer> lineno = new ArrayList<>(); //code line number, because the same string expression put together, so its lineno is a list
+    private List<Integer> lastlineno = new ArrayList<>(); //code last line number, because the same string expression put together, so its lineno is a list
+    private List<Integer> rowNo = new ArrayList<>(); 
+    private List<Integer> lastrowNo = new ArrayList<>();
+    private List<String> text = new ArrayList<>();
+    
     private List<ExpressionAtom> expressionAtomList = new ArrayList<>();
 
-    public Expression(String exp, String aliasStr, String location, int freq, List<Integer> lineno) {
+    public Expression(String exp, String aliasStr, String location, int freq, List<Integer> lineno,List<Integer> lastlineno,List<Integer> rowNo,List<Integer> lastrowNo,List<String> text) {
         this.rawStr = exp;
-        this.location = location;
         this.aliasStr = aliasStr;
+        this.location = location;
+        
         this.freq = freq;
         this.lineno = lineno;
+        this.lastlineno = lastlineno;
+        this.rowNo = rowNo;
+        this.lastrowNo = lastrowNo;
+        this.text = text;
         extendExpressionToAtoms();
 
 
+    }
+
+    
+    public String getLocation() {
+    	return location;  
     }
 
     public int getFreq() {
@@ -45,8 +60,32 @@ public class Expression {
     public List<Integer> getLineno(){
         return this.lineno;
     }
+    public List<Integer> getLastLineno(){
+        return this.lastlineno;
+    }
+    public List<Integer> getrowNo(){
+    	return this.rowNo;
+    }
+    public List<Integer> getlastrowNo(){
+    	return this.lastrowNo;
+    }
+    public List<String> gettext(){
+    	return this.text;
+    }
     public void addLineno(int num) {
         this.lineno.add(num);
+    }
+    public void addLastLineno(int num) {
+        this.lastlineno.add(num);
+    }
+    public void addrowNo(int num) {
+    	this.rowNo.add(num);
+    }
+    public void addlastrowNo(int num) {
+    	this.lastrowNo.add(num);
+    }
+    public void addtext(String text) {
+    	this.text.add(text);
     }
 
     /**alias name: even if have parameter, the para in alias  does not contain () and ".".
@@ -77,7 +116,8 @@ public class Expression {
             if(isMatchedParenthese(newStr)) {
                 int freq = this.freq;  // the freq of atom = the freq of expression
                 String usageType = inferUsage(newStr);
-                ExpressionAtom atom = new ExpressionAtom(newStr, usageType, freq, this.lineno);
+                ExpressionAtom atom = new ExpressionAtom(newStr, usageType, freq, this.lineno,this.lastlineno,this.rowNo,this.lastrowNo,this.text);
+                
                 this.expressionAtomList.add(atom);
                 //System.out.println("extend:" + newStr);
             }

@@ -172,6 +172,7 @@ public class PyRelationInf extends RelationInterface {
         if(!atomDependCollect.getDepends().containsKey(deptype)) {
             return deps;
         }
+        
         for (Tuple<Integer, Integer> relation : atomDependCollect.getDepends().get(deptype)) {
             int id1 = relation.x;
             int id2 = relation.y;

@@ -4,6 +4,14 @@ import util.Configure;
 
 import static java.lang.System.exit;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import expression.Expression;
+import expression.ExpressionCollect;
+import uerr.AbsEntity;
+import uerr.SingleCollect;
+
 
 /**
  *  cmd1:  extract relations from source code for python and golang
@@ -18,6 +26,7 @@ public class Main {
     public static void main(String[] args) {
         //check args
         checkInput(args);
+
 
         //configure
         String lang = args[0];
@@ -35,12 +44,16 @@ public class Main {
         config(lang, inputDir, usageDir, projectName);
 
         //start work for depend_parser
+        
         if(!lang.equals(Configure.EXTERNAL_DATA_SOURCE)){
             DepWork depWork = new DepWork();
             depWork.deperWorkflow(depMask);
         }
 
+
+        
         //start work for experiment
+        
         Experiment experiment = new Experiment();
         if(lang.equals(Configure.EXTERNAL_DATA_SOURCE)) {
             experiment.generateTraceClassCallsForExperiments();
@@ -53,13 +66,13 @@ public class Main {
 
     private static void checkInput(String[] args) {
         //System.out.println("\ninput parameters:" + "srcDir usageDir projectName deps=[111111111]");
-        System.out.println(
+       /* System.out.println(
                 "cmd1:  extract relations from source code for python and golang\n" +
                         "   java -jar *.jar  python/lang sourcedir usagedir projectname 111111111\n" +
                         " \n" +
                         "cmd2: extract relations from input data source/external data source:\n" +
                         "   java jar *.jar  datasource   entity.csv dep.csv\n" +
-                        "   it outputs the dependency in datasource into json format.\n\n");
+                        "   it outputs the dependency in datasource into json format.\n\n");*/
         if(args.length < 2) {
             System.out.println("Not enough parameters!");
             exit(1);

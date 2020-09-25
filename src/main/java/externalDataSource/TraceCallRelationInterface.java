@@ -58,7 +58,7 @@ public class TraceCallRelationInterface extends RelationInterface {
             while((line = br.readLine()) != null) {
                 System.out.println("line= " + line);
                 String[] arr = line.split(Configure.COMMA);
-                //System.out.println( Integer.toString(arr.length) + " " + arr.toString());
+                
                 int loop = Integer.parseInt(arr[2]);
                 for (int i = 0; i < loop; i++){
                     deps.add(new Tuple<String, String>(arr[0], arr[1]));

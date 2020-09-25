@@ -35,6 +35,7 @@ public class ExpressionCollect {
 
     public void printAllAtoms() {
         int containerSize = expressionCollect.getCurrentIndex();
+        System.out.println("containerSize:" +  containerSize);
         for (int containerId = 0; containerId < containerSize; containerId ++) {
             int parentEntityid = expressionCollect.getContainerById(containerId).getParentId();
             String entityName = SingleCollect.getSingleCollectInstance().getLongName(parentEntityid);
