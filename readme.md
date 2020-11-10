@@ -30,11 +30,11 @@ The usage command is:
 ```sh
 java -jar <executable> <lang> <dir> <include-dir> <project-name>
 ```
-- <executable>. The executable jar package of ENRE.
-- <lang>. The language of source code that will be analyzed. It can be **python** or **golang**.
-- <dir>. The path of the source code that will be analyzed.
-- <include-dir>. The **github url** of source code. It only works when analyzing golang projects. Set it "**null**" when analyzing python projects.
-- <project-name>. A short alias name of the anayzed source code project.  
+- \<executable>. The executable jar package of ENRE.
+- \<lang>. The language of source code that will be analyzed. It can be **python** or **golang**.
+- \<dir>. The path of the source code that will be analyzed.
+- \<include-dir>. The **github url** of source code. It only works when analyzing golang projects. Set it "**null**" when analyzing python projects.
+- \<project-name>. A short alias name of the anayzed source code project.  
 
 #### Example I:
 Use ENRE to analyze a demo project "**fire**" written in *Python*: 
