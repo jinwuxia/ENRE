@@ -1,7 +1,7 @@
 package uerr;
 
-import sun.security.krb5.Config;
-import sun.security.krb5.Confounder;
+//import sun.security.krb5.Config;
+//import sun.security.krb5.Confounder;
 import util.Configure;
 import util.Tuple;
 
