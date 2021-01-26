@@ -23,13 +23,13 @@ public class NameSearchFile {
      */
     public int findVarInFile(String varName, int fileId) {
         if(fileId == -1
-                || !(singleCollect.getEntities().get(fileId) instanceof AbsFILEntity)
+                || !(singleCollect.getEntityById(fileId) instanceof AbsFILEntity)
                 ) {
             return -1;
         }
-        for(int entityId: singleCollect.getEntities().get(fileId).getChildrenIds()) {
-            if (singleCollect.getEntities().get(entityId) instanceof AbsVAREntity
-                    && singleCollect.getEntities().get(entityId).getName().equals(varName)) {
+        for(int entityId: singleCollect.getEntityById(fileId).getChildrenIds()) {
+            if (singleCollect.getEntityById(entityId) instanceof AbsVAREntity
+                    && singleCollect.getEntityById(entityId).getName().equals(varName)) {
                 return entityId;
             }
         }
@@ -44,13 +44,13 @@ public class NameSearchFile {
      */
     public int findStructTypeInFile(String typeName, int fileId) {
         if(fileId == -1
-                || !(singleCollect.getEntities().get(fileId) instanceof AbsFILEntity)
+                || !(singleCollect.getEntityById(fileId) instanceof AbsFILEntity)
                 ) {
             return -1;
         }
-        for(int entityId: singleCollect.getEntities().get(fileId).getChildrenIds()) {
-            if (singleCollect.getEntities().get(entityId) instanceof StructEntity
-                    && singleCollect.getEntities().get(entityId).getName().equals(typeName)) {
+        for(int entityId: singleCollect.getEntityById(fileId).getChildrenIds()) {
+            if (singleCollect.getEntityById(entityId) instanceof StructEntity
+                    && singleCollect.getEntityById(entityId).getName().equals(typeName)) {
                 return entityId;
             }
         }
@@ -66,13 +66,13 @@ public class NameSearchFile {
      */
     public int findAliasTypeInFile(String typeName, int fileId){
         if(fileId == -1
-                || !(singleCollect.getEntities().get(fileId) instanceof AbsFILEntity)
+                || !(singleCollect.getEntityById(fileId) instanceof AbsFILEntity)
                 ) {
             return -1;
         }
-        for(int entityId: singleCollect.getEntities().get(fileId).getChildrenIds()) {
-            if (singleCollect.getEntities().get(entityId) instanceof AliasTypeEntity
-                    && singleCollect.getEntities().get(entityId).getName().equals(typeName)) {
+        for(int entityId: singleCollect.getEntityById(fileId).getChildrenIds()) {
+            if (singleCollect.getEntityById(entityId) instanceof AliasTypeEntity
+                    && singleCollect.getEntityById(entityId).getName().equals(typeName)) {
                 return entityId;
             }
         }
@@ -87,13 +87,13 @@ public class NameSearchFile {
      */
     public int findInterfaceTypeInFile(String typeName, int fileId) {
         if(fileId == -1
-                || !(singleCollect.getEntities().get(fileId) instanceof AbsFILEntity)
+                || !(singleCollect.getEntityById(fileId) instanceof AbsFILEntity)
                 ) {
             return -1;
         }
-        for(int entityId: singleCollect.getEntities().get(fileId).getChildrenIds()) {
-            if (singleCollect.getEntities().get(entityId) instanceof InterfaceEntity
-                    && singleCollect.getEntities().get(entityId).getName().equals(typeName)) {
+        for(int entityId: singleCollect.getEntityById(fileId).getChildrenIds()) {
+            if (singleCollect.getEntityById(entityId) instanceof InterfaceEntity
+                    && singleCollect.getEntityById(entityId).getName().equals(typeName)) {
                 return entityId;
             }
         }
@@ -108,13 +108,13 @@ public class NameSearchFile {
      */
     public int findMethodInFile(String methodName, int fileId) {
         if(fileId == -1
-                || !(singleCollect.getEntities().get(fileId) instanceof AbsFILEntity)
+                || !(singleCollect.getEntityById(fileId) instanceof AbsFILEntity)
                 ) {
             return -1;
         }
-        for(int entityId: singleCollect.getEntities().get(fileId).getChildrenIds()) {
-            if (singleCollect.getEntities().get(entityId) instanceof MethodEntity
-                    && singleCollect.getEntities().get(entityId).getName().equals(methodName)) {
+        for(int entityId: singleCollect.getEntityById(fileId).getChildrenIds()) {
+            if (singleCollect.getEntityById(entityId) instanceof MethodEntity
+                    && singleCollect.getEntityById(entityId).getName().equals(methodName)) {
                 return entityId;
             }
         }
@@ -129,14 +129,14 @@ public class NameSearchFile {
      */
     public int findFunctionInFile(String functionName, int fileId) {
         if(fileId == -1
-                || !(singleCollect.getEntities().get(fileId) instanceof AbsFILEntity)
+                || !(singleCollect.getEntityById(fileId) instanceof AbsFILEntity)
                 ) {
             return -1;
         }
-        for(int entityId: singleCollect.getEntities().get(fileId).getChildrenIds()) {
-            if (!(singleCollect.getEntities().get(entityId) instanceof MethodEntity)
-                    && singleCollect.getEntities().get(entityId) instanceof AbsFUNEntity
-                    && singleCollect.getEntities().get(entityId).getName().equals(functionName)) {
+        for(int entityId: singleCollect.getEntityById(fileId).getChildrenIds()) {
+            if (!(singleCollect.getEntityById(entityId) instanceof MethodEntity)
+                    && singleCollect.getEntityById(entityId) instanceof AbsFUNEntity
+                    && singleCollect.getEntityById(entityId).getName().equals(functionName)) {
                 return entityId;
             }
         }
@@ -153,13 +153,13 @@ public class NameSearchFile {
      */
     public int findImportedPackageInFile(String packageName, int fileId) {
         if(fileId != -1 &&
-                singleCollect.getEntities().get(fileId) instanceof AbsFILEntity) {
-            ArrayList<Tuple<String, Integer>> relations = singleCollect.getEntities().get(fileId).getRelations();
+                singleCollect.getEntityById(fileId) instanceof AbsFILEntity) {
+            ArrayList<Tuple<String, Integer>> relations = singleCollect.getEntityById(fileId).getRelations();
             for (Tuple<String, Integer> oneImport : relations) {
                 if (oneImport.x.equals(Configure.RELATION_IMPORT)) {
                     int thisImportedPackageId = oneImport.y;
-                    String thisImportedPackageName = singleCollect.getEntities().get(thisImportedPackageId).getName();
-                    String thisImportedAliasName = ((AbsFILEntity) singleCollect.getEntities().get(fileId)).getImportsAlias().get(thisImportedPackageId);
+                    String thisImportedPackageName = singleCollect.getEntityById(thisImportedPackageId).getName();
+                    String thisImportedAliasName = ((AbsFILEntity) singleCollect.getEntityById(fileId)).getImportsAlias().get(thisImportedPackageId);
                     if (packageName.equals(thisImportedPackageName)
                             || packageName.equals(thisImportedAliasName)) {
                         return thisImportedPackageId;

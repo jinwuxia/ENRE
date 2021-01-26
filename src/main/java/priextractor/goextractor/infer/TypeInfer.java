@@ -30,8 +30,8 @@ public class TypeInfer {
                 if(!isBuiltInType(keyType)) {
                     typeId = searchTypeId(keyType, fileId);
                 }
-                if(((AbsVAREntity) singleCollect.getEntities().get(entity.getId())).getTypeId() == -1) {
-                    ((AbsVAREntity) singleCollect.getEntities().get(entity.getId())).setTypeId(typeId);
+                if(((AbsVAREntity) entity).getTypeId() == -1) {
+                    ((AbsVAREntity) entity).setTypeId(typeId);
                 }
                 //System.out.println("old_type:" + type + ";  new_type:" + keyType + ";  typeId:" + Integer.toString(typeId));
             }
@@ -47,11 +47,11 @@ public class TypeInfer {
     private int findFileId(AbsEntity entity) {
         int id = entity.getId();
         while (id != -1
-                && !(singleCollect.getEntities().get(id) instanceof AbsFILEntity) ) {
-            id = singleCollect.getEntities().get(id).getParentId();
+                && !(singleCollect.getEntityById(id) instanceof AbsFILEntity) ) {
+            id = singleCollect.getEntityById(id).getParentId();
         }
         if(id != -1
-                && singleCollect.getEntities().get(id) instanceof AbsFILEntity) {
+                && singleCollect.getEntityById(id) instanceof AbsFILEntity) {
             return id;
         }
         return -1;
@@ -131,8 +131,8 @@ public class TypeInfer {
 
         if(arr.length == 1) {
             //priextractor.goextractor.searcher Type in this package
-            if(fileId != -1 && singleCollect.getEntities().get(fileId) instanceof AbsFILEntity) {
-                packageId = singleCollect.getEntities().get(fileId).getParentId();
+            if(fileId != -1 && singleCollect.getEntityById(fileId) instanceof AbsFILEntity) {
+                packageId = singleCollect.getEntityById(fileId).getParentId();
             }
         }
         if(arr.length == 2) {
@@ -157,7 +157,7 @@ public class TypeInfer {
      */
     private int getSearchType(String typeName, int packageId) {
         if(packageId == -1
-                || !(singleCollect.getEntities().get(packageId) instanceof AbsFLDEntity)) {
+                || !(singleCollect.getEntityById(packageId) instanceof AbsFLDEntity)) {
             return -1;
         }
         int typeId = nameSearchPackage.findStructTypeInPackage(typeName, packageId);
@@ -178,16 +178,16 @@ public class TypeInfer {
     public void output() {
         for (AbsEntity entity : singleCollect.getEntities()) {
             if(entity instanceof AbsVAREntity) {
-                int typeId = ((AbsVAREntity) singleCollect.getEntities().get(entity.getId())).getTypeId();
+                int typeId = ((AbsVAREntity) singleCollect.getEntityById(entity.getId())).getTypeId();
                 int fileId = findFileId(entity);
                 String fileName = "";
                 if(fileId != -1) {
-                    fileName = singleCollect.getEntities().get(fileId).getName();
+                    fileName = singleCollect.getEntityById(fileId).getName();
                 }
                 if(typeId != -1) {
                     System.out.println("Var name:" + entity.getName() +
                             ", type_ori:" + ((AbsVAREntity) entity).getType() +
-                            ", type_get:" + singleCollect.getEntities().get(typeId).getName() +
+                            ", type_get:" + singleCollect.getEntityById(typeId).getName() +
                             ", file:" + fileName);
                 }
                 else {

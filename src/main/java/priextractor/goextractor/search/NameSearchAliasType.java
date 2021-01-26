@@ -20,13 +20,13 @@ public class NameSearchAliasType {
         if (AliasTypeId == -1) {
             return -1;
         }
-        if (!(singleCollect.getEntities().get(AliasTypeId) instanceof AliasTypeEntity)) {
+        if (!(singleCollect.getEntityById(AliasTypeId) instanceof AliasTypeEntity)) {
             return -1;
         }
-        for(Tuple<String, Integer> relation : singleCollect.getEntities().get(AliasTypeId).getRelations()) {
+        for(Tuple<String, Integer> relation : singleCollect.getEntityById(AliasTypeId).getRelations()) {
             if (relation.x.equals(Configure.RELATION_RECEIVED_BY)) {
                 int methodId = relation.y;
-                if (singleCollect.getEntities().get(methodId).getName().equals(methodName)) {
+                if (singleCollect.getEntityById(methodId).getName().equals(methodName)) {
                     return methodId;
                 }
             }

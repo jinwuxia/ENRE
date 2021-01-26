@@ -1,7 +1,7 @@
 package priextractor.goextractor.search;
 
 import entitybuilder.gobuilder.GoConstantString;
-import uerr.AbsFUNEntity;
+import entitybuilder.gobuilder.goentity.GoFunEntity;
 import entitybuilder.gobuilder.goentity.MethodEntity;
 import uerr.SingleCollect;
 
@@ -19,10 +19,10 @@ public class NameSearchFunction {
      */
     public boolean isPackageName(String name, int functionId) {
         if(functionId == -1
-                || !(singleCollect.getEntities().get(functionId) instanceof AbsFUNEntity)) {
+                || !(singleCollect.getEntityById(functionId) instanceof GoFunEntity)) {
             return false;
         }
-        Map<String, String> name2RoleMap = ((AbsFUNEntity) singleCollect.getEntities().get(functionId)).getName2RoleMap();
+        Map<String, String> name2RoleMap = ((GoFunEntity) singleCollect.getEntityById(functionId)).getName2RoleMap();
         if(name2RoleMap.containsKey(name)){
             if (name2RoleMap.get(name).equals(GoConstantString.OPERAND_NAME_ROLE_PKG)) {
                 return true;
@@ -40,10 +40,10 @@ public class NameSearchFunction {
      */
     public boolean isParameterName(String name, int functionId) {
         if(functionId == -1
-                || !(singleCollect.getEntities().get(functionId) instanceof AbsFUNEntity)) {
+                || !(singleCollect.getEntityById(functionId) instanceof GoFunEntity)) {
             return false;
         }
-        Map<String, String> name2RoleMap = ((AbsFUNEntity) singleCollect.getEntities().get(functionId)).getName2RoleMap();
+        Map<String, String> name2RoleMap = ((GoFunEntity) singleCollect.getEntityById(functionId)).getName2RoleMap();
         if(name2RoleMap.containsKey(name)){
             if (name2RoleMap.get(name).equals(GoConstantString.OPERAND_NAME_ROLE_PAR)) {
                 return true;
@@ -60,10 +60,10 @@ public class NameSearchFunction {
      */
     public boolean isReceiverName(String name, int functionId) {
         if(functionId == -1
-                || !(singleCollect.getEntities().get(functionId) instanceof MethodEntity)) {
+                || !(singleCollect.getEntityById(functionId) instanceof MethodEntity)) {
             return false;
         }
-        Map<String, String> name2RoleMap = ((MethodEntity) singleCollect.getEntities().get(functionId)).getName2RoleMap();
+        Map<String, String> name2RoleMap = ((MethodEntity) singleCollect.getEntityById(functionId)).getName2RoleMap();
         if(name2RoleMap.containsKey(name)){
             if (name2RoleMap.get(name).equals(GoConstantString.OPERAND_NAME_ROLE_REC)) {
                 return true;
@@ -80,10 +80,10 @@ public class NameSearchFunction {
      */
     public boolean isReturnName(String name, int functionId) {
         if(functionId == -1
-                || !(singleCollect.getEntities().get(functionId) instanceof AbsFUNEntity)) {
+                || !(singleCollect.getEntityById(functionId) instanceof GoFunEntity)) {
             return false;
         }
-        Map<String, String> name2RoleMap = ((AbsFUNEntity) singleCollect.getEntities().get(functionId)).getName2RoleMap();
+        Map<String, String> name2RoleMap = ((GoFunEntity) singleCollect.getEntityById(functionId)).getName2RoleMap();
         if(name2RoleMap.containsKey(name)){
             if (name2RoleMap.get(name).equals(GoConstantString.OPERAND_NAME_ROLE_RET)) {
                 return true;
@@ -101,10 +101,10 @@ public class NameSearchFunction {
      */
     public boolean isFunctionName(String name, int functionId) {
         if(functionId == -1
-                || !(singleCollect.getEntities().get(functionId) instanceof AbsFUNEntity)) {
+                || !(singleCollect.getEntityById(functionId) instanceof GoFunEntity)) {
             return false;
         }
-        Map<String, String> name2RoleMap = ((AbsFUNEntity) singleCollect.getEntities().get(functionId)).getName2RoleMap();
+        Map<String, String> name2RoleMap = ((GoFunEntity) singleCollect.getEntityById(functionId)).getName2RoleMap();
         if(name2RoleMap.containsKey(name)){
             if (name2RoleMap.get(name).equals(GoConstantString.OPERAND_NAME_ROLE_FUN)) {
                 return true;
@@ -121,10 +121,10 @@ public class NameSearchFunction {
      */
     public boolean isLocalName(String name, int functionId) {
         if(functionId == -1
-                || !(singleCollect.getEntities().get(functionId) instanceof AbsFUNEntity)) {
+                || !(singleCollect.getEntityById(functionId) instanceof GoFunEntity)) {
             return false;
         }
-        Map<String, String> name2RoleMap = ((AbsFUNEntity) singleCollect.getEntities().get(functionId)).getName2RoleMap();
+        Map<String, String> name2RoleMap = ((GoFunEntity) singleCollect.getEntityById(functionId)).getName2RoleMap();
         if(name2RoleMap.containsKey(name)){
             if (name2RoleMap.get(name).equals(GoConstantString.OPERAND_NAME_ROLE_LOC_VAR)) {
                 return true;
@@ -141,10 +141,10 @@ public class NameSearchFunction {
      */
     public boolean isGlobalName(String name, int functionId) {
         if(functionId == -1
-                || !(singleCollect.getEntities().get(functionId) instanceof AbsFUNEntity)) {
+                || !(singleCollect.getEntityById(functionId) instanceof GoFunEntity)) {
             return false;
         }
-        Map<String, String> name2RoleMap = ((AbsFUNEntity) singleCollect.getEntities().get(functionId)).getName2RoleMap();
+        Map<String, String> name2RoleMap = ((GoFunEntity) singleCollect.getEntityById(functionId)).getName2RoleMap();
         if(name2RoleMap.containsKey(name)){
             if (name2RoleMap.get(name).equals(GoConstantString.OPERAND_NAME_ROLE_GLO_VAR)) {
                 return true;
@@ -180,10 +180,10 @@ public class NameSearchFunction {
      */
     public int getIdByName(String name, int functionId) {
         if(functionId == -1
-                || !(singleCollect.getEntities().get(functionId) instanceof AbsFUNEntity)) {
+                || !(singleCollect.getEntityById(functionId) instanceof GoFunEntity)) {
             return -1;
         }
-        Map<String, Integer> name2IdMap = ((AbsFUNEntity) singleCollect.getEntities().get(functionId)).getName2IdMap();
+        Map<String, Integer> name2IdMap = ((GoFunEntity) singleCollect.getEntityById(functionId)).getName2IdMap();
         if(name2IdMap.containsKey(name)) {
             return name2IdMap.get(name);
         }

@@ -1,6 +1,7 @@
 package priextractor.goextractor.godeper;
 
 import entitybuilder.gobuilder.GoConstantString;
+import entitybuilder.gobuilder.goentity.GoFunEntity;
 import uerr.*;
 import entitybuilder.gobuilder.goentity.MethodEntity;
 import util.Configure;
@@ -17,9 +18,9 @@ public class MapInFun {
      */
     public void buildNameSearchTable() {
         for(AbsEntity functionEntity : singleCollect.getEntities()) {
-            if(functionEntity instanceof AbsFUNEntity) {
+            if(functionEntity instanceof GoFunEntity) {
                 int functionId = functionEntity.getId();
-                for(LocalName localName : ((AbsFUNEntity) singleCollect.getEntities().get(functionId)).getLocalNames()) {
+                for(LocalName localName : ((GoFunEntity) singleCollect.getEntityById(functionId)).getLocalNames()) {
                     int parameterId = getIdIfParameter(localName.getName(), functionId);
                     if(parameterId != -1) {//modify role, add 3 maps
                         processAsPara(localName, parameterId, functionId);
@@ -77,10 +78,10 @@ public class MapInFun {
         String name = localName.getName();
         String role = GoConstantString.OPERAND_NAME_ROLE_RET;
 
-        ((AbsFUNEntity) singleCollect.getEntities().get(functionId)).addName2Id(name, returnId);
-        ((AbsFUNEntity) singleCollect.getEntities().get(functionId)).addName2Role(name, role);
+        ((GoFunEntity) singleCollect.getEntityById(functionId)).addName2Id(name, returnId);
+        ((GoFunEntity) singleCollect.getEntityById(functionId)).addName2Role(name, role);
         for(String usage : localName.getUsages()) {
-            ((AbsFUNEntity) singleCollect.getEntities().get(functionId)).addName2Usage(name, usage);
+            ((GoFunEntity) singleCollect.getEntityById(functionId)).addName2Usage(name, usage);
         }
     }
 
@@ -93,10 +94,10 @@ public class MapInFun {
         String name = localName.getName();
         String role = GoConstantString.OPERAND_NAME_ROLE_PAR;
 
-        ((AbsFUNEntity) singleCollect.getEntities().get(functionId)).addName2Id(name, parameterId);
-        ((AbsFUNEntity) singleCollect.getEntities().get(functionId)).addName2Role(name, role);
+        ((GoFunEntity) singleCollect.getEntityById(functionId)).addName2Id(name, parameterId);
+        ((GoFunEntity) singleCollect.getEntityById(functionId)).addName2Role(name, role);
         for(String usage : localName.getUsages()) {
-            ((AbsFUNEntity) singleCollect.getEntities().get(functionId)).addName2Usage(name, usage);
+            ((GoFunEntity) singleCollect.getEntityById(functionId)).addName2Usage(name, usage);
         }
     }
 
@@ -107,10 +108,10 @@ public class MapInFun {
         String name = localName.getName();
         String role = GoConstantString.OPERAND_NAME_ROLE_REC;
 
-        ((MethodEntity) singleCollect.getEntities().get(functionId)).addName2Id(name, receiverVarId);
-        ((MethodEntity) singleCollect.getEntities().get(functionId)).addName2Role(name, role);
+        ((MethodEntity) singleCollect.getEntityById(functionId)).addName2Id(name, receiverVarId);
+        ((MethodEntity) singleCollect.getEntityById(functionId)).addName2Role(name, role);
         for(String usage : localName.getUsages()) {
-            ((MethodEntity) singleCollect.getEntities().get(functionId)).addName2Usage(name, usage);
+            ((MethodEntity) singleCollect.getEntityById(functionId)).addName2Usage(name, usage);
         }
     }
 
@@ -124,8 +125,8 @@ public class MapInFun {
         String name = localName.getName();
         String role = GoConstantString.OPERAND_NAME_ROLE_PKG;
 
-        ((AbsFUNEntity) singleCollect.getEntities().get(functionId)).addName2Id(name, packageId);
-        ((AbsFUNEntity) singleCollect.getEntities().get(functionId)).addName2Role(name, role);
+        ((GoFunEntity) singleCollect.getEntityById(functionId)).addName2Id(name, packageId);
+        ((GoFunEntity) singleCollect.getEntityById(functionId)).addName2Role(name, role);
     }
 
     /**
@@ -138,8 +139,8 @@ public class MapInFun {
         String name = localName.getName();
         String role = GoConstantString.OPERAND_NAME_ROLE_FUN;
 
-        ((AbsFUNEntity) singleCollect.getEntities().get(functionId)).addName2Id(name, localFunctionId);
-        ((AbsFUNEntity) singleCollect.getEntities().get(functionId)).addName2Role(name, role);
+        ((GoFunEntity) singleCollect.getEntityById(functionId)).addName2Id(name, localFunctionId);
+        ((GoFunEntity) singleCollect.getEntityById(functionId)).addName2Role(name, role);
     }
 
 
@@ -152,10 +153,10 @@ public class MapInFun {
         String name = localName.getName();
         String role = GoConstantString.OPERAND_NAME_ROLE_LOC_VAR;
 
-        ((AbsFUNEntity) singleCollect.getEntities().get(functionId)).addName2Id(name, localVarId);
-        ((AbsFUNEntity) singleCollect.getEntities().get(functionId)).addName2Role(name, role);
+        ((GoFunEntity) singleCollect.getEntityById(functionId)).addName2Id(name, localVarId);
+        ((GoFunEntity) singleCollect.getEntityById(functionId)).addName2Role(name, role);
         for(String usage : localName.getUsages()) {
-            ((AbsFUNEntity) singleCollect.getEntities().get(functionId)).addName2Usage(name, usage);
+            ((GoFunEntity) singleCollect.getEntityById(functionId)).addName2Usage(name, usage);
         }
     }
 
@@ -169,10 +170,10 @@ public class MapInFun {
         String name = localName.getName();
         String role = GoConstantString.OPERAND_NAME_ROLE_GLO_VAR;
 
-        ((AbsFUNEntity) singleCollect.getEntities().get(functionId)).addName2Id(name, globalVarId);
-        ((AbsFUNEntity) singleCollect.getEntities().get(functionId)).addName2Role(name, role);
+        ((GoFunEntity) singleCollect.getEntityById(functionId)).addName2Id(name, globalVarId);
+        ((GoFunEntity) singleCollect.getEntityById(functionId)).addName2Role(name, role);
         for(String usage : localName.getUsages()) {
-            ((AbsFUNEntity) singleCollect.getEntities().get(functionId)).addName2Usage(name, usage);
+            ((GoFunEntity) singleCollect.getEntityById(functionId)).addName2Usage(name, usage);
         }
     }
 
@@ -184,12 +185,12 @@ public class MapInFun {
      */
     private int getIdIfParameter(String name, int functionId) {
         if(functionId == -1
-                || !(singleCollect.getEntities().get(functionId) instanceof AbsFUNEntity)) {
+                || !(singleCollect.getEntityById(functionId) instanceof GoFunEntity)) {
             return -1;
         }
-        AbsFUNEntity functionEntity = (AbsFUNEntity) singleCollect.getEntities().get(functionId);
+        GoFunEntity functionEntity = (GoFunEntity) singleCollect.getEntityById(functionId);
         for (int parameterId : functionEntity.getParameters()) {
-            AbsVAREntity varEntity = (AbsVAREntity) singleCollect.getEntities().get(parameterId);
+            AbsVAREntity varEntity = (AbsVAREntity) singleCollect.getEntityById(parameterId);
             if(varEntity.getName().equals(name)) {
                 return parameterId;
             }
@@ -205,12 +206,12 @@ public class MapInFun {
      */
     private int getIdIfReturn(String name, int functionId) {
         if(functionId == -1
-                || !(singleCollect.getEntities().get(functionId) instanceof AbsFUNEntity)) {
+                || !(singleCollect.getEntityById(functionId) instanceof GoFunEntity)) {
             return -1;
         }
-        AbsFUNEntity functionEntity = (AbsFUNEntity) singleCollect.getEntities().get(functionId);
+        GoFunEntity functionEntity = (GoFunEntity) singleCollect.getEntityById(functionId);
         for (int returnId : functionEntity.getReturns()) {
-            AbsVAREntity varEntity = (AbsVAREntity) singleCollect.getEntities().get(returnId);
+            AbsVAREntity varEntity = (AbsVAREntity) singleCollect.getEntityById(returnId);
             if(varEntity.getName().equals(name)) {
                 return returnId;
             }
@@ -226,12 +227,12 @@ public class MapInFun {
      */
     private int getIdIfReceiver(String name, int functionId) {
         if(functionId == -1
-                || !(singleCollect.getEntities().get(functionId) instanceof MethodEntity)) {
+                || !(singleCollect.getEntityById(functionId) instanceof MethodEntity)) {
             return -1;
         }
-        MethodEntity methodEntity = (MethodEntity) singleCollect.getEntities().get(functionId);
+        MethodEntity methodEntity = (MethodEntity) singleCollect.getEntityById(functionId);
         int receiverVarId = methodEntity.getReceiverVarId();
-        AbsVAREntity varEntity = (AbsVAREntity) singleCollect.getEntities().get(receiverVarId);
+        AbsVAREntity varEntity = (AbsVAREntity) singleCollect.getEntityById(receiverVarId);
         if(varEntity.getName().equals(name)) {
             return receiverVarId;
         }
@@ -247,20 +248,20 @@ public class MapInFun {
      */
     private int getIdIfPackage(String name, int functionId) {
         if(functionId == -1
-                || !(singleCollect.getEntities().get(functionId) instanceof AbsFUNEntity)) {
+                || !(singleCollect.getEntityById(functionId) instanceof GoFunEntity)) {
             return -1;
         }
-        AbsFUNEntity functionEntity = (AbsFUNEntity) singleCollect.getEntities().get(functionId);
+        GoFunEntity functionEntity = (GoFunEntity) singleCollect.getEntityById(functionId);
         int fileId = functionEntity.getParentId();
-        if(fileId == -1 || !(singleCollect.getEntities().get(fileId) instanceof AbsFILEntity)) {
+        if(fileId == -1 || !(singleCollect.getEntityById(fileId) instanceof AbsFILEntity)) {
             return -1;
         }
-        AbsFILEntity fileEntity = (AbsFILEntity) singleCollect.getEntities().get(fileId);
+        AbsFILEntity fileEntity = (AbsFILEntity) singleCollect.getEntityById(fileId);
         for (Tuple<String, Integer> oneImport : fileEntity.getRelations()) {
             if (oneImport.x.equals(Configure.RELATION_IMPORT)) {
                 int thisImportedPackageId = oneImport.y;
-                String thisImportedPackageName = singleCollect.getEntities().get(thisImportedPackageId).getName();
-                String thisImportedAliasName = ((AbsFILEntity) singleCollect.getEntities().get(fileId)).getImportsAlias().get(thisImportedPackageId);
+                String thisImportedPackageName = singleCollect.getEntityById(thisImportedPackageId).getName();
+                String thisImportedAliasName = ((AbsFILEntity) singleCollect.getEntityById(fileId)).getImportsAlias().get(thisImportedPackageId);
                 if (name.equals(thisImportedPackageName)
                         || name.equals(thisImportedAliasName)) {
                     return thisImportedPackageId;
@@ -278,24 +279,24 @@ public class MapInFun {
      */
     private int getIdIfFunction(String name, int functionId) {
         if(functionId == -1
-                || !(singleCollect.getEntities().get(functionId) instanceof AbsFUNEntity)) {
+                || !(singleCollect.getEntityById(functionId) instanceof GoFunEntity)) {
             return -1;
         }
-        AbsFUNEntity functionEntity = (AbsFUNEntity) singleCollect.getEntities().get(functionId);
+        GoFunEntity functionEntity = (GoFunEntity) singleCollect.getEntityById(functionId);
         int fileId = functionEntity.getParentId();
-        if(fileId == -1 || !(singleCollect.getEntities().get(fileId) instanceof AbsFILEntity)) {
+        if(fileId == -1 || !(singleCollect.getEntityById(fileId) instanceof AbsFILEntity)) {
             return -1;
         }
-        AbsFILEntity fileEntity = (AbsFILEntity) singleCollect.getEntities().get(fileId);
+        AbsFILEntity fileEntity = (AbsFILEntity) singleCollect.getEntityById(fileId);
         int packageId = fileEntity.getParentId();
         if(packageId == -1) {
             return -1;
         }
-        for (int id : singleCollect.getEntities().get(packageId).getChildrenIds()) {
-            if (singleCollect.getEntities().get(id) instanceof AbsFILEntity) {
-                for (int usedFunctionId : singleCollect.getEntities().get(id).getChildrenIds()) {
-                    AbsEntity usedFunctionEntity = singleCollect.getEntities().get(usedFunctionId);
-                    if (usedFunctionEntity instanceof AbsFUNEntity
+        for (int id : singleCollect.getEntityById(packageId).getChildrenIds()) {
+            if (singleCollect.getEntityById(id) instanceof AbsFILEntity) {
+                for (int usedFunctionId : singleCollect.getEntityById(id).getChildrenIds()) {
+                    AbsEntity usedFunctionEntity = singleCollect.getEntityById(usedFunctionId);
+                    if (usedFunctionEntity instanceof GoFunEntity
                             && !(usedFunctionEntity instanceof MethodEntity)) {
                         if(usedFunctionEntity.getName().equals(name)) {
                             return usedFunctionEntity.getId();
@@ -316,24 +317,24 @@ public class MapInFun {
      */
     private int getIdIfGlobalVar(String name, int functionId) {
         if(functionId == -1
-                || !(singleCollect.getEntities().get(functionId) instanceof AbsFUNEntity)) {
+                || !(singleCollect.getEntityById(functionId) instanceof GoFunEntity)) {
             return -1;
         }
-        AbsFUNEntity functionEntity = (AbsFUNEntity) singleCollect.getEntities().get(functionId);
+        GoFunEntity functionEntity = (GoFunEntity) singleCollect.getEntityById(functionId);
         int fileId = functionEntity.getParentId();
-        if(fileId == -1 || !(singleCollect.getEntities().get(fileId) instanceof AbsFILEntity)) {
+        if(fileId == -1 || !(singleCollect.getEntityById(fileId) instanceof AbsFILEntity)) {
             return -1;
         }
-        AbsFILEntity fileEntity = (AbsFILEntity) singleCollect.getEntities().get(fileId);
+        AbsFILEntity fileEntity = (AbsFILEntity) singleCollect.getEntityById(fileId);
         int packageId = fileEntity.getParentId();
         if(packageId == -1) {
             return -1;
         }
-        for (int id : singleCollect.getEntities().get(packageId).getChildrenIds()) {
-            if (singleCollect.getEntities().get(id) instanceof AbsFILEntity) {
-                for (int varId : singleCollect.getEntities().get(id).getChildrenIds()) {
-                    if(singleCollect.getEntities().get(varId) instanceof AbsVAREntity) {
-                        if(singleCollect.getEntities().get(varId).getName().equals(name)) {
+        for (int id : singleCollect.getEntityById(packageId).getChildrenIds()) {
+            if (singleCollect.getEntityById(id) instanceof AbsFILEntity) {
+                for (int varId : singleCollect.getEntityById(id).getChildrenIds()) {
+                    if(singleCollect.getEntityById(varId) instanceof AbsVAREntity) {
+                        if(singleCollect.getEntityById(varId).getName().equals(name)) {
                             return varId;
                         }
                     }
@@ -351,27 +352,27 @@ public class MapInFun {
      * @return
      */
     private int getIdIfLocalVar(LocalName localName, int functionId) {
-        if(functionId == -1 || !(singleCollect.getEntities().get(functionId) instanceof AbsFUNEntity)) {
+        if(functionId == -1 || !(singleCollect.getEntityById(functionId) instanceof GoFunEntity)) {
             return -1;
         }
 
-        //System.out.println("function:" + singleCollect.getEntities().get(functionId).getName());
+        //System.out.println("function:" + singleCollect.getEntityById(functionId).getName());
         //System.out.println("find: " + localName);
 
         String currentName = localName.getName();
         int currentBlockId = localName.getLocalBlockId();
-        int currentBlockDepth = ((AbsFUNEntity) singleCollect.getEntities().get(functionId)).getLocalBlocks().get(currentBlockId).getDepth();
+        int currentBlockDepth = ((GoFunEntity) singleCollect.getEntityById(functionId)).getLocalBlocks().get(currentBlockId).getDepth();
 
         int resVarId = -1;
         int resBlockId = -1;
-        for (int varId : singleCollect.getEntities().get(functionId).getChildrenIds()) {
-            if (singleCollect.getEntities().get(varId) instanceof AbsVAREntity) {
-                String candidateName = singleCollect.getEntities().get(varId).getName();
-                int candidateBlockId = ((AbsVAREntity) singleCollect.getEntities().get(varId)).getLocalBlockId();
-                int candidateBlockDepth =  ((AbsFUNEntity) singleCollect.getEntities().get(functionId)).getLocalBlocks().get(candidateBlockId).getDepth();
+        for (int varId : singleCollect.getEntityById(functionId).getChildrenIds()) {
+            if (singleCollect.getEntityById(varId) instanceof AbsVAREntity) {
+                String candidateName = singleCollect.getEntityById(varId).getName();
+                int candidateBlockId = ((AbsVAREntity) singleCollect.getEntityById(varId)).getLocalBlockId();
+                int candidateBlockDepth =  ((GoFunEntity) singleCollect.getEntityById(functionId)).getLocalBlocks().get(candidateBlockId).getDepth();
                 // case 1
                 if(currentName.equals(candidateName) && currentBlockId == candidateBlockId) {
-                    //System.out.println("found: " + singleCollect.getEntities().get(varId));
+                    //System.out.println("found: " + singleCollect.getEntityById(varId));
                     return varId;
                 }
                 //case 2
@@ -384,7 +385,7 @@ public class MapInFun {
             }
         }
         if (resVarId != -1) {
-            //System.out.println("found: " + singleCollect.getEntities().get(resVarId));
+            //System.out.println("found: " + singleCollect.getEntityById(resVarId));
         }
         return resVarId;
     }

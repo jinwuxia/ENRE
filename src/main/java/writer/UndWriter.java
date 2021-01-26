@@ -1,6 +1,5 @@
 package writer;
 
-import entitybuilder.pybuilder.pyentity.ModuleEntity;
 import entitybuilder.pybuilder.pyentity.PyFunctionEntity;
 import entitybuilder.pybuilder.pyentity.PyMethodEntity;
 import uerr.AbsEntity;
@@ -36,13 +35,13 @@ public class UndWriter {
         for(AbsEntity entity : singleCollect.getEntities()) {
             int id1 = entity.getId();
             String shortname1 = getShortName(id1);
-            String longname1 = getLongName(id1);
+            String longname1 = singleCollect.getLongName(id1);
             for (Tuple<String, Integer> relation : entity.getRelations()) {
                 String depType = getDepType(relation.x);
                 int id2 = relation.y;
                 if(!depType.equals("")) {
                     String shorname2 = getShortName(id2);
-                    String longname2 = getLongName(id2);
+                    String longname2 = singleCollect.getLongName(id2);
                     String[] arr = new String[]{depType, longname1, shortname1, longname2, shorname2};
                     deplist.add(arr);
                 }
@@ -60,12 +59,12 @@ public class UndWriter {
         Map<String, Map<String, Map<String, Integer>>> depSta = new HashMap<String, Map<String, Map<String, Integer>>>();
         for(AbsEntity entity : singleCollect.getEntities()) {
             int id1 = entity.getId();
-            String longname1 = getLongName(id1);
+            String longname1 = singleCollect.getLongName(id1);
             for (Tuple<String, Integer> relation : entity.getRelations()) {
                 String depType = getDepType(relation.x);
                 int id2 = relation.y;
                 if(!depType.equals("")) {
-                    String longname2 = getLongName(id2);
+                    String longname2 = singleCollect.getLongName(id2);
                     if(!depSta.containsKey(depType)) {
                         depSta.put(depType, new HashMap<String, Map<String, Integer>>());
                     }
@@ -111,7 +110,7 @@ public class UndWriter {
             int id = entity.getId();
             String type = getEntityType(id);
             if(!type.equals("")) {
-                String longname = getLongName(id);
+                String longname = singleCollect.getLongName(id);
                 String shotname = getShortName(id);
                 String[] arr = new String[] {type, longname, shotname};
                 entlist.add(arr);
@@ -121,13 +120,13 @@ public class UndWriter {
     }
 
     private String getShortName(int id) {
-        AbsEntity entity = singleCollect.getEntities().get(id);
+        AbsEntity entity = singleCollect.getEntityById(id);
         if(entity instanceof PyFunctionEntity && entity.getName().endsWith("__main__")) {
             int fileId = entity.getParentId();
-            String fileName = singleCollect.getEntities().get(fileId).getSimpleName();
+            String fileName = singleCollect.getEntityById(fileId).getSimpleName();
             return fileName;
         }
-        return singleCollect.getEntities().get(id).getSimpleName();
+        return singleCollect.getEntityById(id).getSimpleName();
     }
 
     private String getDepType(String depStr) {
@@ -175,50 +174,15 @@ public class UndWriter {
             return "Class";
         }
         if (singleCollect.isFunction(id) &&
-                !(singleCollect.getEntities().get(id) instanceof PyMethodEntity)){
+                !(singleCollect.getEntityById(id) instanceof PyMethodEntity)){
             return "Function";
         }
-        if(singleCollect.getEntities().get(id) instanceof PyMethodEntity) {
+        if(singleCollect.getEntityById(id) instanceof PyMethodEntity) {
             return "Method";
         }
         return "";
     }
 
-    /**
-     * if module, it longname = fileName
-     * if others, it longname = parentsimplename.parentsimplename....
-     * @param id
-     * @return
-     */
-    private String getLongName(int id) {
-        AbsEntity entity = singleCollect.getEntities().get(id);
-        if(entity instanceof ModuleEntity) {
-            return entity.getName();
-        }
-        if(entity instanceof PyFunctionEntity && entity.getName().endsWith("__main__")) {
-            return singleCollect.getEntities().get(entity.getParentId()).getName();
-        }
-        String longname = "";
-        while(id != -1) {
-            //System.out.println("name:" + singleCollect.getEntities().get(id).getName());
-            //System.out.println("simplename:" + singleCollect.getEntities().get(id).getSimpleName());
-            String name = singleCollect.getEntities().get(id).getSimpleName();
-            if(name.endsWith(".py")) {
-                name = name.split("\\.py")[0];
-            }
-            if(name.endsWith(".go")) {
-                name = name.split("\\.go")[0];
-            }
-            if(!longname.equals("")) {
-                longname = name + "." + longname;
-            }
-            else {
-                longname = name;
-            }
-            id = singleCollect.getEntities().get(id).getParentId();
-        }
-        return longname;
-    }
 
 
 }

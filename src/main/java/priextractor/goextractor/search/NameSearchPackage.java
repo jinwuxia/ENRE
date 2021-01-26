@@ -16,10 +16,10 @@ public class NameSearchPackage {
      */
     public int findVarInPackage(String varName, int packageId){
         if(packageId == -1
-                || !(singleCollect.getEntities().get(packageId) instanceof AbsFLDEntity) ) {
+                || !(singleCollect.getEntityById(packageId) instanceof AbsFLDEntity) ) {
             return -1;
         }
-        for (int fileId : singleCollect.getEntities().get(packageId).getChildrenIds()) {
+        for (int fileId : singleCollect.getEntityById(packageId).getChildrenIds()) {
             int varId = nameSearchFile.findVarInFile(varName, fileId);
             if (varId != -1) {
                 return varId;
@@ -36,10 +36,10 @@ public class NameSearchPackage {
      */
     public int findStructTypeInPackage(String typeName, int packageId) {
         if(packageId == -1
-                || !(singleCollect.getEntities().get(packageId) instanceof AbsFLDEntity) ) {
+                || !(singleCollect.getEntityById(packageId) instanceof AbsFLDEntity) ) {
             return -1;
         }
-        for (int fileId : singleCollect.getEntities().get(packageId).getChildrenIds()) {
+        for (int fileId : singleCollect.getEntityById(packageId).getChildrenIds()) {
             int structId = nameSearchFile.findStructTypeInFile(typeName, fileId);
             if (structId != -1) {
                 return structId;
@@ -57,10 +57,10 @@ public class NameSearchPackage {
      */
     public int findAliasTypeInPackage(String typeName, int packageId) {
         if(packageId == -1
-                || !(singleCollect.getEntities().get(packageId) instanceof AbsFLDEntity) ) {
+                || !(singleCollect.getEntityById(packageId) instanceof AbsFLDEntity) ) {
             return -1;
         }
-        for (int fileId : singleCollect.getEntities().get(packageId).getChildrenIds()) {
+        for (int fileId : singleCollect.getEntityById(packageId).getChildrenIds()) {
             int structId = nameSearchFile.findAliasTypeInFile(typeName, fileId);
             if (structId != -1) {
                 return structId;
@@ -78,10 +78,10 @@ public class NameSearchPackage {
      */
     public int findInterfaceTypeInPackage(String typeName, int packageId) {
         if(packageId == -1
-                || !(singleCollect.getEntities().get(packageId) instanceof AbsFLDEntity) ) {
+                || !(singleCollect.getEntityById(packageId) instanceof AbsFLDEntity) ) {
             return -1;
         }
-        for (int fileId : singleCollect.getEntities().get(packageId).getChildrenIds()) {
+        for (int fileId : singleCollect.getEntityById(packageId).getChildrenIds()) {
             int interfaceId = nameSearchFile.findInterfaceTypeInFile(typeName, fileId);
             if (interfaceId != -1) {
                 return interfaceId;
@@ -95,10 +95,10 @@ public class NameSearchPackage {
     //find functionId in a package
     public int findFunctionInPackage(String functionName, int packageId) {
         if(packageId == -1
-                || !(singleCollect.getEntities().get(packageId) instanceof AbsFLDEntity) ) {
+                || !(singleCollect.getEntityById(packageId) instanceof AbsFLDEntity) ) {
             return -1;
         }
-        for (int fileId : singleCollect.getEntities().get(packageId).getChildrenIds()) {
+        for (int fileId : singleCollect.getEntityById(packageId).getChildrenIds()) {
             int functionId = nameSearchFile.findFunctionInFile(functionName, fileId);
             if (functionId != -1) {
                 return functionId;

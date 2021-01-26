@@ -1,7 +1,7 @@
 package priextractor.goextractor;
 
 import uerr.*;
-import uerr.RelationInterface;
+import util.RelationInterface;
 import entitybuilder.gobuilder.goentity.AliasTypeEntity;
 import entitybuilder.gobuilder.goentity.InterfaceEntity;
 import entitybuilder.gobuilder.goentity.MethodEntity;
@@ -52,7 +52,7 @@ public class GoRelationInf extends RelationInterface {
             else if(entity instanceof AbsVAREntity) {
                 int parentId = entity.getParentId();
                 if(parentId != -1) {
-                    if(!(singleCollect.getEntities().get(parentId) instanceof StructEntity)) {
+                    if(!(singleCollect.getEntityById(parentId) instanceof StructEntity)) {
                         varCount ++;
                     }
                 }
@@ -116,15 +116,15 @@ public class GoRelationInf extends RelationInterface {
         for (AbsEntity entity : singleCollect.getEntities()) {
             if (entity instanceof AbsFUNEntity) {
                 String methodName1 =entity.getName();
-                String fileName1 = singleCollect.getEntities().get(entity.getParentId()).getName();
+                String fileName1 = singleCollect.getEntityById(entity.getParentId()).getName();
 
                 for (Tuple<String, Integer> relation : entity.getRelations()) {
                     String relationType = relation.x;
                     int entityId2 = relation.y;
                     if(relationType.equals(Configure.RELATION_CALL)) {
-                        AbsEntity entity2 = singleCollect.getEntities().get(entityId2);
+                        AbsEntity entity2 = singleCollect.getEntityById(entityId2);
                         String methodName2 = entity2.getName();
-                        String fileName2 = singleCollect.getEntities().get(entity2.getParentId()).getName();
+                        String fileName2 = singleCollect.getEntityById(entity2.getParentId()).getName();
                         Tuple<String, String> oneCall;
                         if(level.equals(Configure.RELATION_LEVEL_FILE)) {
                             oneCall = new Tuple<String, String>(fileName1, fileName2);
@@ -147,16 +147,16 @@ public class GoRelationInf extends RelationInterface {
             if(entity instanceof AbsFUNEntity) {
                 int functionId = entity.getId();
                 String functionName = entity.getName();
-                int fileId1 = singleCollect.getEntities().get(functionId).getParentId();
-                String fileName1 = singleCollect.getEntities().get(fileId1).getName();
+                int fileId1 = singleCollect.getEntityById(functionId).getParentId();
+                String fileName1 = singleCollect.getEntityById(fileId1).getName();
 
                 for(Tuple<String, Integer> relation : entity.getRelations()) {
                     if(relation.x.equals(Configure.RELATION_PARAMETER)) {
                         int varTypeId2 = relation.y;
-                        String varTypeName2 = singleCollect.getEntities().get(varTypeId2).getName();
+                        String varTypeName2 = singleCollect.getEntityById(varTypeId2).getName();
                         if(varTypeId2 != -1) {
-                            int fileId2 = singleCollect.getEntities().get(varTypeId2).getParentId();
-                            String fileName2 = singleCollect.getEntities().get(fileId2).getName();
+                            int fileId2 = singleCollect.getEntityById(varTypeId2).getParentId();
+                            String fileName2 = singleCollect.getEntityById(fileId2).getName();
 
                             Tuple<String, String> oneSet;
                             if(level.equals(Configure.RELATION_LEVEL_FILE)) {
@@ -181,16 +181,16 @@ public class GoRelationInf extends RelationInterface {
             if(entity instanceof AbsFUNEntity) {
                 int functionId = entity.getId();
                 String functionName = entity.getName();
-                int fileId1 = singleCollect.getEntities().get(functionId).getParentId();
-                String fileName1 = singleCollect.getEntities().get(fileId1).getName();
+                int fileId1 = singleCollect.getEntityById(functionId).getParentId();
+                String fileName1 = singleCollect.getEntityById(fileId1).getName();
 
                 for(Tuple<String, Integer> relation : entity.getRelations()) {
                     if(relation.x.equals(Configure.RELATION_RETURN)) {
                         int varTypeId2 = relation.y;
-                        String varTypeName2 = singleCollect.getEntities().get(varTypeId2).getName();
+                        String varTypeName2 = singleCollect.getEntityById(varTypeId2).getName();
                         if(varTypeId2 != -1) {
-                            int fileId2 = singleCollect.getEntities().get(varTypeId2).getParentId();
-                            String fileName2 = singleCollect.getEntities().get(fileId2).getName();
+                            int fileId2 = singleCollect.getEntityById(varTypeId2).getParentId();
+                            String fileName2 = singleCollect.getEntityById(fileId2).getName();
 
                             Tuple<String, String> oneSet;
                             if(level.equals(Configure.RELATION_LEVEL_FILE)) {
@@ -214,18 +214,18 @@ public class GoRelationInf extends RelationInterface {
         for (AbsEntity entity : singleCollect.getEntities()) {
             if (entity instanceof AbsFUNEntity) {
                 String methodName1 =entity.getName();
-                String fileName1 = singleCollect.getEntities().get(entity.getParentId()).getName();
+                String fileName1 = singleCollect.getEntityById(entity.getParentId()).getName();
 
                 for (Tuple<String, Integer> relation : entity.getRelations()) {
                     String relationType = relation.x;
                     int entityId2 = relation.y;
                     if(relationType.equals(Configure.RELATION_SET)) {
-                        AbsEntity entity2 = singleCollect.getEntities().get(entityId2);
+                        AbsEntity entity2 = singleCollect.getEntityById(entityId2);
                         String varName2 = entity2.getName();
                         int fileId2 = getFileForVar(entityId2);
                         String fileName2 = "";
                         if(fileId2 != -1){
-                            fileName2 = singleCollect.getEntities().get(fileId2).getName();
+                            fileName2 = singleCollect.getEntityById(fileId2).getName();
                         }
                         Tuple<String, String> oneSet;
                         if(level.equals(Configure.RELATION_LEVEL_FILE)) {
@@ -248,18 +248,18 @@ public class GoRelationInf extends RelationInterface {
         for (AbsEntity entity : singleCollect.getEntities()) {
             if (entity instanceof AbsFUNEntity) {
                 String methodName1 =entity.getName();
-                String fileName1 = singleCollect.getEntities().get(entity.getParentId()).getName();
+                String fileName1 = singleCollect.getEntityById(entity.getParentId()).getName();
 
                 for (Tuple<String, Integer> relation : entity.getRelations()) {
                     String relationType = relation.x;
                     int entityId2 = relation.y;
                     if(relationType.equals(Configure.RELATION_USE)) {
-                        AbsEntity entity2 = singleCollect.getEntities().get(entityId2);
+                        AbsEntity entity2 = singleCollect.getEntityById(entityId2);
                         String varName2 = entity2.getName();
                         int fileId2 = getFileForVar(entityId2);
                         String fileName2 = "";
                         if(fileId2 != -1){
-                            fileName2 = singleCollect.getEntities().get(fileId2).getName();
+                            fileName2 = singleCollect.getEntityById(fileId2).getName();
                         }
 
                         Tuple<String, String> oneSet;
@@ -286,15 +286,15 @@ public class GoRelationInf extends RelationInterface {
                 String typeName = entity.getName();
                 int fileId = entity.getParentId();
                 if(fileId != -1) {
-                    String fileName1 = singleCollect.getEntities().get(fileId).getName();
+                    String fileName1 = singleCollect.getEntityById(fileId).getName();
                     for(Tuple<String, Integer> relation : entity.getRelations()) {
                         if(relation.x.equals(Configure.RELATION_IMPLEMENT)) {
                             int interfaceId = relation.y;
-                            String interfaceName = singleCollect.getEntities().get(interfaceId).getName();
-                            int fileId2 = singleCollect.getEntities().get(interfaceId).getParentId();
+                            String interfaceName = singleCollect.getEntityById(interfaceId).getName();
+                            int fileId2 = singleCollect.getEntityById(interfaceId).getParentId();
                             String fileName2 = "";
                             if(fileId2 != -1) {
-                                fileName2 = singleCollect.getEntities().get(fileId2).getName();
+                                fileName2 = singleCollect.getEntityById(fileId2).getName();
                             }
                             if(level.equals(Configure.RELATION_LEVEL_FILE)) {
                                 deps.add(new Tuple<String, String>(fileName1, fileName2));
@@ -329,12 +329,12 @@ public class GoRelationInf extends RelationInterface {
                 if (!relations.isEmpty()) {
                     for (Tuple<String, Integer> oneRelation : relations) {
                         if (oneRelation.x.equals(Configure.RELATION_IMPORT)) {
-                            String importedPackageName = ((AbsFLDEntity) singleCollect.getEntities().get(oneRelation.y)).getFullPath();
+                            String importedPackageName = ((AbsFLDEntity) singleCollect.getEntityById(oneRelation.y)).getFullPath();
                             if(level.equals(Configure.RELATION_LEVEL_FILE)) {
-                                ArrayList<Integer> fileIds2 = singleCollect.getEntities().get(oneRelation.y).getChildrenIds();
+                                ArrayList<Integer> fileIds2 = singleCollect.getEntityById(oneRelation.y).getChildrenIds();
                                 for (int fileId2 : fileIds2) {
-                                    if(singleCollect.getEntities().get(fileId2) instanceof AbsFILEntity) {
-                                        importDeps.add(new Tuple<String, String>(fileName, singleCollect.getEntities().get(fileId2).getName()));
+                                    if(singleCollect.getEntityById(fileId2) instanceof AbsFILEntity) {
+                                        importDeps.add(new Tuple<String, String>(fileName, singleCollect.getEntityById(fileId2).getName()));
                                     }
                                 }
                             }
@@ -359,12 +359,12 @@ public class GoRelationInf extends RelationInterface {
                 String structName = structEntity.getName();
                 ArrayList<Tuple<String, Integer>> relations = structEntity.getRelations();
                 if (!relations.isEmpty()) {
-                    String fileName1 = singleCollect.getEntities().get(structEntity.getParentId()).getName();
+                    String fileName1 = singleCollect.getEntityById(structEntity.getParentId()).getName();
                     for (Tuple<String, Integer> oneRelation : relations) {
                         if (oneRelation.x.equals(Configure.RELATION_INHERIT)) {
-                            String embededStructName = singleCollect.getEntities().get(oneRelation.y).getName();
-                            int embededFileId = singleCollect.getEntities().get(oneRelation.y).getParentId();
-                            String fileName2 = singleCollect.getEntities().get(embededFileId).getName();
+                            String embededStructName = singleCollect.getEntityById(oneRelation.y).getName();
+                            int embededFileId = singleCollect.getEntityById(oneRelation.y).getParentId();
+                            String fileName2 = singleCollect.getEntityById(embededFileId).getName();
                             if (level.equals(Configure.RELATION_LEVEL_FILE)) {
                                 embedDeps.add(new Tuple<String, String>(fileName1, fileName2));
                             }
@@ -387,16 +387,16 @@ public class GoRelationInf extends RelationInterface {
                 ArrayList<Tuple<String, Integer>> relations = interfaceEntity.getRelations();
                 String fileName1 = "";
                 if (interfaceEntity.getParentId() != -1) {
-                    fileName1 = singleCollect.getEntities().get(interfaceEntity.getParentId()).getName();
+                    fileName1 = singleCollect.getEntityById(interfaceEntity.getParentId()).getName();
                 }
                 if (!relations.isEmpty()) {
                     for (Tuple<String, Integer> oneRelation : relations) {
                         if (oneRelation.x.equals(Configure.RELATION_INHERIT)) {
-                            String embededInterfaceName = singleCollect.getEntities().get(oneRelation.y).getName();
-                            int embededFileId = singleCollect.getEntities().get(oneRelation.y).getParentId();
+                            String embededInterfaceName = singleCollect.getEntityById(oneRelation.y).getName();
+                            int embededFileId = singleCollect.getEntityById(oneRelation.y).getParentId();
                             String fileName2 = "";
                             if (embededFileId != -1) {
-                                fileName2 = singleCollect.getEntities().get(embededFileId).getName();
+                                fileName2 = singleCollect.getEntityById(embededFileId).getName();
                             }
                             if (level.equals(Configure.RELATION_LEVEL_FILE)) {
                                 embedDeps.add(new Tuple<String, String>(fileName1, fileName2));
@@ -423,13 +423,13 @@ public class GoRelationInf extends RelationInterface {
         if(varId == -1) {
             return -1;
         }
-        int parentId = singleCollect.getEntities().get(varId).getParentId();
+        int parentId = singleCollect.getEntityById(varId).getParentId();
         while (parentId != -1 &&
-                !(singleCollect.getEntities().get(parentId) instanceof AbsFILEntity)) {
-            parentId = singleCollect.getEntities().get(parentId).getParentId();
+                !(singleCollect.getEntityById(parentId) instanceof AbsFILEntity)) {
+            parentId = singleCollect.getEntityById(parentId).getParentId();
         }
         if(parentId != -1 &&
-                singleCollect.getEntities().get(parentId) instanceof AbsFILEntity) {
+                singleCollect.getEntityById(parentId) instanceof AbsFILEntity) {
             return parentId;
         }
         return -1;
@@ -442,12 +442,12 @@ public class GoRelationInf extends RelationInterface {
                 String methodEntityName = methodEntity.getName();
                 ArrayList<Tuple<String, Integer>> relations = methodEntity.getRelations();
                 if (!relations.isEmpty()) {
-                    String fileName1 = singleCollect.getEntities().get(methodEntity.getParentId()).getName();
+                    String fileName1 = singleCollect.getEntityById(methodEntity.getParentId()).getName();
                     for (Tuple<String, Integer> oneRelation : relations) {
                         if (oneRelation.x.equals(Configure.RELATION_RECEIVE)) {
-                            String structAliasName = singleCollect.getEntities().get(oneRelation.y).getName();
-                            int structAliasFileId = singleCollect.getEntities().get(oneRelation.y).getParentId();
-                            String fileName2 = singleCollect.getEntities().get(structAliasFileId).getName();
+                            String structAliasName = singleCollect.getEntityById(oneRelation.y).getName();
+                            int structAliasFileId = singleCollect.getEntityById(oneRelation.y).getParentId();
+                            String fileName2 = singleCollect.getEntityById(structAliasFileId).getName();
                             if (level.equals(Configure.RELATION_LEVEL_FILE)) {
                                 receiveDeps.add(new Tuple<String, String>(fileName1, fileName2));
                             }
@@ -462,9 +462,8 @@ public class GoRelationInf extends RelationInterface {
         return receiveDeps;
     }
 
-
     @Override
-    public ArrayList<Tuple<String, String>> getImplicitExternalCalls(String level) {
+    public ArrayList<Tuple<String, String>> getDepByCategory(String level, String deptype) {
         ArrayList<Tuple<String, String>> receiveDeps = new ArrayList<Tuple<String, String>>();
         return receiveDeps;
     }

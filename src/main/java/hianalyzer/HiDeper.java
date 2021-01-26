@@ -39,7 +39,7 @@ public class HiDeper {
 
 
     private void buildEntity (int entityId, String type) {
-        AbsEntity absEntity = singleCollect.getEntities().get(entityId);
+        AbsEntity absEntity = singleCollect.getEntityById(entityId);
         String name = absEntity.getName();
         hiDepData.addEntity(entityId, name, type, absEntity.getParentId());
     }
@@ -117,10 +117,10 @@ public class HiDeper {
     }
 
     private int findFunction(int id) {
-        while(id != -1 && !(singleCollect.getEntities().get(id) instanceof AbsFUNEntity)) {
-            id = singleCollect.getEntities().get(id).getParentId();
+        while(id != -1 && !(singleCollect.getEntityById(id) instanceof AbsFUNEntity)) {
+            id = singleCollect.getEntityById(id).getParentId();
         }
-        if(id != -1 && singleCollect.getEntities().get(id) instanceof AbsFUNEntity) {
+        if(id != -1 && singleCollect.getEntityById(id) instanceof AbsFUNEntity) {
             return id;
         }
         return -1;
@@ -128,29 +128,29 @@ public class HiDeper {
 
 
     private int findClass(int id) {
-        while(id != -1 && !(singleCollect.getEntities().get(id) instanceof AbsCLSEntity)) {
-            id = singleCollect.getEntities().get(id).getParentId();
+        while(id != -1 && !(singleCollect.getEntityById(id) instanceof AbsCLSEntity)) {
+            id = singleCollect.getEntityById(id).getParentId();
         }
-        if(id != -1 && singleCollect.getEntities().get(id) instanceof AbsCLSEntity) {
+        if(id != -1 && singleCollect.getEntityById(id) instanceof AbsCLSEntity) {
             return id;
         }
         return -1;
     }
     private int findFile(int id) {
-        while(id != -1 && !(singleCollect.getEntities().get(id) instanceof AbsFILEntity)) {
-            id = singleCollect.getEntities().get(id).getParentId();
+        while(id != -1 && !(singleCollect.getEntityById(id) instanceof AbsFILEntity)) {
+            id = singleCollect.getEntityById(id).getParentId();
         }
-        if(id != -1 && singleCollect.getEntities().get(id) instanceof AbsFILEntity) {
+        if(id != -1 && singleCollect.getEntityById(id) instanceof AbsFILEntity) {
             return id;
         }
         return -1;
     }
 
     private int findFolder(int id) {
-        while(id != -1 && !(singleCollect.getEntities().get(id) instanceof AbsFLDEntity)) {
-            id = singleCollect.getEntities().get(id).getParentId();
+        while(id != -1 && !(singleCollect.getEntityById(id) instanceof AbsFLDEntity)) {
+            id = singleCollect.getEntityById(id).getParentId();
         }
-        if(id != -1 && singleCollect.getEntities().get(id) instanceof AbsFLDEntity) {
+        if(id != -1 && singleCollect.getEntityById(id) instanceof AbsFLDEntity) {
             return id;
         }
         return -1;
@@ -182,8 +182,8 @@ public class HiDeper {
             int id1 = entry.getKey();
             for (Map.Entry<Integer, Map<String, Map<String, Integer>>> entry2 : entry.getValue().entrySet()) {
                 int id2 = entry2.getKey();
-                System.out.println(singleCollect.getEntities().get(id1).getName());
-                System.out.println(singleCollect.getEntities().get(id2).getName());
+                System.out.println(singleCollect.getEntityById(id1).getName());
+                System.out.println(singleCollect.getEntityById(id2).getName());
                 System.out.println(entry2.getValue());
                 System.out.println("\n");
             }

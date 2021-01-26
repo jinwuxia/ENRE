@@ -1,0 +1,117 @@
+A.
+depend detail:
+
+1) a.b.c()
+depends on a's type, b's type, c()
+
+2) a.b.c().d()
+depends on a'atype, b's type,c()'s type and d()
+
+3) b()
+depends on b()
+
+4) a
+depends on a
+
+in conclusion,
+if expression (x) has no "dot", depends on x entity
+if expression (x.y or x.y() or x().y())  has 'dot', depends on x'type and  y entity.(only last is entity)
+
+
+
+
+
+B.
+a = x.y
+a.z()
+how about this situation
+
+C.
+resolve methods:
+if super() or super.X, we resolve it as super
+if it can be resolved out as regular way, we resolve it as regular.
+if built-in func() or built-in exception() , we resolve it as builtin
+if built-in x.method(), we resolve it as builtin
+
+
+
+D.resolve the implicit dependency
+
+the object expression: for the atom expression that meets the both:
+ 1)x, has been resolved as regular one.   type is unknown
+ 2)x.y/x.y.z or x.z()/x.z().a() form and  not resolved.
+
+the procedure:
+
+   1):implicit_possible in current expression.
+   refer each single expression. for each expression, if it has more than more atoms(a tree),
+
+   eg. a->a.b ->a.b.c()
+       for leaf a.b.c(), we can refer its entity by name X.c()
+       for non-leaf a.b,  we can refer entity by name X.b, and then refer its type based on x.b.c's entity's parent.
+       for non-leaf a, the a should be resolved as regular, we only need to refer its type based on x.b's entity's parent.
+
+   make some statistical, how many atoms in each implicit:  P1, P2, P3, P4, P5, P6,
+    possible type P1: how many atoms
+    possible type P2: how many atoms
+
+
+
+    2)implicit_refine in current container
+   refine the above possible type (implicit_possible, regular) by considering them in current container.
+
+    in current container,
+    group atoms based on name.(remove the parameters for method, method() ).
+    it may exist map{atom_name} = [ [], [XXX], ].  some is null. so note it when intersection.
+
+    map{atom name}=[type_list1, type_list2, type_list3]. compute the intersection of the typelist_n.
+    if intersection is null, then report error, or look for a type which appears most.
+    if the type is changed, then label as implicit_refine
+
+    2.1) for x ,  we infer its type by intersection
+    2.2) for x.y, we infer its entity and type by intersection.
+
+    one an atom is updated, then refine the entity bind id of atoms after the current atom. (only bindid is affected, the type is not.)
+
+
+    3)implicit_abstract for the atom of implicit_, has len(typeIDList) > 1.
+    If classes in set are in the same inheritance tree.
+    then further infer the type  to be the base class.
+    (depending on the abstractions but not implementation.)
+
+    one an atom is updated, then refine the entity bind id of atoms after the current atom.
+
+
+
+
+
+do we need to update the entity' type in entityCollect class?????
+since some type of var member type, parameter type,   method memember return type, function()'s return type are reasoned out.
+
+
+-------------------------------------------
+
+0.bug.
+init file __all__=[....]
+
+0.bug:
+directory has no init, we did not treat as package, it will lead to import missing in tensorflow.
+
+1.
+refactor the imports
+
+2.
+refactor the inheritance
+
+3.identify the atom that is imported, but is library , not in code.
+if atom is visible in the namescope, but its entity is -1, it means it is library
+
+
+
+
+4.@(para=xx,)
+def func()
+para was wrongly as library. how to solve the atom or function calles in decorations
+
+5.atom is local/annonymous block.
+

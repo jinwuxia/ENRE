@@ -13,7 +13,7 @@ public class WriterIntf {
     public void run(JDepObject jDepObject, XDepObject xDepObject, ArrayList<String[]> nodes, ArrayList<String[]> edges) {
 
         //output data by writers
-
+        /*
         JsonWriter jsonWriter = new JsonWriter();
         jsonWriter.toJson(jDepObject, configure.getOutputJsonFile());
         System.out.println("Export "+ configure.getOutputJsonFile());
@@ -21,6 +21,7 @@ public class WriterIntf {
         XmlWriter xmlWriter = new XmlWriter();
         xmlWriter.toXml(xDepObject, configure.getOutputXmlFile() );
         System.out.println("Export "+ configure.getOutputXmlFile());
+        */
 
         CsvWriter csvWriter = new CsvWriter();
         csvWriter.writeCsv(nodes, configure.getOutputCsvNodeFile());
@@ -28,6 +29,7 @@ public class WriterIntf {
         csvWriter.writeCsv(edges, configure.getOutputCsvEdgeFile());
         System.out.println("Export "+configure.getOutputCsvEdgeFile());
 
+        /*
         DotWriter dotWriter = new DotWriter();
         String fileName1 = Configure.getConfigureInstance().getAnalyzedProjectName() + "_" + DotUtil.FILTER_NO_DEP + ".dot";
         String fileName2 = Configure.getConfigureInstance().getAnalyzedProjectName() + "_" + DotUtil.FILTER_FILE_FOLDER_DEP + ".dot";
@@ -42,6 +44,7 @@ public class WriterIntf {
         dotWriter.writeDot(DotUtil.FILTER_FUNC_CLASS_DEP, fileName4);
         dotWriter.writeDot(DotUtil.FILTER_FUNCTION_DEP, fileName5);
         dotWriter.writeDot(DotUtil.FILTER_DEFAULT_DEP, fileName6);
+        */
 
         /*Render render = new Render();
         String destFileName1 = Configure.getConfigureInstance().getAnalyzedProjectName() + "_" + DotUtil.FILTER_NO_DEP + ".svg";
@@ -59,6 +62,7 @@ public class WriterIntf {
         render.run(fileName1, "fdp", destFileName6, "svg");*/
     }
 
+    /**
     public void undTest() {
         UndWriter undWriter = new UndWriter();
         undWriter.writeUnd();
@@ -69,5 +73,6 @@ public class WriterIntf {
         ImplicitCallWriter implicitCallWriter = new ImplicitCallWriter();
         implicitCallWriter.writeImplicitCalls();
     }
+     */
 
 }

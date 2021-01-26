@@ -8,12 +8,6 @@ import java.util.HashMap;
 
 public class ModuleEntity extends AbsFILEntity {
     private String moduleSimpleName; // without path, a simple name
-
-    //init form of functioncalls
-    private ArrayList<String> calledFunctions = new ArrayList<String>();
-    //private HashMap<String, Integer> calledWeightedFunctions = new HashMap<String, Integer>();
-    private ArrayList<LocalName> localNames = new ArrayList<LocalName>(); //the initial Names appear in a function
-
     private ArrayList<ImportStmt> importStmts = new ArrayList<ImportStmt>();
     private HashMap<Integer, Integer> importedId2Indexs = new HashMap<Integer, Integer>(); //[importedId, aboveIndex]
 
@@ -33,52 +27,12 @@ public class ModuleEntity extends AbsFILEntity {
         return moduleSimpleName;
     }
 
-    public ArrayList<String> getCalledFunctions() {
-        return calledFunctions;
-    }
 
-
-    public void setCalledFunctions(ArrayList<String> calledFunctions) {
-        this.calledFunctions.clear();
-        this.calledFunctions.addAll(calledFunctions);
-    }
-
-    /*public HashMap<String, Integer> getCalledWeightedFunctions() {
-        return calledWeightedFunctions;
-    }
-
-    public void updateCalledWeightedFunction(String calleeStr) {
-        if(calledWeightedFunctions.containsKey(calleeStr)) {
-            calledWeightedFunctions.put(calleeStr, calledWeightedFunctions.get(calleeStr) + 1);
-        }
-        else {
-            calledWeightedFunctions.put(calleeStr, 1);
-        }
-    }*/
-
-    /**
-     * even if calleeStr is already added, it still be added
-     * @param calleeStr
-     */
-    public void addFunctionCall(String calleeStr) {
-        this.calledFunctions.add(calleeStr);
-    }
-
-    public void addLocalName(LocalName localName) {
-        this.localNames.add(localName);
-    }
-
-    public ArrayList<LocalName> getLocalNames() {
-        return localNames;
-    }
 
     public ArrayList<ImportStmt> getImportStmts() {
         return importStmts;
     }
 
-    public void addImportStmt(ImportStmt stmt) {
-        importStmts.add(stmt);
-    }
     public void addImportStmts(ArrayList<ImportStmt> stmts) {
         importStmts.addAll(stmts);
     }
@@ -100,7 +54,6 @@ public class ModuleEntity extends AbsFILEntity {
         //str += ("includes:" + includedEntities + "\n");
         str += ("parentId:" + parentId + ",");
         str += ("childrenIds:" + childrenIds + ",");
-        str += ("calledFunctions:" + calledFunctions + ",");
         str += ("imports:" + importStmts + ",");
         str += ("relations:" + relations + ")\n");
         //str += ("calledFunctions with weight" + calledWeightedFunctions + ")\n");

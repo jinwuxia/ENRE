@@ -1,6 +1,7 @@
 package formator;
 
-import uerr.RelationInterface;
+import externalDataSource.TraceCallRelationInterface;
+import util.RelationInterface;
 import priextractor.goextractor.GoRelationInf;
 import priextractor.py3extractor.PyRelationInf;
 import util.Configure;
@@ -11,17 +12,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.lang.System.console;
 import static java.lang.System.exit;
 
 public class MapObject {
     private RelationInterface relationInterface;
-    private ArrayList<String> files;
+    private ArrayList<String> nodes;
     private Map<Integer, Map<Integer, Map<String, Integer>>> finalRes = new HashMap<Integer, Map<Integer, Map<String, Integer>>>();
-    private String[] depStrs;
 
-    public MapObject(String[] depStrs) {
-        this.depStrs = depStrs;
-        init();
+    public MapObject(String[] depStrs, String level) {
+
+        init(level);  //init "nodes" and "relationInterface"
+        buildDepMap(depStrs, level);  // read data from relationInterface and stores into "fileRes".
 
         //summarize the entity and dependency
         //System.out.println(relationInterface.entityStatis());
@@ -55,7 +57,7 @@ public class MapObject {
         return str;
     }
 
-    private void init() {
+    private void init(String level) {
         Configure configure = Configure.getConfigureInstance();
         if(configure.getLang().equals(Configure.GO_LANG)) {
             relationInterface = new GoRelationInf();
@@ -63,68 +65,56 @@ public class MapObject {
         else if(configure.getLang().equals(Configure.PYTHON_LANG)) {
             relationInterface = new PyRelationInf();
         }
+        else if(configure.getLang().equals(Configure.EXTERNAL_DATA_SOURCE)) {
+            relationInterface = new TraceCallRelationInterface();
+        }
         else {
             System.out.println("Not support this language!\n");
             exit(0);
         }
-        files =  relationInterface.getAllFiles();
-        buildDepMap(files);
+        nodes =  relationInterface.getAllNodes(level);
     }
 
 
-    public ArrayList<String> getFiles() {
-        return files;
+    public ArrayList<String> getNodes() {
+        return nodes;
     }
 
-    public void setFiles(ArrayList<String> files) {
-        this.files = files;
-    }
-
-
-    public String[] getDepStrs() {
-        return depStrs;
-    }
-
-    public void setDepStrs(String[] depStrs) {
-        this.depStrs = depStrs;
-    }
 
     public Map<Integer, Map<Integer, Map<String, Integer>>> getFinalRes() {
         return finalRes;
     }
 
-    public void setFinalRes(Map<Integer, Map<Integer, Map<String, Integer>>> finalRes) {
-        this.finalRes = finalRes;
-    }
 
     /**
-     * build map from fileName to new id
-     * store into fileName2Id.
-     * @param files
+     * build map from nodeName to new id
+     * store into nodeName2Id.
+     * @param
      */
-    private Map<String, Integer> buildFileMap(ArrayList<String> files) {
-        Map<String, Integer> fileName2Id = new HashMap<String, Integer>();
+    private Map<String, Integer> buildNodeMap() {
+        Map<String, Integer> nodeName2Id = new HashMap<String, Integer>();
         int index = 0;
-        for (String fileName : files) {
-            fileName2Id.put(fileName, index);
+        for (String nodeName : nodes) {
+            nodeName2Id.put(nodeName, index);
             index ++;
         }
-        return fileName2Id;
+        return nodeName2Id;
     }
 
     /**
      * build fileDeps into a map.
-     * @param files
+     * @param
      */
-    private void buildDepMap(ArrayList<String> files) {
+    private void buildDepMap(String[] depStrs, String level) {
 
-        Map<String, Integer> fileName2Id =  buildFileMap(files);
+        Map<String, Integer> nodeName2Id =  buildNodeMap();
+
         for (int i = 0; i < depStrs.length; i++) {
             String depType = depStrs[i];
             //System.out.println(depType);
-            ArrayList<Tuple<String, String>> deps = relationInterface.getDepByType(Configure.RELATION_LEVEL_FILE, depType);
+            ArrayList<Tuple<String, String>> deps = relationInterface.getDepByType(level, depType);
             if (deps != null){
-                addDepsInMap(deps, depType, fileName2Id);
+                addDepsInMap(deps, depType, nodeName2Id);
                 //System.out.println("dep not null: " + depType);
             }
             //else {
@@ -138,19 +128,19 @@ public class MapObject {
      *
      * @param deps
      * @param depType
-     * @param fileName2Id
+     * @param nodeName2Id
      */
-    private void addDepsInMap(ArrayList<Tuple<String, String>> deps, String depType, Map<String, Integer> fileName2Id) {
+    private void addDepsInMap(ArrayList<Tuple<String, String>> deps, String depType, Map<String, Integer> nodeName2Id) {
         for(Tuple<String, String> dep : deps) {
             String name1 = dep.x;
             String name2 = dep.y;
             int index1 = -1;
             int index2 = -1;
-            if(fileName2Id.containsKey(name1)) {
-                index1 = fileName2Id.get(name1);
+            if(nodeName2Id.containsKey(name1)) {
+                index1 = nodeName2Id.get(name1);
             }
-            if (fileName2Id.containsKey(name2)) {
-                index2 = fileName2Id.get(name2);
+            if (nodeName2Id.containsKey(name2)) {
+                index2 = nodeName2Id.get(name2);
             }
 
             if(name1.equals(name2) || index1 == -1 || index2 == -1) {

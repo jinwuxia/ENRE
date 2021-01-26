@@ -318,7 +318,9 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
                 }
             }
         }
-        furtherVisitAtomExpr(str, ctx);
+        if(!str.equals(PyConstantString.IF_NAME)) {
+            furtherVisitAtomExpr(str, ctx);
+        }
         return str;
     }
 
@@ -328,16 +330,20 @@ public class PyEntityVisitor extends Python3BaseVisitor<String> {
      * @param ctx
      */
     private void furtherVisitAtomExpr(String str, Python3Parser.Atom_exprContext ctx) {
+        //get code line number
+        int lineno = ctx.getStart().getLine();
         //if it is "", it must bse literal string, number, [...], (...), none, true, false,..
         if(!str.equals(Configure.NULL_STRING)) {
-            String usage = PyConstantString.NAME_USAGE_USE; //default usage
+            String location = "right";
+            //String usage = PyConstantString.NAME_USAGE_USE; //default usage
             boolean isLeftAssign = contextHelper.isAtomExprInLeftAssignment(ctx);
             boolean isLeftAugAssign = contextHelper.isAtomExprInLeftAugassignment(ctx);
             //System.out.println(str + ", isLeftAssignment= " +  isLeftAssign + "; isLeftAugAssign= " + isLeftAugAssign);
             if(isLeftAssign || isLeftAugAssign) {
-                usage = PyConstantString.NAME_USAGE_SET;
+                //location = PyConstantString.NAME_USAGE_SET;
+                location = "left";
             }
-            int nameId = processTask.processAtomExpr(isLeftAssign, moduleId, classId, functionId, str, usage);
+            int nameId = processTask.processAtomExpr(isLeftAssign, moduleId, classId, functionId, str, location, lineno);
             //System.out.println(str + " " + nameId);
             //the following is for post-processing the existed leftVar with rightValue
             if(isLeftAssign) {

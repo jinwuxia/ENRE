@@ -1,42 +1,29 @@
 package client;
 
-import formator.spreadsheet.Csvgrapher;
-import priextractor.AnayzerIntf;
-import entitybuilder.BuilderIntf;
 import formator.Formator;
 import formator.fjson.JDepObject;
 import formator.fxml.XDepObject;
+import formator.spreadsheet.Csvgrapher;
 import hianalyzer.HiDepData;
 import hianalyzer.HiDeper;
+import priextractor.AnayzerIntf;
+import entitybuilder.BuilderIntf;
 import priextractor.goextractor.GoRelationInf;
 import priextractor.py3extractor.PyRelationInf;
-import uerr.RelationInterface;
-import writer.JsonWriter;
+import util.RelationInterface;
 import writer.UndWriter;
-import writer.WriterIntf;
 import util.Configure;
+import writer.WriterIntf;
 
 import java.util.ArrayList;
 
-public class TemplateWork {
-
+/**
+ * it should be template method pattern, so that the steps and oder of processing are fixed.
+ */
+public class DepWork {
     protected static Configure configure = Configure.getConfigureInstance();
 
-
-    public final void workflow(String[] args) {
-        String lang = args[0];
-        String inputDir = args[1];
-        String usageDir = args[2];
-        String projectName = usageDir;
-        String depMask = "111111111";
-        if (args.length > 3) {
-            projectName = args[3];
-        }
-        if (args.length > 4) {
-            depMask = args[4];
-        }
-
-        config(lang, inputDir, usageDir, projectName);
+    public void deperWorkflow(String depMask) {
         String[] depTypes = getDepType(depMask);
 
         long startTime = System.currentTimeMillis();
@@ -52,13 +39,15 @@ public class TemplateWork {
         long endTime = System.currentTimeMillis();
         System.out.println("\nConsumed time: " + (float) ((endTime - startTime) / 1000.00) + " s,  or " + (float) ((endTime - startTime) / 60000.00) + " min.\n");
 
+
+
         //build hierarchical dependencies
         HiDeper hiDeper = new HiDeper();
         hiDeper.run();
         //hiDeper.tmpOutput();
         HiDepData hiDepData = HiDepData.getInstance();
 
-        Formator formator = new Formator(depTypes);
+        Formator formator = new Formator(depTypes, Configure.RELATION_LEVEL_FILE);
         JDepObject jDepObject = formator.getfJsonDataModel();
         XDepObject xDepObject = formator.getfXmlDataModel();
 
@@ -71,26 +60,9 @@ public class TemplateWork {
         writer.run(jDepObject, xDepObject, allNodes, allEdges);
 
         //output the summary of the acquired results.
+
         summary();
 
-        //the followings are for experiments
-        //generateDataForExperiments(writer);
-
-    }
-
-    /**
-     * parse the input parameter, save into configure
-     *
-     * @param inputDir
-     * @param usageDir
-     * @param projectName
-     */
-    private void config(String lang, String inputDir, String usageDir, String projectName) {
-        configure.setLang(lang);
-        configure.setInputSrcPath(inputDir);
-        configure.setUsageSrcPath(usageDir);
-        configure.setAnalyzedProjectName(projectName);
-        configure.setDefault();
     }
 
 
@@ -139,24 +111,6 @@ public class TemplateWork {
             UndWriter undWriter = new UndWriter();
             System.out.println(undWriter.priDepStatis()+ "\n");
         }
-    }
-
-
-    private void generateDataForExperiments(WriterIntf writer) {
-        //export formats consistent with understand, to compare with understand tool
-        writer.undTest();
-
-        //export external  implicit calls at file level as csv file
-        writer.exportImplicitExternalAtFileLevel();
-
-        //export external implicit calls at file level
-        String[] partialDepType = new String[]{Configure.RELATION_IMPLICIT_EXTERNAL_CALL};
-        Formator partialFormator = new Formator(partialDepType);
-        JDepObject partialJDepObject = partialFormator.getfJsonDataModel();
-        JsonWriter jsonWriter = new JsonWriter();
-        String partialJsonfile = configure.getAnalyzedProjectName() + "_implicit_dep.json";
-        jsonWriter.toJson(partialJDepObject, partialJsonfile);
-        System.out.println("Export " + partialJsonfile);
     }
 
 }

@@ -1,11 +1,8 @@
 package priextractor.goextractor.godeper;
 
 import entitybuilder.gobuilder.GoConstantString;
+import entitybuilder.gobuilder.goentity.*;
 import uerr.*;
-import entitybuilder.gobuilder.goentity.AliasTypeEntity;
-import entitybuilder.gobuilder.goentity.InterfaceEntity;
-import entitybuilder.gobuilder.goentity.StructEntity;
-import entitybuilder.gobuilder.goentity.StructFieldEntity;
 import priextractor.goextractor.search.*;
 import util.Configure;
 import util.Tuple;
@@ -36,10 +33,10 @@ public class FuncDepVisitor {
      */
     private void setUses() {
         for (AbsEntity entity : singleCollect.getEntities()) {
-            if(entity instanceof AbsFUNEntity) {
+            if(entity instanceof GoFunEntity) {
                 int functionId = entity.getId();
-                Map<String, ArrayList<String>> name2usage = ((AbsFUNEntity) entity).getName2UsageMap();
-                Map<String, Integer> name2Id = ((AbsFUNEntity) entity).getName2IdMap();
+                Map<String, ArrayList<String>> name2usage = ((GoFunEntity) entity).getName2UsageMap();
+                Map<String, Integer> name2Id = ((GoFunEntity) entity).getName2IdMap();
                 for (Map.Entry<String, ArrayList<String>> entry : name2usage.entrySet()) {
                     String varName = entry.getKey();
                     for (String usage : entry.getValue()) {
@@ -61,10 +58,10 @@ public class FuncDepVisitor {
      */
     private void setSets() {
         for (AbsEntity entity : singleCollect.getEntities()) {
-            if(entity instanceof AbsFUNEntity) {
+            if(entity instanceof GoFunEntity) {
                 int functionId = entity.getId();
-                Map<String, ArrayList<String>> name2usage = ((AbsFUNEntity) entity).getName2UsageMap();
-                Map<String, Integer> name2Id = ((AbsFUNEntity) entity).getName2IdMap();
+                Map<String, ArrayList<String>> name2usage = ((GoFunEntity) entity).getName2UsageMap();
+                Map<String, Integer> name2Id = ((GoFunEntity) entity).getName2IdMap();
                 for (Map.Entry<String, ArrayList<String>> entry : name2usage.entrySet()) {
                     String varName = entry.getKey();
                     for (String usage : entry.getValue()) {
@@ -86,11 +83,11 @@ public class FuncDepVisitor {
      */
     private void setParameters() {
         for(AbsEntity entity : singleCollect.getEntities()) {
-            if(entity instanceof AbsFUNEntity) {
+            if(entity instanceof GoFunEntity) {
                 int functionId = entity.getId();
-                for (int parameterId : ((AbsFUNEntity) entity).getParameters()) {
-                    if(((AbsVAREntity) singleCollect.getEntities().get(parameterId)).getTypeId() != -1) {
-                        int typeId = ((AbsVAREntity) singleCollect.getEntities().get(parameterId)).getTypeId();
+                for (int parameterId : ((GoFunEntity) entity).getParameters()) {
+                    if(((AbsVAREntity) singleCollect.getEntityById(parameterId)).getTypeId() != -1) {
+                        int typeId = ((AbsVAREntity) singleCollect.getEntityById(parameterId)).getTypeId();
                         saveRelation(functionId, typeId, Configure.RELATION_PARAMETER, Configure.RELATION_PARAMETERED_BY);
                     }
                 }
@@ -104,11 +101,11 @@ public class FuncDepVisitor {
      */
     private void setReturns() {
         for (AbsEntity entity : singleCollect.getEntities()) {
-            if(entity instanceof AbsFUNEntity) {
+            if(entity instanceof GoFunEntity) {
                 int functionId = entity.getId();
-                for (int returnId : ((AbsFUNEntity) entity).getReturns()) {
-                    if(((AbsVAREntity) singleCollect.getEntities().get(returnId)).getTypeId() != -1) {
-                        int typeId = ((AbsVAREntity) singleCollect.getEntities().get(returnId)).getTypeId();
+                for (int returnId : ((GoFunEntity) entity).getReturns()) {
+                    if(((AbsVAREntity) singleCollect.getEntityById(returnId)).getTypeId() != -1) {
+                        int typeId = ((AbsVAREntity) singleCollect.getEntityById(returnId)).getTypeId();
                         saveRelation(functionId, typeId, Configure.RELATION_RETURN, Configure.RELATION_RETURNED_BY);
                     }
                 }
@@ -123,21 +120,21 @@ public class FuncDepVisitor {
      */
     private void setCalls() {
         for (AbsEntity functionOrMethodEntity : singleCollect.getEntities()) {
-            if(functionOrMethodEntity instanceof AbsFUNEntity) {
+            if(functionOrMethodEntity instanceof GoFunEntity) {
                 int callerEntityId = functionOrMethodEntity.getId(); //caller uerr id
 
                 //for debug
                 int callerFileId = functionOrMethodEntity.getParentId();
-                String callerFileName = singleCollect.getEntities().get(callerFileId).getName();
+                String callerFileName = singleCollect.getEntityById(callerFileId).getName();
 
                 //this tmpCalleeEntityIds for save all id (including -1); because saveRelation only save ones without -1.
                 ArrayList<Integer> tmpCalleeEntityIds = new ArrayList<Integer>();
-                for (int calleeIndex = 0; calleeIndex < ((AbsFUNEntity) functionOrMethodEntity).getCalledFunctions().size(); calleeIndex++) {
+                for (int calleeIndex = 0; calleeIndex < ((GoFunEntity) functionOrMethodEntity).getCalledFunctions().size(); calleeIndex++) {
                     //System.out.println("call relation: callerName: " + functionOrMethodEntity.getName() + ";  file: " + callerFileName);
 
-                    String originalCalleeStr = ((AbsFUNEntity) functionOrMethodEntity).getCalledFunctions().get(calleeIndex);
+                    String originalCalleeStr = ((GoFunEntity) functionOrMethodEntity).getCalledFunctions().get(calleeIndex);
                     //if f1(f2()) or f1().f2(), substitute the first call, make the str has only one call with one ().
-                    String newCalleeStr = simplifyCalleeStr(originalCalleeStr, calleeIndex, ((AbsFUNEntity) functionOrMethodEntity).getCalledFunctions(), tmpCalleeEntityIds);
+                    String newCalleeStr = simplifyCalleeStr(originalCalleeStr, calleeIndex, ((GoFunEntity) functionOrMethodEntity).getCalledFunctions(), tmpCalleeEntityIds);
                     String[] tmp = newCalleeStr.split("\\("); //delete parameter(..)
                     //System.out.println("tmp split: " + tmp);
                     String newCalleeName = tmp[0];
@@ -148,9 +145,9 @@ public class FuncDepVisitor {
                         saveRelation(callerEntityId, calleeEntityId, Configure.RELATION_CALL, Configure.RELATION_CALLED_BY);
                         //for debug
                         String calleeFileName = Configure.NULL_STRING;
-                        int calleeFileId = singleCollect.getEntities().get(calleeEntityId).getParentId();
+                        int calleeFileId = singleCollect.getEntityById(calleeEntityId).getParentId();
                         if (calleeFileId != -1) {
-                            calleeFileName = singleCollect.getEntities().get(calleeFileId).getName();
+                            calleeFileName = singleCollect.getEntityById(calleeFileId).getName();
                         }
                         //System.out.println("calleeName: orig=" + originalCalleeStr  + ",  new=" + newCalleeStr + ", new=" + newCalleeName + ", file=" + calleeFileName);
                     }
@@ -185,7 +182,7 @@ public class FuncDepVisitor {
             if (preEntityId != -1) {
                 // use the first return as the return type.???????????????????? may have some issues.
                 // GoConstantString.CUSTOME_TYPE is used to label that this type is the return type of a function or methods.
-                //int firstReturnId = ((AbsFUNEntity) singleCollect.getEntities().get(preEntityId)).getReturns().get(0);
+                //int firstReturnId = ((GoFunEntity) singleCollect.getEntityById(preEntityId)).getReturns().get(0);
                 newSubStr = GoConstantString.CUSTOME_TYPE + Integer.toString(preEntityId);
             }
         }
@@ -237,7 +234,7 @@ public class FuncDepVisitor {
         else {
             //System.out.println("searchFunctionOrMethod: no such case!");
         }
-        if(calleeEntityId != -1 && singleCollect.getEntities().get(calleeEntityId) instanceof AbsFUNEntity) {
+        if(calleeEntityId != -1 && singleCollect.getEntityById(calleeEntityId) instanceof GoFunEntity) {
             return calleeEntityId;
         }
         return -1;
@@ -257,14 +254,14 @@ public class FuncDepVisitor {
     public int searchFunctionOrMethodCaseC(String[] calleeNameArr, int callerEntityId) {
         int methodId = -1;
         int varId = nameSearchFunction.getIdByName(calleeNameArr[0], callerEntityId);
-        int typeId = ((AbsVAREntity) singleCollect.getEntities().get(varId)).getTypeId();
+        int typeId = ((AbsVAREntity) singleCollect.getEntityById(varId)).getTypeId();
 
         for (int i = 1; i < calleeNameArr.length - 1; i++) {
             String fieldName = calleeNameArr[i];
             if(typeId != -1) {
                 int structFieldId = nameSearchStruct.findFieldInStructAndEmbededStructs(fieldName, typeId);
                 if (structFieldId != -1) {
-                    typeId = ((StructFieldEntity) singleCollect.getEntities().get(structFieldId)).getTypeId();
+                    typeId = ((StructFieldEntity) singleCollect.getEntityById(structFieldId)).getTypeId();
                 }
 
             }
@@ -319,10 +316,10 @@ public class FuncDepVisitor {
             }
         }
         if(previousFunctionId != -1 &&
-                !(((AbsFUNEntity) singleCollect.getEntities().get(previousFunctionId)).getReturns().isEmpty())
+                !(((GoFunEntity) singleCollect.getEntityById(previousFunctionId)).getReturns().isEmpty())
                 ) {
-            int firstReturnId = ((AbsFUNEntity) singleCollect.getEntities().get(previousFunctionId)).getReturns().get(0);
-            int firstReturnTypeId = ((AbsVAREntity) singleCollect.getEntities().get(firstReturnId)).getTypeId();
+            int firstReturnId = ((GoFunEntity) singleCollect.getEntityById(previousFunctionId)).getReturns().get(0);
+            int firstReturnTypeId = ((AbsVAREntity) singleCollect.getEntityById(firstReturnId)).getTypeId();
             if(firstReturnTypeId != -1) {
                 methodId = searchMethodInType(calleeMethodName, firstReturnTypeId);
             }
@@ -349,14 +346,14 @@ public class FuncDepVisitor {
             if(varId == -1) {
                 return methodId;
             }
-            typeId = ((AbsVAREntity) singleCollect.getEntities().get(varId)).getTypeId();
+            typeId = ((AbsVAREntity) singleCollect.getEntityById(varId)).getTypeId();
         }
 
         for (int i = 2; i < calleeNameArr.length - 1; i++) {
             if(typeId != -1) {
                 String fieldName = calleeNameArr[i];
                 int structFieldId = nameSearchStruct.findFieldInStructAndEmbededStructs(fieldName, typeId);
-                typeId = ((StructFieldEntity) singleCollect.getEntities().get(structFieldId)).getTypeId();
+                typeId = ((StructFieldEntity) singleCollect.getEntityById(structFieldId)).getTypeId();
             }
             else {
                 return methodId;
@@ -392,13 +389,13 @@ public class FuncDepVisitor {
         if (typeId == -1) {
             return -1;
         }
-        if(singleCollect.getEntities().get(typeId) instanceof StructEntity) {
+        if(singleCollect.getEntityById(typeId) instanceof StructEntity) {
             methodId = nameSearchStruct.findMethodInStructAndEmbededStructs(methodName, typeId);
         }
-        else if (singleCollect.getEntities().get(typeId) instanceof AliasTypeEntity) {
+        else if (singleCollect.getEntityById(typeId) instanceof AliasTypeEntity) {
             methodId = nameSearchAliasType.findMethodInAliasType(methodName, typeId);
         }
-        else if(singleCollect.getEntities().get(typeId) instanceof InterfaceEntity) {
+        else if(singleCollect.getEntityById(typeId) instanceof InterfaceEntity) {
             methodId = nameSearchInterface.findMethodInInfAndEmbededInfs(methodName, typeId);
         }
         return methodId;
@@ -416,11 +413,11 @@ public class FuncDepVisitor {
     private void saveRelation(int entityId1, int entityId2, String relationType1, String relationType2) {
         Tuple<String, Integer> relation1 =
                 new Tuple<String, Integer>(relationType1, entityId2);
-        singleCollect.getEntities().get(entityId1).addRelation(relation1);
+        singleCollect.getEntityById(entityId1).addRelation(relation1);
 
         Tuple<String, Integer> relation2 =
                 new Tuple<String, Integer>(relationType2, entityId1);
-        singleCollect.getEntities().get(entityId2).addRelation(relation2);
+        singleCollect.getEntityById(entityId2).addRelation(relation2);
     }
 
 

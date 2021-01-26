@@ -1,20 +1,22 @@
 package entitybuilder.pybuilder.pyvisitor;
 
+import expression.Expression;
+import expression.ExpressionCollect;
+import expression.ExpressionContainer;
 import uerr.*;
 import uerr.SingleCollect;
 import entitybuilder.pybuilder.PyConstantString;
 import entitybuilder.pybuilder.pyentity.*;
 import util.Configure;
-import util.OsUtil;
 import util.StringUtil;
 
 import java.util.ArrayList;
-
-import static java.lang.System.exit;
+import java.util.List;
 
 public class PyProcessTask {
 
     SingleCollect singleCollect = SingleCollect.getSingleCollectInstance();
+    ExpressionCollect expressionCollect = ExpressionCollect.getExpressionCollect();
 
     /**
      * process the directory as a package,
@@ -51,13 +53,14 @@ public class PyProcessTask {
         String onlyFileName = StringUtil.getLastStrByPathDelimiter(fileName);
         String moduleSimpleName = onlyFileName.split(PyConstantString.DOT_PY)[0];
 
+
         int moduleId = singleCollect.getCurrentIndex();
         ModuleEntity moduleEntity = new ModuleEntity(moduleId, fileName);
         moduleEntity.setModuleSimpleName(moduleSimpleName);
         singleCollect.addEntity(moduleEntity);
 
         //set parent and child
-        //System.out.println("modulename:" + fileName);
+        //System.out.println("modulename:" + fileName + "," + moduleSimpleName);
         return moduleId;
     }
 
@@ -82,7 +85,7 @@ public class PyProcessTask {
             }
         }
         singleCollect.addEntity(classEntity);
-        singleCollect.getEntities().get(parentId).addChildId(classId);
+        singleCollect.getEntityById(parentId).addChildId(classId);
 
         return classId;
     }
@@ -98,7 +101,7 @@ public class PyProcessTask {
             InstMethodEntity methodEntity = new InstMethodEntity(methodId, PyConstantString.INIT_METHOD_NAME);
             methodEntity.setParentId(classId);
             singleCollect.addEntity(methodEntity);
-            singleCollect.getEntities().get(classId).addChildId(methodId);
+            singleCollect.getEntityById(classId).addChildId(methodId);
         }
     }
 
@@ -109,9 +112,9 @@ public class PyProcessTask {
      * @return
      */
     private boolean classHasExplicitInitMethod(int classId) {
-        for(int childId : singleCollect.getEntities().get(classId).getChildrenIds()) {
-            if(singleCollect.getEntities().get(childId) instanceof InstMethodEntity) {
-                if(singleCollect.getEntities().get(childId).getName().equals(PyConstantString.INIT_METHOD_NAME)) {
+        for(int childId : singleCollect.getEntityById(classId).getChildrenIds()) {
+            if(singleCollect.getEntityById(childId) instanceof InstMethodEntity) {
+                if(singleCollect.getEntityById(childId).getName().equals(PyConstantString.INIT_METHOD_NAME)) {
                     return true;
                 }
             }
@@ -132,7 +135,7 @@ public class PyProcessTask {
         PyFunctionEntity functionEntity = new PyFunctionEntity(functionId, functionName);
         functionEntity.setParentId(moduleId);
         singleCollect.addEntity(functionEntity);
-        singleCollect.getEntities().get(moduleId).addChildId(functionId);
+        singleCollect.getEntityById(moduleId).addChildId(functionId);
 
         processParas(functionId, paraStrs);
 
@@ -166,7 +169,7 @@ public class PyProcessTask {
 
         functionEntity.setParentId(classId);
         singleCollect.addEntity(functionEntity);
-        singleCollect.getEntities().get(classId).addChildId(functionId);
+        singleCollect.getEntityById(classId).addChildId(functionId);
 
         processParas(functionId, paraStrs);
         return functionId;
@@ -188,7 +191,7 @@ public class PyProcessTask {
             singleCollect.addEntity(paraVarEntity); // its parent id is not the functionID.
 
             // set parameters
-            ( (PyFunctionEntity) singleCollect.getEntities().get(functionId)).addParameter(paraId);
+            ( (PyFunctionEntity) singleCollect.getEntityById(functionId)).addParameter(paraId);
         }
     }
 
@@ -226,7 +229,7 @@ public class PyProcessTask {
         if (functionId == -1) {
             return false;
         }
-        if(singleCollect.getEntities().get(functionId).getName().equals(PyConstantString.INIT_METHOD_NAME)) {
+        if(singleCollect.getEntityById(functionId).getName().equals(PyConstantString.INIT_METHOD_NAME)) {
             return true;
         }
         return false;
@@ -239,8 +242,8 @@ public class PyProcessTask {
      * @param leftId
      */
     public void processRightAssignValue(String value, int leftId) {
-        ((AbsVAREntity) singleCollect.getEntities().get(leftId)).setValue(value);
-        //System.out.println("left: " + singleCollect.getEntities().get(leftId).getName() + "; right: " + value);
+        ((AbsVAREntity) singleCollect.getEntityById(leftId)).setValue(value);
+        //System.out.println("left: " + singleCollect.getEntityById(leftId).getName() + "; right: " + value);
     }
 
 
@@ -253,10 +256,10 @@ public class PyProcessTask {
      * @param classId
      * @param functionId
      * @param str
-     * @param usage
+     * @param location
      * return varID, or -1(if localName, not var)
      */
-    public int processAtomExpr(boolean isLeftAssign, int moduleId, int classId, int functionId, String str, String usage) {
+    public int processAtomExpr(boolean isLeftAssign, int moduleId, int classId, int functionId, String str, String location,int lineno) {
         int resId = -1;
         int parentId = moduleId;
         if(functionId != -1) {
@@ -278,12 +281,12 @@ public class PyProcessTask {
                     resId = processLocOrGloVar(parentId, str);
                 }
                 //it a local Name or global Name, save into Name
-                processLocOrGloName(parentId, str, usage);
+                processLocOrGloName(parentId, str, location, lineno);
             }
         }
         //it a local Name or global Name:  self.X, x, x.y, x.y(), x/new()
         else {
-            processLocOrGloName(parentId, str, usage);
+            processLocOrGloName(parentId, str, location, lineno);
         }
         return resId;
     }
@@ -300,7 +303,7 @@ public class PyProcessTask {
         classVarEntity.setParentId(classId);
         singleCollect.getEntities().add(classVarEntity);
 
-        singleCollect.getEntities().get(classId).addChildId(varId);
+        singleCollect.getEntityById(classId).addChildId(varId);
         return varId;
     }
 
@@ -316,7 +319,7 @@ public class PyProcessTask {
         InstVarEntity instVarEntity = new InstVarEntity(varId, varName);
         instVarEntity.setParentId(classId);
         singleCollect.getEntities().add(instVarEntity);
-        singleCollect.getEntities().get(classId).addChildId(varId);
+        singleCollect.getEntityById(classId).addChildId(varId);
 
         return varId;
     }
@@ -331,12 +334,12 @@ public class PyProcessTask {
         if(moduleId == -1) {
             return -1;
         }
-        if(!(singleCollect.getEntities().get(moduleId) instanceof ModuleEntity)) {
+        if(!(singleCollect.getEntityById(moduleId) instanceof ModuleEntity)) {
             return -1;
         }
-        for (int childId : singleCollect.getEntities().get(moduleId).getChildrenIds()) {
-            if(singleCollect.getEntities().get(childId) instanceof AbsVAREntity) {
-                if(singleCollect.getEntities().get(childId).getName().equals(str)) {
+        for (int childId : singleCollect.getEntityById(moduleId).getChildrenIds()) {
+            if(singleCollect.getEntityById(childId) instanceof AbsVAREntity) {
+                if(singleCollect.getEntityById(childId).getName().equals(str)) {
                     return childId;
                 }
             }
@@ -354,12 +357,12 @@ public class PyProcessTask {
         if(functionId == -1) {
             return -1;
         }
-        if(!(singleCollect.getEntities().get(functionId) instanceof PyFunctionEntity)) {
+        if(!(singleCollect.getEntityById(functionId) instanceof PyFunctionEntity)) {
             return -1;
         }
-        for (int childId : singleCollect.getEntities().get(functionId).getChildrenIds()) {
-            if(singleCollect.getEntities().get(childId) instanceof AbsVAREntity) {
-                if(singleCollect.getEntities().get(childId).getName().equals(str)) {
+        for (int childId : singleCollect.getEntityById(functionId).getChildrenIds()) {
+            if(singleCollect.getEntityById(childId) instanceof AbsVAREntity) {
+                if(singleCollect.getEntityById(childId).getName().equals(str)) {
                     return childId;
                 }
             }
@@ -378,11 +381,11 @@ public class PyProcessTask {
         if(functionId == -1) {
             return -1;
         }
-        if(!(singleCollect.getEntities().get(functionId) instanceof PyFunctionEntity)) {
+        if(!(singleCollect.getEntityById(functionId) instanceof PyFunctionEntity)) {
             return -1;
         }
-        for (int parameterId : ((PyFunctionEntity) singleCollect.getEntities().get(functionId)).getParameters()) {
-            if(singleCollect.getEntities().get(parameterId).getName().equals(str)) {
+        for (int parameterId : ((PyFunctionEntity) singleCollect.getEntityById(functionId)).getParameters()) {
+            if(singleCollect.getEntityById(parameterId).getName().equals(str)) {
                 return parameterId;
             }
         }
@@ -415,7 +418,7 @@ public class PyProcessTask {
         varEntity.setParentId(moduleOrFunctionId);
         singleCollect.getEntities().add(varEntity);
 
-        singleCollect.getEntities().get(moduleOrFunctionId).addChildId(varId);
+        singleCollect.getEntityById(moduleOrFunctionId).addChildId(varId);
         return varId;
     }
 
@@ -423,166 +426,114 @@ public class PyProcessTask {
     /**
      * process name in global scope(module) or local scope(function)
      * str is a simple variable in global scope: x, __name__, __main__, x.y, x.y(),x/new(), self.x
-     * @param moduleOrFunctionId
+     * @param parentId  the module or funtionid
      * @param str
      * @param usage
      */
-    private int processLocOrGloName(int moduleOrFunctionId, String str, String usage) {
-        int resId = -1;
-        if(isStrAVar(str)) { // without (), without dot
-            resId = processNameWithoutDot(moduleOrFunctionId,  str, usage);
+    private void processLocOrGloName(int parentId, String str, String usage, int lineno) {
+        //get the expression container for current module/function
+        AbsEntity entity =  singleCollect.getEntityById(parentId);
+        int expContainerId = entity.getExpContainerId();
+        if (expContainerId == -1) {
+            expContainerId = expressionCollect.getCurrentIndex();
+            expressionCollect.addContainer(new ExpressionContainer(parentId, expContainerId));
+            singleCollect.getEntityById(parentId).setExpContainerId(expContainerId);
         }
-        else if(isStrACallee(str)) { //such as x.y(), y(), self.y()
-            resId = processCallee(moduleOrFunctionId, str);
+
+        int expIndex = expressionCollect.getContainerById(expContainerId).getExprByName(str);
+        //System.out.println("raw expression: "+ str);
+        if(-1 == expIndex) {
+            String aliasStr = simplifyStr(expContainerId, str);
+            //System.out.println("after: " + aliasStr);
+            List<Integer> linenoList = new ArrayList<>();
+            linenoList.add(lineno);
+            expressionCollect.getContainerById(expContainerId).addExpression(new Expression(str,aliasStr, usage, 1,linenoList));
         }
-        else if(isStrAObjectAttribute(str)) { //with dot, but without (). such as x.y
-            //because the name has dot: x.y,
-            // so x should be already appear in var in a separate way.
-            // or, x is a imported name.
-            resId = processNameWithDot(moduleOrFunctionId, str, usage);
+        else {
+            int oldFreq = expressionCollect.getContainerById(expContainerId).getExpressionList().get(expIndex).getFreq();
+            expressionCollect.getContainerById(expContainerId).getExpressionList().get(expIndex).setFreq(oldFreq + 1);
+            expressionCollect.getContainerById(expContainerId).getExpressionList().get(expIndex).addLineno(lineno);
         }
-        return resId;
+
+
+
+
     }
 
-
-
     /**
-     * judge the name with dot or not: X.Y but not X.Y()
+     * make parameter not including ( and ".".
+     * so we can split by . in the expression extension
      * @param str
      * @return
      */
-    private boolean isStrAObjectAttribute(String str) {
-        if(!str.contains(Configure.DOT)) {
-            return false;
-        }
-        if(str.contains(Configure.LEFT_PARENTHESES)) {
-            return false;
-        }
-        if(str.contains(Configure.RIGHT_PARENTHESES)) {
-            return false;
-        }
-        return true;
-    }
+    private String simplifyStr(int expContainerId, String str) {
+        List<Expression> expressions = expressionCollect.getContainerById(expContainerId).getExpressionList();
 
+        int index = expressions.size() -1;
+        while(isComplex(str) && index >= 0) {
+            String substr = expressions.get(index).getRawStr();
 
-    /**
-     * the name with dot.
-     * it must be X.Y.  X should be already added into var or imported name,
-     * so  add X.y into localName
-     * @param parentId  moduleId or functionId
-     * @param str
-     */
-    private int processNameWithDot(int parentId, String str, String usage) {
-        int nameIndex = -1;
-
-        if(singleCollect.getEntities().get(parentId) instanceof ModuleEntity) {
-            nameIndex = processNameInModule(parentId, str, usage);
-        }
-        else if (singleCollect.getEntities().get(parentId) instanceof PyFunctionEntity) {
-            nameIndex = processNameInFunction(parentId, str, usage);
-        }
-        return nameIndex;
-    }
-
-
-    /** it is processed in the same way with processNameWithDot.
-     * May be in the future, it is different,so we duplicate it.
-     * the name without dot.
-     * it must be Y.  Y should be already added into var.
-     * @param parentId  moduleId or functionId
-     * @param str
-     */
-    private int processNameWithoutDot(int parentId, String str, String usage) {
-        int nameIndex = -1;
-        //maybe duplicated, check if exist.
-        if(str.equals(PyConstantString.SELF)) {  //if local name = self, do not process, then return.
-            return nameIndex;
-        }
-
-        if(singleCollect.getEntities().get(parentId) instanceof ModuleEntity) {
-            nameIndex = processNameInModule(parentId, str, usage);
-        }
-        else if (singleCollect.getEntities().get(parentId) instanceof PyFunctionEntity) {
-            nameIndex = processNameInFunction(parentId, str, usage);
-        }
-        return nameIndex;
-
-    }
-
-
-    /** process name "x" or "x.y " or "x.y.z" in the module
-     *
-     * @param moduleId
-     * @param name
-     * @param usage
-     */
-    private int processNameInModule(int moduleId, String name, String usage) {
-        int localNameIndex = getLocalNameId(moduleId, name);
-        if(localNameIndex != -1) { //exist
-            ((ModuleEntity) singleCollect.getEntities().get(moduleId)).getLocalNames().get(localNameIndex).updateUsage(usage);
-            ((ModuleEntity) singleCollect.getEntities().get(moduleId)).getLocalNames().get(localNameIndex).updateWeighedUsage(usage);
-        }
-        else { //not exist
-            localNameIndex = ((ModuleEntity) singleCollect.getEntities().get(moduleId)).getLocalNames().size();
-            LocalName localName = new LocalName(name, -1, "", "");
-            localName.updateWeighedUsage(usage);
-            localName.updateUsage(usage);
-            ((ModuleEntity) singleCollect.getEntities().get(moduleId)).addLocalName(localName);
-
-        }
-        return localNameIndex;
-    }
-
-
-    /**
-     * process name "x" in the function
-     * @param functionId
-     * @param name
-     * @param usage
-     */
-    private int processNameInFunction(int functionId, String name, String usage) {
-        int localNameIndex = getLocalNameId(functionId, name);
-        if(localNameIndex != -1) { //exist
-            ((PyFunctionEntity) singleCollect.getEntities().get(functionId)).getLocalNames().get(localNameIndex).updateUsage(usage);
-            ((PyFunctionEntity) singleCollect.getEntities().get(functionId)).getLocalNames().get(localNameIndex).updateWeighedUsage(usage);
-        }
-        else { //not exist
-            localNameIndex = ((PyFunctionEntity) singleCollect.getEntities().get(functionId)).getLocalNames().size();
-            LocalName localName = new LocalName(name, -1, "", "");
-            localName.updateUsage(usage);
-            localName.updateWeighedUsage(usage);
-            ((PyFunctionEntity) singleCollect.getEntities().get(functionId)).addLocalName(localName);
-        }
-        return localNameIndex;
-    }
-
-    /**
-     * get localname index in funciton or module
-     * @param parentId
-     * @param name
-     * @return
-     */
-    private int getLocalNameId(int parentId, String name) {
-        AbsEntity entity = singleCollect.getEntities().get(parentId);
-        ArrayList<LocalName> localNames = null;
-
-        if(entity instanceof ModuleEntity) {
-            localNames = ((ModuleEntity) entity).getLocalNames();
-        }
-        else if(entity instanceof PyFunctionEntity) {
-            localNames = ((PyFunctionEntity) entity).getLocalNames();
-        }
-        if(localNames == null) {
-            return -1;
-        }
-
-        for (int index = 0; index < localNames.size(); index ++) {
-            LocalName localName = localNames.get(index);
-            if(localName.getName().equals(name)) {
-                return index;
+            int startIndex = str.indexOf(substr);
+            if(startIndex == 0) {
+                startIndex = str.lastIndexOf(substr);
             }
+            while (startIndex != -1 && startIndex != 0
+                    && (substr.contains(".") || substr.contains("("))
+                    && !str.equals(substr)) {
+                //System.out.println("substr " + substr);
+                int endIndex = startIndex + substr.length();
+                str = str.substring(0, startIndex) + Integer.toString(index) + str.substring(endIndex);
+
+                startIndex = str.indexOf(substr);
+                if(startIndex == 0) {
+                    startIndex = str.lastIndexOf(substr);
+                }
+            }
+            index--;
+            //System.out.println("substr " + substr+", str " + str + ", index " + Integer.toString(index));
         }
-        return -1;
+
+        return str;
+    }
+
+    /**
+     * contain () and dot
+     * @param str
+     * @return
+     */
+    private boolean isComplex(String str) {
+        int indexOfLeftBrace = str.indexOf("(");
+        int indexOfDot = str.indexOf(".");
+        int indexOfRightBrace = str.indexOf(")");
+        if (indexOfLeftBrace != -1 && indexOfRightBrace != -1 && indexOfDot != -1 ) {
+            if (dotBetween(str))
+            return true;
+        }
+        if(countAppearNumber(str, "(") > 1 && countAppearNumber(str, ")") > 1) {
+            return true;
+        }
+        return false;
+
+    }
+    private boolean dotBetween(String str) {
+        int indexOflBrace = str.indexOf("(");
+        int indexOfrBrace = str.indexOf(")");
+        str  = str.substring(indexOflBrace, indexOfrBrace);
+        if (str.contains(".")) {
+            return true;
+        }
+        return false;
+
+    }
+
+    private int countAppearNumber(String str, String subStr) {
+        int count = 0;
+        int start = 0;
+        while ((start = str.indexOf(subStr, start)) != -1) {
+            start = start + subStr.length();
+            count++;
+        }
+        return count;
     }
 
     /** judge str is a simple var or not
@@ -612,27 +563,6 @@ public class PyProcessTask {
         return false;
     }
 
-
-
-    /**
-     *
-     * @param parentId moduleId or functionId
-     * @param str  callee fun form with parameter
-     */
-    private int processCallee(int parentId, String str) {
-        int nameIndex = -1;
-        if(singleCollect.getEntities().get(parentId) instanceof ModuleEntity) {
-            nameIndex = ((ModuleEntity) singleCollect.getEntities().get(parentId)).getCalledFunctions().size();
-            ((ModuleEntity) singleCollect.getEntities().get(parentId)).addFunctionCall(str);
-            //((ModuleEntity) singleCollect.getEntities().get(parentId)).updateCalledWeightedFunction(str);
-        }
-        else if (singleCollect.getEntities().get(parentId) instanceof PyFunctionEntity) {
-            nameIndex = ((PyFunctionEntity) singleCollect.getEntities().get(parentId)).getCalledFunctions().size();
-            ((PyFunctionEntity) singleCollect.getEntities().get(parentId)).addCalledFunction(str);
-            //((AbsFUNEntity) singleCollect.getEntities().get(parentId)).updateCalledWeightedFunction(str);
-        }
-        return nameIndex;
-    }
 
 
 
@@ -698,11 +628,11 @@ public class PyProcessTask {
      */
     private void saveImportsInFuncOrModule(ArrayList<ImportStmt> importStmts, int functionOrModuleId) {
         if(functionOrModuleId != -1) {
-            if(singleCollect.getEntities().get(functionOrModuleId) instanceof PyFunctionEntity) {
-                ((PyFunctionEntity) singleCollect.getEntities().get(functionOrModuleId)).addImportStmts(importStmts);
+            if(singleCollect.getEntityById(functionOrModuleId) instanceof PyFunctionEntity) {
+                ((PyFunctionEntity) singleCollect.getEntityById(functionOrModuleId)).addImportStmts(importStmts);
             }
-            else if(singleCollect.getEntities().get(functionOrModuleId) instanceof ModuleEntity) {
-                ((ModuleEntity) singleCollect.getEntities().get(functionOrModuleId)).addImportStmts(importStmts);
+            else if(singleCollect.getEntityById(functionOrModuleId) instanceof ModuleEntity) {
+                ((ModuleEntity) singleCollect.getEntityById(functionOrModuleId)).addImportStmts(importStmts);
             }
         }
     }

@@ -10,9 +10,9 @@ import formator.spreadsheet.Csvgrapher;
 public class Formator {
     private MapObject mapObject;
 
-    public Formator(String[] depTypes) {
+    public Formator(String[] depTypes, String level) {
 
-        mapObject = new MapObject(depTypes);
+        mapObject = new MapObject(depTypes, level);
     }
 
     public XDepObject getfXmlDataModel() {
@@ -31,6 +31,10 @@ public class Formator {
 
         //XmlWriter xmlFormat = new XmlWriter();
         //xmlFormat.toXml(xDepObject);
+    }
+
+    public MapObject getMapObject() {
+        return this.mapObject;
     }
 
 

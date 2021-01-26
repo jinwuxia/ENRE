@@ -10,11 +10,11 @@ public class XBuildObject {
 
     public XDepObject buildObjectProcess(MapObject mapObject) {
         Configure configure = Configure.getConfigureInstance();
-        ArrayList<String> files = mapObject.getFiles();
+        ArrayList<String> nodes = mapObject.getNodes();
         Map<Integer, Map<Integer, Map<String, Integer>>> finalRes = mapObject.getFinalRes();
 
-        XFiles xFiles = new XFiles();
-        xFiles.setFiles(files);
+        XNodes xNodes = new XNodes();
+        xNodes.setNodes(nodes);
 
         ArrayList<XCell> xCellList = buildCellList(finalRes);
 
@@ -24,7 +24,7 @@ public class XBuildObject {
         XDepObject xDepObject = new XDepObject();
         xDepObject.setName(configure.getAttributeName());
         xDepObject.setSchemaVersion(configure.getSchemaVersion());
-        xDepObject.setVariables(xFiles);
+        xDepObject.setVariables(xNodes);
         xDepObject.setCells(xCells);
 
         return xDepObject;

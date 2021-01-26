@@ -15,20 +15,8 @@ public class PyConstantString {
     public static final String CLASS_METHOD_CLS_PARAMETER = "cls";
     public static final String SUPER = "super";
 
-    public static final String CUSTOM_PRE = "CUSTOM_PRE";
 
     public static final String COMMENT = "'''";
-    public static final String STRING_LETERAL_1 = "\"";
-    public static final String STRING_LETERAL_2  = "'";
-
-    public static final String NAME_USAGE_USE = "Use";
-    public static final String NAME_USAGE_SET = "Set";
-
-
-    public static final String ENTITY_CLASS_METHOD = "class_method";
-    public static final String ENTITY_CLASS_STATIC_METHOD = "class_static_method";
-    public static final String ENTITY_INST_METHOD = "instance_method";
-    public static final String ENTITY_FUNCTION = "function";
 
 
     public static final String [] KEYWORDS =  {
@@ -71,7 +59,7 @@ public class PyConstantString {
     public static String[] BUILT_IN_FUNCTIONS = {
             "abs",	"delattr",	"hash",	"memoryview",	"set",
             "all",	"dict",	"help",	"min",	"setattr",
-            "any",	"dir",	"hex",	"next",	"slice",
+            "any",	"dir",	"hex",	"next",	"slice", "exit",
             "ascii",	"divmod",	"id",	"object",	"sorted",
             "bin",	"enumerate",	"input",	"oct",	"staticmethod",
             "bool",	"eval",	"int",	"open",	"str",
@@ -84,5 +72,196 @@ public class PyConstantString {
             "compile",	"globals",	"map",	"reversed",	"__import__",
             "complex",	"hasattr",	"max",	"round"
 };
+
+
+    /**
+     * methods of built-in String
+     */
+    public static String[] BUILT_IN_STRING_METHODS = {
+            "capitalize",
+            "center",
+            "casefold",
+            "count",
+            "endswith",
+            "expandtabs",
+            "encode",
+            "find",
+            "format",
+            "index",
+            "isalnum",
+            "isalpha",
+            "isdecimal",
+            "isdigit",
+            "isidentifier",
+            "islower",
+            "isnumeric",
+            "isprintable",
+            "isspace",
+            "istitle",
+            "isupper",
+            "join",
+            "ljust",
+            "rjust",
+            "lower",
+            "upper",
+            "swapcase",
+            "lstrip",
+            "rstrip",
+            "strip",
+            "partition",
+            "maketrans",
+            "rpartition",
+            "translate",
+            "replace",
+            "rfind",
+            "rindex",
+            "split",
+            "rsplit",
+            "splitlines",
+            "startswith",
+            "title",
+            "zfill",
+            "format_map"
+    };
+
+    /**
+     * methods of built-in List
+     */
+    public static String[] BUILT_IN_LIST_METHODS = {
+            "index",
+            "append",
+            "extend",
+            "insert",
+            "remove",
+            "count",
+            "pop",
+            "reverse",
+            "sort",
+            "copy",
+            "clear"
+    };
+
+    /**
+     * methods of built-in Tuple
+     */
+    public static String[] BUILT_IN_TUPLE_METHODS = {
+            "index",
+            "count"
+    };
+
+
+    /**
+     * methods of built-in Dict
+     */
+    public static String[] BUILT_IN_DICT_METHODS = {
+            "clear",
+            "copy",
+            "fromkeys",
+            "get",
+            "items",
+            "keys",
+            "popitem",
+            "setdefault",
+            "pop",
+            "values",
+            "update",
+    };
+
+    /**
+     * methods of built-in Set
+     */
+    public static String[] BUILT_IN_SET_METHODS = {
+            "remove",
+            "add",
+            "copy",
+            "clear",
+            "difference",
+            "difference_update",
+            "discard",
+            "intersection",
+            "intersection_update",
+            "isdisjoint",
+            "issubset",
+            "pop",
+            "symmetric_difference",
+            "symmetric_difference_update",
+            "union",
+            "update"
+    };
+
+    /**
+     * methods of built-in File
+     */
+    public static String[] BUILT_IN_FILE_METHOD = {
+            "close",
+            "flush",
+            "fileno",
+            "isatty",
+            "next",
+            "read",
+            "readline",
+            "readlines",
+            "seek",
+            "tell",
+            "truncate",
+            "write",
+            "writelines"
+    };
+
+    /**
+     * built-in Exception types
+     */
+    public static String[] BUILT_IN_EXCEPTIONS = {
+            "BaseException",
+            "SystemExit",
+            "KeyboardInterrupt",
+            "GeneratorExit",
+            "Exception",
+            "StopIteration",
+            "StandardError",
+            "BufferError",
+            "ArithmeticError",
+            "FloatingPointError",
+            "OverflowError",
+            "ZeroDivisionError",
+            "AssertionError",
+            "AttributeError",
+            "EnvironmentError",
+            "IOError",
+            "OSError",
+            "WindowsError",
+            "VMSError",
+            "EOFError",
+            "ImportError",
+            "LookupError",
+            "IndexError",
+            "KeyError",
+            "MemoryError",
+            "NameError",
+            "UnboundLocalError",
+            "ReferenceError",
+            "RuntimeError",
+            "NotImplementedError",
+            "SyntaxError",
+            "IndentationError",
+            "TabError",
+            "SystemError",
+            "TypeError",
+            "ValueError",
+            "UnicodeError",
+            "UnicodeDecodeError",
+            "UnicodeEncodeError",
+            "UnicodeTranslateError",
+            "Warning",
+            "DeprecationWarning",
+            "PendingDeprecationWarning",
+            "RuntimeWarning",
+            "SyntaxWarning",
+            "UserWarning",
+            "FutureWarning",
+            "ImportWarning",
+            "UnicodeWarning",
+            "BytesWarning"
+    };
 
 }
