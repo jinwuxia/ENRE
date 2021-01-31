@@ -27,13 +27,12 @@ public class Main {
         String usageDir = args[2];
         String projectName = usageDir;
         String depMask = "111111111";
-
         if (args.length > 3) {
             projectName = args[3];
         }
-        if (args.length > 4) {
-            depMask = args[4];
-        }
+//        if (args.length > 4) {
+//            depMask = args[4];
+//        }
         config(lang, inputDir, usageDir, projectName);
 
         //start work for depend_parser
@@ -49,7 +48,13 @@ public class Main {
             exit(0);
         }
         experiment.experimentWorkflow();
-
+        if(args[0].equals("python")&&args[args.length-2].equals("--from-type")){
+            try {
+                FromType.workflow(args);
+            } catch (IOException e) {
+                System.out.println("Exception throws in --from-type process");
+            }
+        }
     }
 
 

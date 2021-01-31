@@ -6,14 +6,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class FromType {
-    static String typeExtractor = "D:\\WorkSpace\\TypeExtractor\\main.py";
-    static String cvs2json = "D:\\WorkSpace\\TypeExtractor\\csv2json.py";
+    static String typeExtractor = ".\\TypeExtractor\\main.py";
+    static String cvs2json = ".\\TypeExtractor\\csv2json.py";
     static void workflow(String [] args) throws IOException {
 
-        final String out_dir = args[5];
-        final String proj_dir = args[2];
-        final String stub_dir = args[3];
-        System.out.println("");
+        final String out_dir = args[3]+"-type-info";
+        final String proj_dir = args[1];
+        final String stub_dir = args[args.length-1];
         File proj = new File(proj_dir);
         if(proj.exists()){
             String merged = merge(proj_dir,stub_dir);
@@ -36,9 +35,6 @@ public class FromType {
                 System.out.println(line);
             }
         }
-        else{
-
-        }
         toJson(proj, out_dir);
     }
 
@@ -49,7 +45,7 @@ public class FromType {
                 cvs2json,
                 proj.getAbsolutePath(),
                 out_dir,
-                "result-of-"+proj.getName()+".json"
+                proj.getName()+"-deps-from-type"+".json"
         );
         Process process = builder.start();
         BufferedReader r = new BufferedReader(new InputStreamReader(process.getInputStream()));
