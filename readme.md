@@ -74,6 +74,13 @@ $java -jar ENRE-v2.0.jar  python  demo-projects\django   null  django demo-proje
 ```
 With the regular outputs like Example I and II, ENRE will generate type infomation in  django-type-info/ directory in csv format, and use it to generate the dependencies to JSON file named django-deps-from-type.json.
 
+# Requirement
+ENRE uses python scripts in TypeExtractor/ for --from-type option, these python scripts use some python libraries which in requirements.txt. Make sure these libraries have been installed.
+```sh
+pip install -r requirements.txt
+``` 
+Or you can manually install the libraries in the requirements.txt file one by one.
+
 License
 ----
 
