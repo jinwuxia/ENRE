@@ -21,9 +21,9 @@ ENRE supports analyzing source code written in [*Python*](https://www.python.org
 
 # Usage
 ###  1)Prepare the executable jar
-The released jar of ENRE is named as **ENRE-v2.0.jar**.
+The released jar of ENRE is named as **ENRE-type2.0.jar**.
 ###  2) Set up Java environment 
-To execute ENRE-v2.0.jar, you should set up JAVA envionment. Please referer to [Set up JAVA environment](https://docs.oracle.com/javase/7/docs/webnotes/install/). 
+To execute ENRE-type2.0.jar, you should set up JAVA envionment. Please referer to [Set up JAVA environment](https://docs.oracle.com/javase/7/docs/webnotes/install/). 
 ### 3) cmd usage
 Now, everthing is already prepared well. Let's use ENRE to analyze source code. 
 The usage command is:
@@ -42,11 +42,11 @@ java -jar <executable> <lang> <dir> <include-dir> <project-name> [--from-type] [
 Use ENRE to analyze a demo project "**fire**" written in *Python*: 
 ```sh
 #in linux platform 
-$java -jar ENRE-v2.0.jar  python  demo-projects/fire   null  fire   
+$java -jar ENRE-type2.0.jar  python  demo-projects/fire   null  fire   
 ```
 ```sh
 #in windows platform
-$java -jar ENRE-v2.0.jar  python  demo-projects\fire   null  fire 
+$java -jar ENRE-type2.0.jar  python  demo-projects\fire   null  fire 
 ```
 
 After analysis, ENRE finally outputs the resovled entities and dependencies in **JSON**, **XML**, **DOT** files in new-generated **fire-out/** directory.
@@ -55,11 +55,11 @@ After analysis, ENRE finally outputs the resovled entities and dependencies in *
 Use ENRE to analyze a demo project "**beego**" written in  *Go*:
 ```sh
 #in linux platform 
-$java -jar ENRE-v2.0.jar  golang  demo-projects/beego   github.com/astaxie/beego  beego  
+$java -jar ENRE-type2.0.jar  golang  demo-projects/beego   github.com/astaxie/beego  beego  
 ```
 ```sh
 #in windows platform
-$java -jar ENRE-v2.0.jar  golang  demo-projects\beego   github.com/astaxie/beego  beego
+$java -jar ENRE-type2.0.jar  golang  demo-projects\beego   github.com/astaxie/beego  beego
 ```
 After analysis, ENRE finally outputs the resovled entities and dependencies in **JSON**, **XML**, **DOT** files in new-generated **beego-out/** directory.
 
@@ -70,7 +70,7 @@ After analysis, ENRE finally outputs the resovled entities and dependencies in *
 Use ENRE to analyze a demo project **django** written in *python* with **type** infomation.
 ```sh
 #in windows platform
-$java -jar ENRE-v2.0.jar  python  demo-projects\django   null  django demo-projects\django-stubs
+$java -jar ENRE-type2.0.jar  python  demo-projects\django   null  django demo-projects\django-stubs
 ```
 With the regular outputs like Example I and II, ENRE will generate type infomation in  django-type-info/ directory in csv format, and use it to generate the dependencies to JSON file named django-deps-from-type.json.
 
