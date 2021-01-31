@@ -132,7 +132,7 @@ You can reference the following papers if you use ENRE or feel interested in kno
     }
 
 
-[**ENRE Introduction Video **](https://www.youtube.com/watch?v=BfXp5bb1yqc&t=43s)
+[**ENRE Introduction Video**](https://www.youtube.com/watch?v=BfXp5bb1yqc&t=43s)
 
 
 License
