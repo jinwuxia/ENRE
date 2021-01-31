@@ -102,7 +102,7 @@ You can reference the following papers if you use ENRE or want to learn more abo
 
 
 
-[**ENRE video introduction**](https://www.youtube.com/watch?v=BfXp5bb1yqc&t=43s)
+[**ENRE Introduction Video **](https://www.youtube.com/watch?v=BfXp5bb1yqc&t=43s)
 
 
 License
