@@ -22,7 +22,7 @@ ENRE (ENtity Relationship Extractor ) is a tool for extraction of code entity de
 ENRE supports analyzing source code written in [*Python*](https://www.python.org/), [*Go*](https://golang.org/). 
 
 ## Advanced Feature 
-<font color=blue>New Update!</font>
+**New Update!**
 
 ENRE has integrated type inference technique and type stub files (one of type hint practices) to enhance the extraction of **Possible Dependencies** in Python code.
 
@@ -40,17 +40,16 @@ To execute ENRE-type2.0.jar, you should set up JAVA envionment. Please referer t
 ## 2) Set up Python environment
 
 ENRE contains Python scripts located in *TypeExtractor* for *--from-type* option. 
+You should install [Python](https://www.python.org/) in your local environment, at least **Python 3.8** version. 
 
-You should install [Python](https://www.python.org/) in your local environment, at least **Python 3.8**version. 
-
-*TypeExtractor* also requires several third-party libraries listed in *requirements.txt*. 
-
-You can install these Python libraries by running the following command.
+*TypeExtractor* also requires several third-party tools listed in *requirements.txt*. 
+You can install them by running the following command.
 
 ```sh
 pip install -r requirements.txt
 ``` 
 
+Why needs at least **Python 3.8**? The Python code in ENRE use Python [ast library](https://docs.python.org/3/library/ast.html) to find locations of objects, and some attributes (i.e., *end_lineno*,*end_col_offset*) of *ast.node* are only supported in Python3.8 and later. 
 
 # Usage
 ## 1) Prepare the executable jar
@@ -104,12 +103,12 @@ Use ENRE to analyze a demo project **django** written in *python* with **type st
 #in windows platform
 $java -jar ENRE-type2.0.jar  python  demo-projects\django   null  django demo-projects\django-stubs
 ```
-Besides outputting similar files to the *Example I* and *Example I*, this command will generate type infomation into  **django-type-info/\*.csv** and thus possible dependencies into **\*deps-from-type.json**.
+Besides outputting similar files to the *Example I* and *Example II*, this command will generate type infomation into  *django-type-info.csv* and thus possible dependencies into *deps-from-type.json*.
 
 
 # References
 
-You can reference the following papers if you use ENRE or want to learn more about it.
+You can reference the following papers if you use ENRE or feel interested in knowing more about it.
 
 
     @inproceedings{2020ase-jin,
