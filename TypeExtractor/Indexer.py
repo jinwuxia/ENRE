@@ -87,7 +87,6 @@ class CoordinateGenVisitor(NodeVisitor):
         indentation = node.col_offset
         nested_location = nestedlist2location(self.nested_loc)
         for target in node.targets:
-            print(self.nested_loc)
             expression = self.tokens.get_text(target)
             self.var_locs.append((expression, nested_location, node.end_lineno, node.col_offset,
                                   target.lineno, target.end_lineno, target.col_offset + 1, target.end_col_offset + 1))

@@ -94,12 +94,9 @@ def visitDir_with_unmerged(source_dir: Path, unmerge_dir: Path, writer: CsvWrite
                         writer.newFile(result_file_name)
                         writer.writeTuples(result)
                 except Exception as error:
-                    print(error.args)
-                    print("**************")
-                    print("Please modify the file " + entry.path + ". " + str(error.args[0]))
-                    print("**************")
                     # os.system("pause")
-                    problemFile.write(entry.path + "\n")
+                    problemFile.write()
+                    problemFile.write(entry.path +":"+str(error.args[0])+"\n")
                     problemFile.flush()
 
 
