@@ -74,7 +74,36 @@ $java -jar ENRE-v1.0.jar  golang  demo-projects\beego   github.com/astaxie/beego
 After analysis, ENRE finally outputs the resovled entities and dependencies in **JSON**, **XML**, **DOT** files in new-generated **beego-out/** directory.
 
 
+# References
+
+You can reference the following papers if you use ENRE or want to learn more about it.
+
+
+    @inproceedings{2020ase-jin,
+        title={Exploring the Architectural Impact of Possible Dependencies in Python Software},
+		
+        author={Jin, Wuxia and Cai, Yuanfang and Kazman, Rick and Zhang, Gang and Zheng, Qinghua and Liu, Ting},
+        booktitle={2020 35th IEEE/ACM International Conference on Automated Software Engineering (ASE)},
+        pages={1--13},
+        year={2020},
+        organization={IEEE}
+        }
+
+    @inproceedings{2019icse-jin,
+      title={ENRE: a tool framework for extensible eNtity relation extraction},
+	  
+      author={Jin, Wuxia and Cai, Yuanfang and Kazman, Rick and Zheng, Qinghua and Cui, Di and Liu, Ting},
+      booktitle={Proceedings of the 41st International Conference on Software Engineering: Companion Proceedings},
+      pages={67--70},
+      year={2019},
+      organization={IEEE Press}
+    }
+
+
+
+
 [**ENRE video introduction**] (https://www.youtube.com/watch?v=BfXp5bb1yqc&t=43s)
+
 
 License
 ----
