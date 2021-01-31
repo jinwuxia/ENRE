@@ -17,7 +17,19 @@ ENRE (ENtity Relationship Extractor ) is a tool for extraction of code entity de
 
 
 # Features
+
+## Basic Feature
 ENRE supports analyzing source code written in [*Python*](https://www.python.org/), [*Go*](https://golang.org/). 
+
+## Advanced Feature 
+<font color=blue>New Update!</font>
+
+ENRE has integrated type inference technique and type stub files (one of type hint practices) to enhance the extraction of **Possible Dependencies** in Python code.
+
+**Possible Dependencies** are the syntactic dependencies indiscernible in source code due to the lack of explicit type references, in contrast with  **Explicit Dependencies**.
+
+You can learn more about this fresh feature and experience it by diving into the **[ENRE-v2.0](https://github.com/jinwuxia/ENRE/tree/v2.0)**. 
+
 
 # Usage
 ###  1)Prepare the executable jar
