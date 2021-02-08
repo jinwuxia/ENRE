@@ -101,7 +101,7 @@ After analysis, ENRE finally outputs the resovled entities and dependencies in *
 Use ENRE to analyze a demo project **django** written in *python* with **type stub** infomation.
 ```sh
 #in windows platform
-$java -jar ENRE-type2.0.jar  python  demo-projects\django   null  django demo-projects\django-stubs
+$java -jar ENRE-type2.0.jar  python  demo-projects\django   null  django --from-type demo-projects\django-stubs
 ```
 Besides outputting similar files to the *Example I* and *Example II*, this command will generate type infomation into  *django-type-info.csv* and thus possible dependencies into *deps-from-type.json*.
 
@@ -132,7 +132,7 @@ You can reference the following papers if you use ENRE or feel interested in kno
     }
 
 
-[**ENRE Introduction Video **](https://www.youtube.com/watch?v=BfXp5bb1yqc&t=43s)
+[**ENRE Introduction Video**](https://www.youtube.com/watch?v=BfXp5bb1yqc&t=43s)
 
 
 License
