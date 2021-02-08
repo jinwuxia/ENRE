@@ -51,6 +51,9 @@ pip install -r requirements.txt
 
 Why needs at least **Python 3.8**? The Python code in ENRE use Python [ast library](https://docs.python.org/3/library/ast.html) to find locations of objects, and some attributes (i.e., *end_lineno*,*end_col_offset*) of *ast.node* are only supported in Python3.8 and later. 
 
+You can follow our [enre-type-QA.md](https://github.com/jinwuxia/ENRE/edit/enre-type/enre-type-QA.md) for possible solutions if configuring Python ENV fails. 
+
+
 # Usage
 ## 1) Prepare the executable jar
 The released jar of ENRE is named as **ENRE-type2.0.jar**.
