@@ -106,6 +106,8 @@ $java -jar ENRE-type2.0.jar  python  demo-projects\django   null  django --from-
 Besides outputting similar files to the *Example I* and *Example II*, this command will generate type infomation into  *django-type-info.csv* and thus possible dependencies into *deps-from-type.json*.
 
 
+You can follow [enre-type QA.md] for possible solutions if coming across errors when running Example III. 
+
 # References
 
 You can reference the following papers if you use ENRE or feel interested in knowing more about it.
