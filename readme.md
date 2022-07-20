@@ -1,5 +1,12 @@
 # ENRE
 
+
+##NOTICE: We have migrated this repository into a new github organization for ENRE. The new link is  [xjtu-enre](https://github.com/xjtu-enre). 
+Now, the ENRE is supporting analyzing multiple programming languages such as JAVA, C++, Python, Golang, JavaScript/TypeScript.  Please refer to the new repositories for more information.
+
+
+
+
 [![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
 
 ENRE (ENtity Relationship Extractor ) is a tool for extraction of code entity dependencies(relationships) from source code. The resolved dependency types include:
