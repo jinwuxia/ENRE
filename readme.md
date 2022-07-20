@@ -1,8 +1,7 @@
 # ENRE
 
 
-##NOTICE: We have migrated this repository into a new github organization for ENRE. The new link is  [xjtu-enre](https://github.com/xjtu-enre). 
-Now, the ENRE is supporting analyzing multiple programming languages such as JAVA, C++, Python, Golang, JavaScript/TypeScript.  Please refer to the new repositories for more information.
+## NOTICE: We have migrated this repository into a new github organization for ENRE. The new link is  [xjtu-enre](https://github.com/xjtu-enre).  Now, our ENRE is supporting analyzing multiple programming languages such as JAVA, C++, Python, Golang, JavaScript/TypeScript.  Please refer to the new repositories [https://github.com/xjtu-enre](https://github.com/xjtu-enre) for more information. 
 
 
 
